@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>타브 리더 - 독립형 기타 타브/코드 뷰어</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="타브 리더">
+<meta name="theme-color" content="#EEF1EC">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EEF1EC; --bg2:#E1E7DF; --ink:#17201C; --sub:#56635B; --dash:#6C7A72; --fret:#0F1512;
+  --chord:#2340C8; --rule:#C3CCC3; --tag-bg:#1E2A24; --tag-ink:#F2EAD0; --btn-bg:#1E2A24; --btn-ink:#F2EAD0;
+  --danger:#B3261E; --focus:#2340C8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12171A; --bg2:#1C2326; --ink:#E4EAE6; --sub:#9AA8A0; --dash:#6B7C74; --fret:#FFFFFF;
+    --chord:#8FB2FF; --rule:#2B363A; --tag-bg:#E3B94E; --tag-ink:#1A1607; --btn-bg:#E3B94E; --btn-ink:#1A1607;
+    --danger:#FF8A80; --focus:#8FB2FF;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12171A; --bg2:#1C2326; --ink:#E4EAE6; --sub:#9AA8A0; --dash:#6B7C74; --fret:#FFFFFF;
+  --chord:#8FB2FF; --rule:#2B363A; --tag-bg:#E3B94E; --tag-ink:#1A1607; --btn-bg:#E3B94E; --btn-ink:#1A1607;
+  --danger:#FF8A80; --focus:#8FB2FF;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:400 16px/1.5 'IBM Plex Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+[hidden]{display:none!important}
+#app{max-width:720px;margin:0 auto}
+
+button,.btn,select,input,textarea{font:inherit;color:inherit}
+button,.btn{background:transparent;border:1px solid var(--rule);border-radius:10px;min-height:44px;padding:0 14px;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;-webkit-tap-highlight-color:transparent}
+button:active,.btn:active{opacity:.7}
+.primary{background:var(--btn-bg);color:var(--btn-ink);border-color:transparent;font-weight:600}
+.link{border-color:transparent;color:var(--sub);padding:0 8px}
+.danger{color:var(--danger);border-color:var(--danger)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);
+  padding:6px 12px 8px;border-bottom:1px solid var(--rule)}
+.hrow{display:flex;align-items:center;gap:8px}
+.hrow h1{margin:0;font-size:22px;font-weight:600;flex:1;letter-spacing:-.01em}
+.vt{flex:1;min-width:0;font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+#jumpwrap{margin-top:6px}
+select,input[type=search],input[type=text]{width:100%;min-height:44px;font-size:16px;padding:0 12px;
+  background:var(--bg2);border:1px solid var(--rule);border-radius:10px}
+
+.tools{display:flex;gap:8px;padding:12px}
+.tools input{flex:1}
+#list{list-style:none;margin:0;padding:0 12px}
+.item{display:block;width:100%;text-align:left;border:none;border-bottom:1px solid var(--rule);
+  border-radius:0;padding:13px 4px;min-height:64px}
+.item b{display:block;font-weight:600;font-size:17px;line-height:1.35}
+.item span{color:var(--sub);font-size:13px}
+.note{color:var(--sub);font-size:14px;padding:0 16px;margin:8px 0 12px}
+.notice-box{background:var(--bg2);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;margin:12px;font-size:13px;color:var(--sub);line-height:1.4}
+#bk{margin:20px 12px 40px;color:var(--sub);font-size:14px}
+#bk summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:500}
+#bk textarea{min-height:110px;margin:8px 0;width:100%}
+.row2{display:flex;gap:8px}
+
+#sheet{--fs:15px;padding:12px 14px 60vh;
+  font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:var(--fs)}
+.blk{padding:6px 8px;overflow-x:auto;margin:2px 0}
+.ln{display:block;white-space:pre;line-height:1.5;font-variant-ligatures:none}
+.ln.tab{line-height:1.28;color:var(--dash)}
+.ln.tab b{color:var(--fret);font-weight:700}
+.ln.tab i{font-style:normal;color:var(--sub)}
+.ln.ch{color:var(--chord);font-weight:700}
+.tabblk{background:var(--bg2);border-left:3px solid var(--rule);border-radius:0 6px 6px 0;margin:8px 0}
+.tabblk .chunk+.chunk{margin-top:14px;padding-top:8px;border-top:1px dashed var(--rule)}
+.txtblk .chunk+.chunk{margin-top:2px}
+.gap{height:8px}
+.sec{margin:22px 0 6px;font:600 14px/1 'IBM Plex Sans KR',system-ui,sans-serif}
+.sec span{display:inline-block;background:var(--tag-bg);color:var(--tag-ink);padding:7px 11px;border-radius:4px}
+#probe{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;
+  font:100px 'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace}
+
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--bg);border-top:1px solid var(--rule);
+  display:flex;gap:8px;align-items:center;justify-content:center;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px))}
+.dock .play{flex:1;max-width:180px}
+.spd{min-width:58px;text-align:center;font-size:13px;color:var(--sub);line-height:1.25}
+.dock .sq{padding:0;width:44px}
+.panel{position:fixed;left:12px;right:12px;z-index:7;max-width:696px;margin:0 auto;
+  bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--bg2);border:1px solid var(--rule);
+  border-radius:14px;padding:6px 14px 10px}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px}
+.step{display:flex;align-items:center;gap:6px}
+.step output{min-width:34px;text-align:center;font-variant-numeric:tabular-nums}
+.step button{width:44px;padding:0}
+.seg{display:flex}
+.seg button{border-radius:0;min-height:40px;font-size:14px;padding:0 10px}
+.seg button:first-child{border-radius:10px 0 0 10px}
+.seg button:last-child{border-radius:0 10px 10px 0;border-left:none}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--btn-ink);border-color:transparent;font-weight:600}
+.hint{color:var(--sub);font-size:13px;margin:0 0 4px}
+
+#edit .body{padding:12px;display:flex;flex-direction:column;gap:10px}
+#etext{width:100%;min-height:52vh;font:16px/1.4 'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  white-space:pre;overflow:auto;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:10px}
+#emsg{color:var(--danger);font-size:14px;min-height:20px;margin:0}
+#imgsec{border-top:1px solid var(--rule);padding-top:12px}
+#imgsec h3{margin:0 0 4px;font-size:15px;font-weight:600}
+#thumbs{display:flex;flex-direction:column;gap:12px;margin:8px 0 10px}
+.th{border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--bg2)}
+.th img{display:block;width:100%;max-height:240px;object-fit:contain;background:#fff}
+.tb{display:flex;flex-wrap:wrap;gap:6px;padding:8px}
+.tb button{min-height:40px;font-size:14px;padding:0 10px}
+#pastebox{min-height:64px;border:1px dashed var(--sub);border-radius:10px;padding:10px;color:var(--ink);font-size:16px;margin-top:8px;
+  -webkit-user-select:text;user-select:text;outline:none}
+#pastebox:empty::before{content:attr(data-ph);color:var(--sub);font-size:14px}
+#imsg{min-height:20px;margin:6px 0 0}
+.pgwrap{overflow-x:auto}
+.pg{display:block;max-width:none;height:auto;margin:6px 0 14px;border-radius:4px;background:#fff}
+#sheet.inv .pg{filter:invert(1) hue-rotate(180deg)}
+.panel{max-height:62vh;overflow:auto}
+#chords{padding:12px 12px 2px;border-bottom:1px solid var(--rule)}
+.ch-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ch-h b{font-size:15px;font-weight:600}
+.ch-h button{min-height:36px;font-size:14px;padding:0 10px;color:var(--sub)}
+#cmeta{margin:2px 0 6px;color:var(--sub);font-size:13px}
+.cstrip{display:flex;gap:6px;overflow-x:auto;padding:6px 0 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.cstrip.all{flex-wrap:wrap;overflow:visible}
+.cc{flex:0 0 auto;width:80px;text-align:center;scroll-snap-align:start}
+.cn{font:700 15px/1.3 'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;margin-bottom:2px;white-space:nowrap}
+svg.cd{display:block;width:80px;height:auto}
+.cd-line{stroke:var(--sub);stroke-width:.8}
+.cd-nut{fill:var(--ink)}
+.cd-dot{fill:var(--ink)}
+.cd-num{fill:var(--bg);font:700 7px 'IBM Plex Sans KR',system-ui,sans-serif;text-anchor:middle}
+.cd-x{fill:var(--sub);font:700 8px system-ui,sans-serif;text-anchor:middle}
+.cd-o{fill:none;stroke:var(--sub);stroke-width:1}
+.cd-fr{fill:var(--sub);font:600 7px system-ui,sans-serif;text-anchor:end}
+.cu{font-size:11px;color:var(--sub);line-height:1.3;margin-top:2px}
+.cc.unk{border:1px dashed var(--rule);border-radius:8px;padding:6px 2px;min-height:96px}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<span id="probe" aria-hidden="true">MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM</span>
+<div id="app">
+
+  <section id="lib">
+    <header class="top">
+      <div class="hrow">
+        <h1>타브 리더</h1>
+        <button id="theme" class="link" type="button">테마: 자동</button>
+      </div>
+    </header>
+    <div class="notice-box">
+      📱 <b>저장 안내:</b> 곡과 이미지는 현재 사용 중인 브라우저 기기에만 저장되며, 기기 간 자동 동기화는 지원되지 않습니다. 다른 기기에서 사용하려면 아래 백업 기능을 이용하세요.
+    </div>
+    <div class="tools">
+      <input id="q" type="search" placeholder="곡 검색" aria-label="곡 검색" autocomplete="off">
+      <button id="addBtn" class="primary" type="button">새 곡</button>
+    </div>
+    <p id="warn" class="note" hidden>이 환경에서는 브라우저 저장이 막혀 있어 곡이 저장되지 않습니다.</p>
+    <ul id="list"></ul>
+    <p id="empty" class="note"></p>
+    <details id="bk">
+      <summary>백업 · 복원 (이미지 포함)</summary>
+      <p class="hint">
+        곡 데이터와 붙여넣은 이미지(base64)를 JSON 텍스트 형식으로 함께 내보내거나 복원할 수 있습니다. 
+        <br><b>주의:</b> 이미지가 포함된 경우 백업 텍스트의 용량이 매우 커질 수 있습니다.
+      </p>
+      <textarea id="bkbox" aria-label="백업 텍스트" placeholder="내보내기를 누르면 모든 곡과 이미지 데이터가 여기에 출력됩니다. 복원하려면 텍스트를 여기에 붙여넣으세요."></textarea>
+      <div class="row2">
+        <button id="bkout" type="button">내보내기</button>
+        <button id="bkin" type="button">복원 (합치기)</button>
+      </div>
+      <p id="bkmsg" class="hint"></p>
+    </details>
+  </section>
+
+  <section id="view" hidden>
+    <header class="top" id="vhead">
+      <div class="hrow">
+        <button id="back" class="link" type="button">← 목록</button>
+        <div id="vtitle" class="vt"></div>
+        <button id="editBtn" class="link" type="button">편집</button>
+      </div>
+      <div id="jumpwrap"><select id="jump" aria-label="섹션으로 이동"></select></div>
+    </header>
+    <section id="chords" hidden aria-label="코드 운지">
+      <div class="ch-h"><b>코드</b><button id="call" type="button">모두 보기</button></div>
+      <p id="cmeta" hidden></p>
+      <div id="cstrip" class="cstrip"></div>
+    </section>
+    <article id="sheet" aria-label="악보"></article>
+    <div class="panel" id="panel" hidden>
+      <div class="prow"><span>글자 크기</span>
+        <div class="step"><button id="fsm" type="button" aria-label="글자 작게">−</button><output id="fsv"></output><button id="fsp" type="button" aria-label="글자 크게">+</button></div>
+      </div>
+      <div class="prow"><span>보기 방식</span>
+        <div class="seg"><button type="button" data-m="reflow">나눠서 크게</button><button type="button" data-m="orig">원본 그대로</button></div>
+      </div>
+      <p class="hint" id="modehint"></p>
+      <div class="prow"><label for="showch">맨 위에 코드 운지 보기</label><input id="showch" type="checkbox"></div>
+      <div id="imgrows" hidden>
+        <div class="prow"><span>이미지 배율</span>
+          <div class="step"><button id="zm" type="button" aria-label="이미지 작게">−</button><output id="zv"></output><button id="zp" type="button" aria-label="이미지 크게">+</button></div>
+        </div>
+        <div class="prow"><label for="inv">이미지 색 반전 (어두운 화면용)</label><input id="inv" type="checkbox"></div>
+      </div>
+      <div class="prow"><label for="wake">보는 동안 화면 켜 두기</label><input id="wake" type="checkbox"></div>
+    </div>
+    <nav class="dock" aria-label="재생 조작">
+      <button id="gear" type="button" aria-expanded="false" aria-controls="panel">설정</button>
+      <button id="slow" class="sq" type="button" aria-label="느리게">−</button>
+      <div class="spd" id="lvl"></div>
+      <button id="fast" class="sq" type="button" aria-label="빠르게">+</button>
+      <button id="play" class="primary play" type="button" aria-pressed="false">재생</button>
+    </nav>
+  </section>
+
+  <section id="edit" hidden>
+    <header class="top">
+      <div class="hrow">
+        <button id="cancel" class="link" type="button">취소</button>
+        <div class="vt" id="etop">새 곡</div>
+        <button id="save" class="primary" type="button">저장</button>
+      </div>
+    </header>
+    <div class="body">
+      <input id="etitle" type="text" placeholder="제목 (비우면 첫 줄을 제목으로 씁니다)" autocomplete="off" aria-label="제목">
+      <textarea id="etext" wrap="off" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="메모 앱이나 Pages에서 복사한 타브 텍스트를 붙여넣으세요." aria-label="악보 텍스트"></textarea>
+      <section id="imgsec">
+        <h3>이미지</h3>
+        <p class="hint">스크린샷·사진을 그대로 보여줍니다. PDF는 페이지를 캡처해 이미지로 추가하세요.</p>
+        <div id="thumbs"></div>
+        <div id="imgtools">
+          <div class="row2">
+            <label class="btn" for="imgfile" style="flex:1">사진·파일 추가</label>
+            <button id="imgpaste" type="button" style="flex:1">클립보드에서 붙여넣기</button>
+          </div>
+          <input id="imgfile" type="file" accept="image/*" multiple hidden>
+          <div id="pastebox" contenteditable="true" role="textbox" aria-label="이미지 붙여넣기 칸" data-ph="이미지를 복사한 뒤, 여기를 길게 눌러 ‘붙여넣기’를 선택하세요."></div>
+        </div>
+        <p id="imsg" class="hint" role="status"></p>
+      </section>
+      <label class="btn" for="file">텍스트 파일(.txt)에서 불러오기</label>
+      <input id="file" type="file" accept=".txt,text/plain" hidden>
+      <p id="emsg" role="status"></p>
+      <button id="del" class="danger" type="button" hidden>이 곡 삭제</button>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+
+// ---------- PWA Manifest 및 Service Worker 동적 등록 ----------
+(function registerPWA(){
+  const manifestData = {
+    name: "타브 리더",
+    short_name: "타브리더",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#12171A",
+    theme_color: "#12171A",
+    icons: [{
+      src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231E2A24'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='%23E3B94E'>🎸</text></svg>",
+      sizes: "192x192 512x512",
+      type: "image/svg+xml"
+    }]
+  };
+  const stringManifest = JSON.stringify(manifestData);
+  const blobManifest = new Blob([stringManifest], {type: 'application/json'});
+  const manifestURL = URL.createObjectURL(blobManifest);
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = manifestURL;
+  document.head.appendChild(link);
+
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      const CACHE_NAME = 'tab-reader-v1';
+      self.addEventListener('install', e => {
+        self.skipWaiting();
+      });
+      self.addEventListener('activate', e => {
+        e.waitUntil(clients.claim());
+      });
+      self.addEventListener('fetch', e => {
+        if (e.request.method !== 'GET') return;
+        e.respondWith(
+          fetch(e.request).catch(() => caches.match(e.request))
+        );
+      });
+    `;
+    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+    const swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl).catch(()=>{});
+  }
+})();
+
+// ---------- IndexedDB (이미지 보관용) ----------
+const DB_NAME = 'TabReaderDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'images';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) { reject(new Error("IndexedDB 비활성화")); return; }
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      }
+    };
+    request.onsuccess = e => resolve(e.target.result);
+    request.onerror = e => reject(e.target.error);
+  });
+}
+
+async function dbPutImage(id, dataUrl) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.put({ id, dataUrl, updated: Date.now() });
+      req.onsuccess = () => resolve(id);
+      req.onerror = e => reject(e.target.error);
+    });
+  } catch(e) {
+    console.error("IndexedDB 저장 실패:", e);
+    throw e;
+  }
+}
+
+async function dbGetImage(id) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get(id);
+      req.onsuccess = e => resolve(e.target.result ? e.target.result.dataUrl : null);
+      req.onerror = () => resolve(null);
+    });
+  } catch(e) {
+    return null;
+  }
+}
+
+async function dbDelImage(id) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.delete(id);
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => resolve(false);
+    });
+  } catch(e) {
+    return false;
+  }
+}
+
+// ---------- CORE (악보 파싱 및 레이아웃) ----------
+const CH=/^[A-G][#b]?(?:maj|min|dim|aug|sus|add|m|M)?\d*(?:(?:sus|add)\d+)?(?:\/[A-G][#b]?)?$/;
+const MARK=/^(?:\(?x\d+\)?|\|+|\/+|-+|N\.?C\.?)$/i;
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function isChordLine(l){const t=l.trim().split(/\s+/);if(!t[0])return false;let n=0;
+  for(const x of t){if(CH.test(x))n++;else if(!MARK.test(x))return false;}return n>0;}
+function isTabLine(l){return /^\s*[a-gA-G][|:]/.test(l)&&(l.match(/-/g)||[]).length>=3;}
+function isHead(l){return /^\s*\[[^\]]+\]\s*$/.test(l);}
+function splitTab(l){l=l.replace(/\s+$/,'');const P=l.match(/^\s*[a-gA-G][|:]/)[0].length;
+  const last=l.lastIndexOf('|');const end=last>=P?last+1:l.length;
+  return{P,s:l.slice(0,end),suffix:l.slice(end),prefix:l.slice(0,P)};}
+const rstrip=s=>s.replace(/\s+$/,'');
+
+function parse(text){
+  const L=text.replace(/\r\n?/g,'\n').replace(/\t/g,'    ').split('\n');
+  const B=[];let i=0;
+  while(i<L.length){
+    const l=L[i];
+    if(!l.trim()){if(B.length&&B[B.length-1].t!=='gap')B.push({t:'gap'});i++;continue;}
+    if(isHead(l)){B.push({t:'head',text:l.trim().replace(/^\[|\]$/g,'')});i++;continue;}
+    let chord=null;
+    if(isChordLine(l)){
+      const n=L[i+1];
+      if(n!==undefined&&isTabLine(n)){chord=l;i++;}
+      else if(n!==undefined&&n.trim()&&!isHead(n)&&!isChordLine(n)){
+        B.push({t:'txt',P:0,rows:[{k:'chord',s:rstrip(l),prefix:'',suffix:''},{k:'lyric',s:rstrip(n),prefix:'',suffix:''}]});i+=2;continue;}
+      else{B.push({t:'txt',P:0,rows:[{k:'chord',s:rstrip(l),prefix:'',suffix:''}]});i++;continue;}
+    }
+    if(isTabLine(L[i])){
+      const run=[];while(i<L.length&&isTabLine(L[i])){run.push(splitTab(L[i]));i++;}
+      const groups=(run.length>6&&run.length%6===0)?run.length/6:1;const size=run.length/groups;
+      for(let g=0;g<groups;g++){
+        const part=run.slice(g*size,(g+1)*size);const rows=[];
+        if(chord&&g===0)rows.push({k:'chord',s:rstrip(chord),prefix:' '.repeat(part[0].P),suffix:''});
+        part.forEach(r=>rows.push({k:'tab',s:r.s,prefix:r.prefix,suffix:r.suffix}));
+        B.push({t:'tab',P:part[0].P,rows});
+      }
+      continue;
+    }
+    B.push({t:'txt',P:0,rows:[{k:'lyric',s:rstrip(l),prefix:'',suffix:''}]});i++;
+  }
+  return B;
+}
+
+function chunkBlock(b,maxCols){
+  const rows=b.rows,P=b.P;
+  const W=Math.max(...rows.map(r=>r.s.length));
+  const WS=Math.max(...rows.map(r=>r.s.length+r.suffix.length));
+  if(!isFinite(maxCols)||WS<=maxCols)return[rows.map(r=>({k:r.k,txt:r.s+r.suffix}))];
+  maxCols=Math.max(maxCols,P+10,18);
+  const fill=(r,i)=>{const c=r.s[i];return c===undefined||c===' '||(r.k==='tab'&&(c==='-'||c==='|'));};
+  const valid=x=>rows.every(r=>fill(r,x-1)||fill(r,x));
+  const tabs=rows.filter(r=>r.k==='tab');
+  const bar=x=>tabs.length>0&&tabs.every(r=>r.s[x-1]==='|');
+  const mk=(a,e,last)=>{
+    let ch=rows.map(r=>({k:r.k,txt:(a>0?r.prefix:'')+r.s.slice(a,e)+(last?r.suffix:'')}));
+    if(P===0&&a>0){
+      const ls=ch.filter(c=>c.txt.trim()).map(c=>c.txt.length-c.txt.trimStart().length);
+      const lead=ls.length?Math.min(...ls):0;
+      ch=ch.map(c=>({k:c.k,txt:rstrip(c.txt.slice(lead))}));
+    }
+    return ch;
+  };
+  const out=[];let a=0;
+  for(;;){
+    const cap=maxCols-(a>0?P:0);
+    if(a+cap>=W){out.push(mk(a,W,true));break;}
+    const hi=a+cap,lo=a+Math.max(4,Math.floor(cap*0.35));
+    let best=-1,bb=-1;
+    for(let x=hi;x>=lo;x--){if(!valid(x))continue;if(best<0)best=x;if(bb<0&&bar(x))bb=x;}
+    const cut=(bb>=0&&bb>=a+Math.floor(cap*0.5))?bb:(best>=0?best:hi);
+    out.push(mk(a,cut,false));a=cut;
+  }
+  return out;
+}
+
+function rowHTML(r,P){
+  let t=r.txt;
+  if(r.k==='tab'){
+    return '<span class="ln tab"><i>'+esc(t.slice(0,P))+'</i>'+esc(t.slice(P)).replace(/[^-|]+/g,'<b>$&</b>')+'</span>';
+  }
+  if(!t.trim())t=' ';
+  return '<span class="ln'+(r.k==='chord'?' ch':'')+'">'+esc(t)+'</span>';
+}
+function renderBlocks(bl,maxCols){
+  let h='';const heads=[];
+  bl.forEach(b=>{
+    if(b.t==='gap'){h+='<div class="gap"></div>';}
+    else if(b.t==='head'){h+='<h2 class="sec"><span>'+esc(b.text)+'</span></h2>';heads.push(b.text);}
+    else{
+      const cs=chunkBlock(b,maxCols);
+      h+='<div class="blk '+(b.t==='tab'?'tabblk':'txtblk')+'">'+
+        cs.map(c=>'<div class="chunk">'+c.map(r=>rowHTML(r,b.P)).join('')+'</div>').join('')+'</div>';
+    }
+  });
+  return{html:h,heads};
+}
+function maxWidth(bl){let w=0;bl.forEach(b=>{if(b.rows)b.rows.forEach(r=>{w=Math.max(w,r.s.length+r.suffix.length);});});return w;}
+
+// ---------- CHORDS (코드 운지 생성) ----------
+const PCS={C:0,'C#':1,Db:1,D:2,'D#':3,Eb:3,E:4,F:5,'F#':6,Gb:6,G:7,'G#':8,Ab:8,A:9,'A#':10,Bb:10,B:11};
+const QN={'':'',maj:'',M:'',m:'m',min:'m','-':'m','7':'7',maj7:'maj7',M7:'maj7',m7:'m7',min7:'m7',sus4:'sus4',sus:'sus4',sus2:'sus2',add9:'add9','6':'6'};
+function parseChord(t){
+  const m=/^([A-G][#b]?)([^\/]*)(?:\/([A-G][#b]?))?$/.exec(t);
+  if(!m)return null;
+  return{pc:PCS[m[1]],q:Object.prototype.hasOwnProperty.call(QN,m[2])?QN[m[2]]:null,bass:m[3]?PCS[m[3]]:null,bassName:m[3]||''};
+}
+const OPEN={
+ C:[[-1,3,2,0,1,0],[0,3,2,0,1,0]], D:[[-1,-1,0,2,3,2],[0,0,0,1,3,2]], E:[[0,2,2,1,0,0],[0,2,3,1,0,0]],
+ G:[[3,2,0,0,0,3],[2,1,0,0,0,3]], A:[[-1,0,2,2,2,0],[0,0,1,2,3,0]],
+ Am:[[-1,0,2,2,1,0],[0,0,2,3,1,0]], Dm:[[-1,-1,0,2,3,1],[0,0,0,2,3,1]], Em:[[0,2,2,0,0,0],[0,2,3,0,0,0]],
+ C7:[[-1,3,2,3,1,0],[0,3,2,4,1,0]], D7:[[-1,-1,0,2,1,2],[0,0,0,2,1,3]], E7:[[0,2,0,1,0,0],[0,2,0,1,0,0]],
+ G7:[[3,2,0,0,0,1],[3,2,0,0,0,1]], A7:[[-1,0,2,0,2,0],[0,0,2,0,3,0]], B7:[[-1,2,1,2,0,2],[0,2,1,3,0,4]],
+ Am7:[[-1,0,2,0,1,0],[0,0,2,0,1,0]], Dm7:[[-1,-1,0,2,1,1],[0,0,0,2,1,1]], Em7:[[0,2,0,0,0,0],[0,2,0,0,0,0]],
+ Cmaj7:[[-1,3,2,0,0,0],[0,3,2,0,0,0]], Fmaj7:[[-1,-1,3,2,1,0],[0,0,3,2,1,0]], Gmaj7:[[3,2,0,0,0,2],[3,2,0,0,0,1]],
+ Amaj7:[[-1,0,2,1,2,0],[0,0,2,1,3,0]], Dmaj7:[[-1,-1,0,2,2,2],[0,0,0,1,1,1]], Emaj7:[[0,2,1,1,0,0],[0,3,1,1,0,0]],
+ Bm7:[[-1,2,0,2,0,2],[0,1,0,2,0,3]],
+ Asus2:[[-1,0,2,2,0,0],[0,0,1,2,0,0]], Asus4:[[-1,0,2,2,3,0],[0,0,1,2,3,0]],
+ Dsus2:[[-1,-1,0,2,3,0],[0,0,0,1,2,0]], Dsus4:[[-1,-1,0,2,3,3],[0,0,0,1,2,3]],
+ Esus4:[[0,2,2,2,0,0],[0,1,2,3,0,0]], Esus2:[[0,2,4,4,0,0],[0,1,3,4,0,0]],
+ Cadd9:[[-1,3,2,0,3,3],[0,2,1,0,3,4]]
+};
+const OPEN_SLASH={
+ 'A/C#':[[-1,4,2,2,2,0],[0,4,1,1,1,0]], 'D/F#':[[2,0,0,2,3,2],[1,0,0,2,4,3]], 'E/G#':[[4,2,2,1,0,0],[4,2,3,1,0,0]],
+ 'G/B':[[-1,2,0,0,3,3],[0,1,0,0,3,4]], 'C/G':[[3,3,2,0,1,0],[3,4,2,0,1,0]], 'C/E':[[0,3,2,0,1,0],[0,3,2,0,1,0]],
+ 'D/A':[[-1,0,0,2,3,2],[0,0,0,1,3,2]], 'A/E':[[0,0,2,2,2,0],[0,0,1,2,3,0]], 'F/C':[[-1,3,3,2,1,1],[0,3,4,2,1,1]],
+ 'Dm/A':[[-1,0,0,2,3,1],[0,0,0,2,3,1]]
+};
+const LIB={},SLASH={};
+Object.keys(OPEN).forEach(k=>{const c=parseChord(k);LIB[c.pc+'|'+c.q]={f:OPEN[k][0],fg:OPEN[k][1]};});
+Object.keys(OPEN_SLASH).forEach(k=>{const c=parseChord(k);SLASH[c.pc+'|'+c.q+'|'+c.bass]={f:OPEN_SLASH[k][0],fg:OPEN_SLASH[k][1]};});
+
+const EF={'':[[0,2,2,1,0,0],[1,3,4,2,1,1]],m:[[0,2,2,0,0,0],[1,3,4,1,1,1]],'7':[[0,2,0,1,0,0],[1,3,1,2,1,1]],
+  m7:[[0,2,0,0,0,0],[1,3,1,1,1,1]],maj7:[[0,2,1,1,0,0],[1,4,2,2,1,1]],sus4:[[0,2,2,2,0,0],null]};
+const AF={'':[[-1,0,2,2,2,0],[0,1,3,3,3,1]],m:[[-1,0,2,2,1,0],[0,1,3,4,2,1]],'7':[[-1,0,2,0,2,0],[0,1,3,1,4,1]],
+  m7:[[-1,0,2,0,1,0],[0,1,3,1,2,1]],maj7:[[-1,0,2,1,2,0],[0,1,3,2,4,1]],sus2:[[-1,0,2,2,0,0],null],sus4:[[-1,0,2,2,3,0],null]};
+
+function shapeFor(pc,q,bass){
+  if(q===null||pc===undefined)return null;
+  if(bass!==null&&bass!==undefined){const s=SLASH[pc+'|'+q+'|'+bass];if(s)return s;}
+  const o=LIB[pc+'|'+q];if(o)return o;
+  const cs=[];
+  if(EF[q])cs.push({f:((pc-4+12)%12)||12,t:EF[q]});
+  if(AF[q])cs.push({f:((pc-9+12)%12)||12,t:AF[q]});
+  if(!cs.length)return null;
+  cs.sort((a,b)=>a.f-b.f);const c=cs[0];
+  return{f:c.t[0].map(x=>x<0?-1:x+c.f),fg:c.t[1]||[0,0,0,0,0,0]};
+}
+function chordSVG(sh,label){
+  const f=sh.f,fg=sh.fg||[];
+  const pos=f.filter(x=>x>0),mn=pos.length?Math.min(...pos):1,mx=pos.length?Math.max(...pos):0;
+  const base=(mx>5||mn>=3)?mn:1;
+  const X0=16,DX=10,Y0=24,DY=13,R=5,sx=i=>X0+i*DX,fy=r=>Y0+(r-0.5)*DY;
+  let s='<svg class="cd" viewBox="0 0 74 96" role="img" aria-label="'+esc(label)+' 운지">';
+  for(let r=0;r<=5;r++){
+    if(r===0&&base===1)s+='<rect class="cd-nut" x="'+X0+'" y="'+(Y0-1.5)+'" width="'+5*DX+'" height="3"/>';
+    else s+='<line class="cd-line" x1="'+X0+'" x2="'+(X0+5*DX)+'" y1="'+(Y0+r*DY)+'" y2="'+(Y0+r*DY)+'"/>';
+  }
+  for(let i=0;i<6;i++)s+='<line class="cd-line" x1="'+sx(i)+'" x2="'+sx(i)+'" y1="'+Y0+'" y2="'+(Y0+5*DY)+'"/>';
+  if(base>1)s+='<text class="cd-fr" x="'+(X0-4)+'" y="'+(Y0+DY*0.5+2.5)+'">'+base+'fr</text>';
+  for(let i=0;i<6;i++){
+    if(f[i]===-1)s+='<text class="cd-x" x="'+sx(i)+'" y="'+(Y0-6)+'">×</text>';
+    else if(f[i]===0)s+='<circle class="cd-o" cx="'+sx(i)+'" cy="'+(Y0-9)+'" r="3"/>';
+  }
+  const barred={};
+  for(let n=1;n<=4;n++){
+    const idx=[];f.forEach((fr,i)=>{if(fg[i]===n&&fr>0)idx.push(i);});
+    if(idx.length>=2&&idx.every(i=>f[i]===f[idx[0]])){
+      const r=f[idx[0]]-base+1;if(r<1||r>5)continue;
+      const a=idx[0],b=idx[idx.length-1];
+      s+='<rect class="cd-dot" x="'+(sx(a)-R)+'" y="'+(fy(r)-R)+'" width="'+((b-a)*DX+2*R)+'" height="'+2*R+'" rx="'+R+'"/>';
+      s+='<text class="cd-num" x="'+sx(a)+'" y="'+(fy(r)+2.5)+'">'+n+'</text>';
+      idx.forEach(i=>{barred[i]=1;});
+    }
+  }
+  for(let i=0;i<6;i++){
+    if(f[i]>0&&!barred[i]){
+      const r=f[i]-base+1;if(r<1||r>5)continue;
+      s+='<circle class="cd-dot" cx="'+sx(i)+'" cy="'+fy(r)+'" r="'+R+'"/>';
+      if(fg[i]>0)s+='<text class="cd-num" x="'+sx(i)+'" y="'+(fy(r)+2.5)+'">'+fg[i]+'</text>';
+    }
+  }
+  return s+'</svg>';
+}
+function chordCard(tok){
+  const c=parseChord(tok);
+  const sh=c?shapeFor(c.pc,c.q,c.bass):null;
+  if(!sh)return '<div class="cc unk"><div class="cn">'+esc(tok)+'</div><div class="cu">운지 정보 없음</div></div>';
+  const exact=c.bass!==null&&SLASH[c.pc+'|'+c.q+'|'+c.bass];
+  const note=(c.bass!==null&&c.bass!==c.pc&&!exact)?'<div class="cu">베이스 '+esc(c.bassName)+' 별도</div>':'';
+  return '<div class="cc"><div class="cn">'+esc(tok)+'</div>'+chordSVG(sh,tok)+note+'</div>';
+}
+function songChords(bl){
+  const seen={},out=[];
+  bl.forEach(b=>{(b.rows||[]).forEach(r=>{if(r.k!=='chord')return;
+    r.s.trim().split(/\s+/).forEach(t=>{if(CH.test(t)&&!seen[t]){seen[t]=1;out.push(t);}});});});
+  return out;
+}
+function songMeta(text){
+  const out=[],names={capo:'카포',tuning:'튜닝',key:'키'};
+  text.split('\n').slice(0,14).forEach(l=>{
+    const m=/^\s*(capo|tuning|key)\s*[:\-]\s*(.+?)\s*$/i.exec(l);
+    if(m)out.push(names[m[1].toLowerCase()]+' '+m[2]);
+  });
+  return out.join(' · ');
+}
+
+// ---------- 예시 데이터 ----------
+function demo(){
+  const S=['e','B','G','D','A','E'];
+  const chords={
+    Am:[[4,0],[3,2],[2,2],[1,1],[0,0],[1,1],[2,2],[1,1]],
+    C:[[4,3],[3,2],[2,0],[1,1],[0,0],[1,1],[2,0],[1,1]],
+    G:[[5,3],[3,0],[2,0],[1,0],[0,3],[1,0],[2,0],[1,0]],
+    D:[[3,0],[2,2],[1,3],[0,2],[1,3],[2,2],[1,3],[0,2]]
+  };
+  const row=names=>{
+    const ms=names.map(n=>{const g=S.map(()=>Array(16).fill('-'));chords[n].forEach(([s,f],i)=>{g[s][2*i+1]=String(f);});return g.map(a=>a.join(''));});
+    const tab=S.map((lb,si)=>lb+'|'+ms.map(m=>m[si]+'|').join(''));
+    const chord='  '+names.map(n=>n.padEnd(17)).join('').replace(/\s+$/,'');
+    return [chord].concat(tab).join('\n');
+  };
+  const cl=p=>{let s='';p.forEach(([c,x])=>{s=s.padEnd(x)+c;});return s;};
+  return{id:'demo',title:'예시 악보 (지워도 됩니다)',updated:Date.now(),text:[
+    '[Intro]',row(['Am','C','G','D']),'',row(['C','G','D','Am']),'',
+    '[Verse]',
+    cl([['Am',0],['C',19]]),'여기에 직접 타브 텍스트와 가사를 붙여넣으세요.',
+    cl([['G',0],['D',22]]),'코드명은 글자 위치에 맞춰 자동으로 정렬됩니다.','',
+    '[Chorus]',
+    cl([['C',0],['G',21],['D',43],['Am',64]]),'긴 줄은 화면 폭에 맞춰 자동으로 나뉘며 코드 위치는 유지됩니다.'
+  ].join('\n'), images:[]};
+}
+
+// ---------- 로컬 저장소 (localStorage) ----------
+let storageOK=true;
+try{localStorage.setItem('tr.t','1');localStorage.removeItem('tr.t');}catch(e){storageOK=false;}
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+};
+let songs=store.get('tr.songs',null);
+const cfg=Object.assign({size:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:true,chordsAll:false},store.get('tr.cfg',{}));
+const saveCfg=()=>store.set('tr.cfg',cfg);
+const saveSongs=()=>store.set('tr.songs',songs);
+if(!Array.isArray(songs)){songs=[demo()];saveSongs();}
+const uid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+// ---------- UI 및 화면 전환 ----------
+const V={lib:$('#lib'),view:$('#view'),edit:$('#edit')};
+let cur=null,parsed=null,heads=[],prevView='lib',ratio=0;
+function show(n){for(const k in V)V[k].hidden=(k!==n);window.scrollTo(0,0);}
+
+function applyTheme(){
+  const r=document.documentElement;
+  if(cfg.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',cfg.theme);
+  $('#theme').textContent='테마: '+({auto:'자동',light:'밝게',dark:'어둡게'}[cfg.theme]);
+}
+$('#theme').onclick=()=>{cfg.theme={auto:'light',light:'dark',dark:'auto'}[cfg.theme];saveCfg();applyTheme();};
+
+// ---------- 곡 목록 ----------
+function fmtDate(t){try{return new Date(t).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});}catch(e){return '';}}
+function renderList(){
+  const q=$('#q').value.trim().toLowerCase();
+  const arr=songs.filter(s=>!q||s.title.toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
+  $('#list').innerHTML=arr.map(s=>'<li><button class="item" type="button" data-id="'+esc(s.id)+'"><b>'+esc(s.title)+'</b><span>'+
+    (s.text.split('\n').filter(x=>x.trim()).length?s.text.split('\n').filter(x=>x.trim()).length+'줄 · ':'')+((s.images||[]).length?'이미지 '+s.images.length+'장 · ':'')+fmtDate(s.updated)+'</span></button></li>').join('');
+  $('#empty').textContent=songs.length?(arr.length?'':'검색 결과가 없습니다.'):'저장된 곡이 없습니다. 새 곡을 눌러 타브 텍스트를 붙여넣어 보세요.';
+  $('#warn').hidden=storageOK;
+}
+$('#list').addEventListener('click',e=>{const b=e.target.closest('.item');if(b)openSong(b.dataset.id);});
+$('#q').addEventListener('input',renderList);
+$('#addBtn').onclick=()=>openEdit(null);
+
+// ---------- 백업 & 복원 (이미지 포함) ----------
+$('#bkout').onclick=async()=>{
+  $('#bkmsg').textContent = '백업 데이터(이미지 포함) 준비 중…';
+  try {
+    const fullBackup = [];
+    for (const s of songs) {
+      const songData = { ...s, imageData: {} };
+      if (Array.isArray(s.images)) {
+        for (const imgId of s.images) {
+          const dUrl = await dbGetImage(imgId);
+          if (dUrl) songData.imageData[imgId] = dUrl;
+        }
+      }
+      fullBackup.push(songData);
+    }
+    const box=$('#bkbox');box.value=JSON.stringify(fullBackup);box.focus();box.select();
+    let ok=false;try{await navigator.clipboard.writeText(box.value);ok=true;}catch(e){}
+    $('#bkmsg').textContent=ok?'복사했습니다. 안전한 곳에 붙여넣어 보관하세요.':'위 텍스트를 전체 선택하여 복사하세요.';
+  } catch(e) {
+    $('#bkmsg').textContent='내보내기 중 오류가 발생했습니다.';
+  }
+};
+
+$('#bkin').onclick=async()=>{
+  try{
+    const a=JSON.parse($('#bkbox').value);if(!Array.isArray(a))throw 0;
+    let n=0;
+    $('#bkmsg').textContent='복원 데이터 처리 중…';
+    for (const x of a) {
+      if(!x||typeof x.title!=='string'||typeof x.text!=='string') continue;
+      const id=/^[a-z0-9_-]+$/i.test(x.id||'')?x.id:uid();
+      const imgIds = Array.isArray(x.images) ? x.images : [];
+      
+      if (x.imageData && typeof x.imageData === 'object') {
+        for (const imgId of Object.keys(x.imageData)) {
+          await dbPutImage(imgId, x.imageData[imgId]);
+        }
+      }
+      
+      const s={id,title:x.title,text:x.text,images:imgIds,updated:Number(x.updated)||Date.now()};
+      const k=songs.findIndex(y=>y.id===id);
+      if(k>=0)songs[k]=s; else songs.push(s);
+      n++;
+    }
+    saveSongs();renderList();$('#bkmsg').textContent=n+'곡을 성공적으로 복원했습니다.';
+  }catch(e){
+    $('#bkmsg').textContent='백업 텍스트를 읽지 못했습니다. 내보내기로 만든 올바른 텍스트 전체를 붙여넣어 주세요.';
+  }
+};
+
+// ---------- 악보 보기 ----------
+function getRatio(){if(!ratio){ratio=$('#probe').getBoundingClientRect().width/10000;}return ratio||0.6;}
+function openSong(id){
+  cur=songs.find(s=>s.id===id);if(!cur)return;
+  parsed=parse(cur.text||'');$('#vtitle').textContent=cur.title;
+  show('view');syncUI();layout(false);wake(true);
+}
+
+async function layout(keep){
+  if(V.view.hidden||!parsed)return;
+  const sheet=$('#sheet'),de=document.documentElement;
+  const y=keep?window.scrollY/Math.max(1,de.scrollHeight):0;
+  const avail=sheet.clientWidth-48;const r=getRatio();
+  let fs=cfg.size,mc=Infinity;
+  if(cfg.mode==='reflow'){mc=Math.floor((avail-2)/(fs*r));}
+  else{const W=Math.max(10,maxWidth(parsed));fs=Math.max(7,Math.min(cfg.size,Math.floor(avail/(W*r)*10)/10));}
+  sheet.style.setProperty('--fs',fs+'px');
+  const out=renderBlocks(parsed,mc);
+  
+  const imgs=(cur&&cur.images)||[];
+  let ih='';
+  for(let i=0; i<imgs.length; i++){
+    const imgId = imgs[i];
+    const src = await dbGetImage(imgId);
+    if(src){
+      ih+='<h2 class="sec"><span>이미지 '+(i+1)+'</span></h2><div class="pgwrap"><img class="pg" alt="악보 이미지 '+(i+1)+
+        '" src="'+src+'" style="width:'+cfg.zoom+'%" decoding="async"></div>';
+    }
+  }
+  
+  sheet.classList.toggle('inv',!!cfg.invert);
+  sheet.innerHTML=ih+out.html;heads=imgs.map((_,i)=>'이미지 '+(i+1)).concat(out.heads);
+  renderChords();fillJump();
+  if(keep)window.scrollTo(0,y*de.scrollHeight);
+  syncJump();
+}
+
+function renderChords(){
+  const box=$('#chords');
+  const list=(cfg.chords===false||!parsed)?[]:songChords(parsed);
+  box.hidden=!list.length;
+  if(!list.length)return;
+  const meta=songMeta((cur&&cur.text)||'');
+  $('#cmeta').textContent=meta;$('#cmeta').hidden=!meta;
+  $('#cstrip').classList.toggle('all',!!cfg.chordsAll);
+  $('#cstrip').innerHTML=list.map(chordCard).join('');
+  $('#call').textContent=cfg.chordsAll?'한 줄로':'모두 보기';
+}
+function syncUI(){
+  $('#fsv').textContent=cfg.size;
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===cfg.mode)));
+  $('#modehint').textContent=cfg.mode==='reflow'
+    ?'마디와 공백 기준으로 줄을 나눠 큰 글자로 보여줍니다.'
+    :'원본 배치를 그대로 두고 화면 너비에 맞게 글자를 줄입니다.';
+  $('#lvl').textContent='속도 '+cfg.level;
+  $('#wake').checked=cfg.wake;
+  $('#showch').checked=cfg.chords!==false;
+  $('#zv').textContent=cfg.zoom+'%';$('#inv').checked=!!cfg.invert;
+  $('#imgrows').hidden=!(cur&&(cur.images||[]).length);
+}
+function fillJump(){
+  const j=$('#jump');
+  j.innerHTML='<option value="top">처음</option>'+heads.map((h,i)=>'<option value="'+i+'">'+esc(h)+'</option>').join('');
+  $('#jumpwrap').hidden=!heads.length;
+}
+$('#jump').addEventListener('change',e=>{
+  const v=e.target.value;
+  if(v==='top'){window.scrollTo(0,0);return;}
+  const el=$('#sheet').querySelectorAll('.sec')[Number(v)];
+  if(el){const hb=$('#vhead').getBoundingClientRect().bottom;window.scrollTo(0,window.scrollY+el.getBoundingClientRect().top-hb-8);}
+});
+function syncJump(){
+  if(V.view.hidden)return;
+  const top=$('#vhead').getBoundingClientRect().bottom+10;let c='top';
+  $('#sheet').querySelectorAll('.sec').forEach((h,i)=>{if(h.getBoundingClientRect().top<=top)c=String(i);});
+  const j=$('#jump');if(j.value!==c)j.value=c;
+}
+let sp=0;
+addEventListener('scroll',()=>{if(sp)return;sp=1;requestAnimationFrame(()=>{sp=0;syncJump();});},{passive:true});
+let lastW=innerWidth,rt=0;
+addEventListener('resize',()=>{if(innerWidth===lastW)return;lastW=innerWidth;clearTimeout(rt);rt=setTimeout(()=>layout(true),150);});
+
+// 설정 패널 조작
+$('#gear').onclick=()=>{const p=$('#panel');p.hidden=!p.hidden;$('#gear').setAttribute('aria-expanded',String(!p.hidden));};
+$('#fsm').onclick=()=>{cfg.size=Math.max(11,cfg.size-1);saveCfg();syncUI();layout(true);};
+$('#fsp').onclick=()=>{cfg.size=Math.min(26,cfg.size+1);saveCfg();syncUI();layout(true);};
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{cfg.mode=b.dataset.m;saveCfg();syncUI();layout(true);});
+$('#call').onclick=()=>{cfg.chordsAll=!cfg.chordsAll;saveCfg();renderChords();};
+$('#showch').onchange=e=>{cfg.chords=e.target.checked;saveCfg();renderChords();};
+const ZOOMS=[100,125,150,200,250,300];
+$('#zm').onclick=()=>{cfg.zoom=ZOOMS[Math.max(0,ZOOMS.indexOf(cfg.zoom)-1)];saveCfg();syncUI();layout(true);};
+$('#zp').onclick=()=>{cfg.zoom=ZOOMS[Math.min(ZOOMS.length-1,ZOOMS.indexOf(cfg.zoom)+1)];saveCfg();syncUI();layout(true);};
+$('#inv').onchange=e=>{cfg.invert=e.target.checked;saveCfg();layout(true);};
+$('#wake').onchange=e=>{cfg.wake=e.target.checked;saveCfg();wake(cfg.wake);};
+
+// 자동 스크롤
+let playing=false,raf=0,last=0,acc=0,touching=false,resumeT=0;
+function tick(t){
+  if(!playing)return;
+  const dt=Math.min(64,t-last)/1000;last=t;
+  if(!touching){
+    acc+=cfg.level*5*dt;const px=Math.floor(acc);
+    if(px>=1){window.scrollBy(0,px);acc-=px;}
+    if(innerHeight+scrollY>=document.documentElement.scrollHeight-2){setPlay(false);return;}
+  }
+  raf=requestAnimationFrame(tick);
+}
+function setPlay(on){
+  playing=on;cancelAnimationFrame(raf);
+  $('#play').textContent=on?'정지':'재생';$('#play').setAttribute('aria-pressed',String(on));
+  if(on){
+    if(innerHeight+scrollY>=document.documentElement.scrollHeight-2)window.scrollTo(0,0);
+    last=performance.now();acc=0;raf=requestAnimationFrame(tick);
+  }
+}
+$('#play').onclick=()=>setPlay(!playing);
+$('#slow').onclick=()=>{cfg.level=Math.max(1,cfg.level-1);saveCfg();syncUI();};
+$('#fast').onclick=()=>{cfg.level=Math.min(12,cfg.level+1);saveCfg();syncUI();};
+addEventListener('touchstart',()=>{touching=true;clearTimeout(resumeT);},{passive:true});
+['touchend','touchcancel'].forEach(ev=>addEventListener(ev,()=>{clearTimeout(resumeT);resumeT=setTimeout(()=>{touching=false;},700);},{passive:true}));
+addEventListener('wheel',()=>{touching=true;clearTimeout(resumeT);resumeT=setTimeout(()=>{touching=false;},700);},{passive:true});
+
+// 화면 켜 둠 유지
+let lock=null;
+async function wake(on){
+  try{
+    if(on&&cfg.wake&&'wakeLock' in navigator&&!lock){lock=await navigator.wakeLock.request('screen');lock.addEventListener('release',()=>{lock=null;});}
+    else if(!on&&lock){await lock.release();lock=null;}
+  }catch(e){lock=null;}
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!V.view.hidden)wake(true);});
+
+$('#back').onclick=()=>{setPlay(false);wake(false);$('#panel').hidden=true;show('lib');renderList();};
+$('#editBtn').onclick=()=>{setPlay(false);openEdit(cur.id);};
+
+// ---------- 곡 편집 및 이미지 추가 ----------
+let editingId=null,delT=0;
+let draft={ids:[],orig:[],up:[],dataUrls:{}};
+const imsg=t=>{$('#imsg').textContent=t||'';};
+
+async function renderThumbs(){
+  const n=draft.ids.length;
+  let html = '';
+  for(let i=0; i<n; i++){
+    const id = draft.ids[i];
+    let dUrl = draft.dataUrls[id];
+    if(!dUrl) {
+      dUrl = await dbGetImage(id);
+      if(dUrl) draft.dataUrls[id] = dUrl;
+    }
+    html += '<div class="th" data-id="'+esc(id)+'"><img alt="이미지 '+(i+1)+'" src="'+(dUrl||'')+'"><div class="tb">'+
+      '<button type="button" data-a="up"'+(i?'':' disabled')+'>위로</button><button type="button" data-a="dn"'+(i<n-1?'':' disabled')+'>아래로</button>'+
+      '<button type="button" data-a="rm" class="danger">삭제</button></div></div>';
+  }
+  $('#thumbs').innerHTML = html;
+}
+
+$('#thumbs').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const th=b.closest('.th');if(!th)return;
+  const id=th.dataset.id,i=draft.ids.indexOf(id),a=b.dataset.a,ids=draft.ids;
+  if(a==='rm'){ids.splice(i,1);renderThumbs();}
+  else if(a==='up'&&i>0){[ids[i-1],ids[i]]=[ids[i],ids[i-1]];renderThumbs();}
+  else if(a==='dn'&&i<ids.length-1){[ids[i+1],ids[i]]=[ids[i],ids[i+1]];renderThumbs();}
+});
+
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function addFiles(files){
+  const list=[...files].filter(f=>/^image\//.test(f.type)||/\.(heic|heif|png|jpe?g|webp|gif)$/i.test(f.name||''));
+  if(!list.length){imsg('이미지 파일을 찾지 못했습니다.');return;}
+  let n=0;
+  for(const f of list){
+    try{
+      imsg('이미지 처리 중… ('+(++n)+'/'+list.length+')');
+      const dataUrl = await fileToDataURL(f);
+      const imgId = uid();
+      await dbPutImage(imgId, dataUrl);
+      draft.ids.push(imgId);
+      draft.up.push(imgId);
+      draft.dataUrls[imgId] = dataUrl;
+      await renderThumbs();
+    }catch(e){
+      console.error(e);
+      imsg('이미지를 읽는 중 오류가 발생했습니다.');
+      return;
+    }
+  }
+  imsg(list.length+'장 추가했습니다. 저장을 눌러야 곡에 반영됩니다.');
+}
+
+$('#imgfile').onchange=e=>{const fs=[...(e.target.files||[])];e.target.value='';if(fs.length)addFiles(fs);};
+function clipImages(dt){
+  const out=[];if(!dt)return out;
+  [...(dt.files||[])].forEach(f=>{if(/^image\//.test(f.type))out.push(f);});
+  if(!out.length)[...(dt.items||[])].forEach(it=>{if(it.kind==='file'&&/^image\//.test(it.type)){const f=it.getAsFile();if(f)out.push(f);}});
+  return out;
+}
+document.addEventListener('paste',e=>{
+  if(V.edit.hidden)return;
+  const fl=clipImages(e.clipboardData);if(!fl.length)return;
+  const hasText=!!(e.clipboardData.getData&&e.clipboardData.getData('text/plain').trim());
+  if(e.target&&e.target.id==='pastebox'||!hasText){e.preventDefault();addFiles(fl);}
+});
+$('#pastebox').addEventListener('input',()=>{$('#pastebox').textContent='';});
+$('#imgpaste').onclick=async()=>{
+  try{
+    const items=await navigator.clipboard.read();const fs=[];
+    for(const it of items){const t=it.types.find(x=>x.startsWith('image/'));if(t){const b=await it.getType(t);fs.push(new File([b],'clip.'+t.split('/')[1],{type:t}));}}
+    if(fs.length)addFiles(fs);else imsg('클립보드에 이미지가 없습니다. 텍스트는 위 입력칸에 붙여넣어 주세요.');
+  }catch(e){imsg('이 환경에서는 버튼으로 읽을 수 없습니다. 아래 칸을 길게 눌러 ‘붙여넣기’를 선택해 주세요.');}
+};
+
+function openEdit(id){
+  const ed=id?songs.find(s=>s.id===id):null;editingId=ed?ed.id:null;prevView=ed?'view':'lib';
+  const im=(ed&&ed.images)||[];draft={ids:im.slice(),orig:im.slice(),up:[],dataUrls:{}};
+  $('#etitle').value=ed?ed.title:'';$('#etext').value=ed?ed.text:'';
+  $('#etop').textContent=ed?'곡 편집':'새 곡';$('#del').hidden=!ed;$('#del').textContent='이 곡 삭제';
+  $('#emsg').textContent='';imsg('');renderThumbs();show('edit');
+}
+
+$('#cancel').onclick=async()=>{
+  const tempAdded = draft.up.filter(x => !draft.orig.includes(x));
+  for(const imgId of tempAdded){ await dbDelImage(imgId); }
+  if(prevView==='view'&&cur){show('view');layout(false);}else{show('lib');renderList();}
+};
+
+$('#file').onchange=e=>{
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{$('#etext').value=String(rd.result||'');if(!$('#etitle').value.trim())$('#etitle').value=f.name.replace(/\.[^.]+$/,'');};
+  rd.readAsText(f);e.target.value='';
+};
+
+$('#save').onclick=async()=>{
+  let title=$('#etitle').value.trim(),text=$('#etext').value.replace(/\s+$/,'');
+  const ids=draft.ids.slice();
+  if(!text.trim()&&!ids.length){$('#emsg').textContent='악보 텍스트를 붙여넣거나 이미지를 추가해 주세요.';return;}
+  if(!title){
+    const ls=text.split('\n'),k=ls.findIndex(x=>x.trim()),first=k>=0?ls[k].trim():'';
+    if(first&&!isTabLine(first)&&!isChordLine(first)&&!isHead(first)){title=first.slice(0,60);ls.splice(k,1);text=ls.join('\n').replace(/^(\s*\n)+/,'');}
+    else title=(!text.trim()&&ids.length)?'이미지 악보':'제목 없음';
+  }
+  let s=editingId?songs.find(x=>x.id===editingId):null;
+  if(s){s.title=title;s.text=text;s.images=ids;s.updated=Date.now();}
+  else{s={id:uid(),title,text,images:ids,updated:Date.now()};songs.push(s);}
+  
+  const removed = draft.orig.filter(x => !ids.includes(x));
+  for(const imgId of removed){ await dbDelImage(imgId); }
+
+  cur=s;saveSongs();openSong(s.id);
+};
+
+$('#del').onclick=async()=>{
+  if(!editingId)return;
+  if($('#del').dataset.arm!=='1'){
+    $('#del').dataset.arm='1';$('#del').textContent='한 번 더 누르면 삭제됩니다 (이미지도 함께 삭제)';
+    clearTimeout(delT);delT=setTimeout(()=>{$('#del').dataset.arm='';$('#del').textContent='이 곡 삭제';},3000);return;
+  }
+  const did=editingId,gone=songs.find(s=>s.id===did);
+  songs=songs.filter(s=>s.id!==did);saveSongs();
+  
+  if(gone&&gone.images){
+    for(const imgId of gone.images){ await dbDelImage(imgId); }
+  }
+  
+  $('#del').dataset.arm='';cur=null;editingId=null;show('lib');renderList();
+};
+
+applyTheme();renderList();
+})();
+</script>
+</body>
+</html>
