@@ -8,145 +8,232 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="타브 리더">
-<meta name="theme-color" content="#EEF1EC">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap">
+<meta name="theme-color" content="#F5F4F0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
 
 <style>
 :root{
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-  --bg:#EEF1EC; --bg2:#E1E7DF; --ink:#17201C; --sub:#56635B; --dash:#6C7A72; --fret:#0F1512;
-  --chord:#2340C8; --rule:#C3CCC3; --tag-bg:#1E2A24; --tag-ink:#F2EAD0; --btn-bg:#1E2A24; --btn-ink:#F2EAD0;
-  --danger:#B3261E; --focus:#2340C8;
+  --bg:#F5F4F0; --surface:#FFFFFF; --surface2:#EFEEE9; --ink:#17171B; --sub:#6E6E76; --faint:#A3A3AA;
+  --line:#E4E2DC; --accent:#F0591E; --accent-ink:#FFFFFF; --accent-soft:#FDE6DB; --chord:#D2470F;
+  --tab:#9A9AA2; --fret:#17171B; --dock:rgba(255,255,255,.86); --shadow:0 10px 30px rgba(20,20,30,.12);
+  --danger:#C62828; --focus:#F0591E; --scrim:rgba(0,0,0,.28);
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#12171A; --bg2:#1C2326; --ink:#E4EAE6; --sub:#9AA8A0; --dash:#6B7C74; --fret:#FFFFFF;
-    --chord:#8FB2FF; --rule:#2B363A; --tag-bg:#E3B94E; --tag-ink:#1A1607; --btn-bg:#E3B94E; --btn-ink:#1A1607;
-    --danger:#FF8A80; --focus:#8FB2FF;
+    --bg:#0D0E11; --surface:#17191E; --surface2:#1F2228; --ink:#EDEDF0; --sub:#8E919A; --faint:#5C5F68;
+    --line:#272A31; --accent:#FF7A3D; --accent-ink:#1A0C04; --accent-soft:#3A2116; --chord:#FF9A66;
+    --tab:#5E626C; --fret:#FFFFFF; --dock:rgba(28,30,36,.86); --shadow:0 10px 30px rgba(0,0,0,.5);
+    --danger:#FF8A80; --focus:#FF7A3D; --scrim:rgba(0,0,0,.5);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#12171A; --bg2:#1C2326; --ink:#E4EAE6; --sub:#9AA8A0; --dash:#6B7C74; --fret:#FFFFFF;
-  --chord:#8FB2FF; --rule:#2B363A; --tag-bg:#E3B94E; --tag-ink:#1A1607; --btn-bg:#E3B94E; --btn-ink:#1A1607;
-  --danger:#FF8A80; --focus:#8FB2FF;
+  --bg:#0D0E11; --surface:#17191E; --surface2:#1F2228; --ink:#EDEDF0; --sub:#8E919A; --faint:#5C5F68;
+  --line:#272A31; --accent:#FF7A3D; --accent-ink:#1A0C04; --accent-soft:#3A2116; --chord:#FF9A66;
+  --tab:#5E626C; --fret:#FFFFFF; --dock:rgba(28,30,36,.86); --shadow:0 10px 30px rgba(0,0,0,.5);
+  --danger:#FF8A80; --focus:#FF7A3D; --scrim:rgba(0,0,0,.5);
 }
 *,*::before,*::after{box-sizing:inherit}
 html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font:400 16px/1.5 'IBM Plex Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;
+  font:400 16px/1.5 'Pretendard Variable',Pretendard,system-ui,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
 [hidden]{display:none!important}
 #app{max-width:720px;margin:0 auto}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 button,.btn,select,input,textarea{font:inherit;color:inherit}
-button,.btn{background:transparent;border:1px solid var(--rule);border-radius:10px;min-height:44px;padding:0 14px;
+button{background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{opacity:.4;cursor:default}
+.btn{min-height:46px;padding:0 16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:15px;
   cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;-webkit-tap-highlight-color:transparent}
-button:active,.btn:active{opacity:.7}
-.primary{background:var(--btn-bg);color:var(--btn-ink);border-color:transparent;font-weight:600}
-.link{border-color:transparent;color:var(--sub);padding:0 8px}
-.danger{color:var(--danger);border-color:var(--danger)}
+.btn:active,.icon:active,.round:active,.playbtn:active,.item:active,.chip:active{transform:scale(.97)}
+.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.danger{color:var(--danger);border-color:var(--danger);background:transparent}
+.textbtn{min-height:44px;padding:0 10px;color:var(--sub);font-weight:600;font-size:15px}
+.icon{width:42px;height:42px;border-radius:13px;display:inline-grid;place-items:center;color:var(--ink)}
+.icon.boxed{background:var(--surface);border:1px solid var(--line)}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+input[type=search],input[type=text],textarea{width:100%;min-height:46px;font-size:16px;padding:0 14px;
+  background:var(--surface2);border:1px solid transparent;border-radius:14px}
+input[type=search]:focus,input[type=text]:focus,textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+input[type=checkbox]{appearance:none;-webkit-appearance:none;width:46px;height:28px;border-radius:99px;background:var(--line);position:relative;
+  cursor:pointer;flex:none;margin:0;transition:background .2s}
+input[type=checkbox]::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+input[type=checkbox]:checked{background:var(--accent)}
+input[type=checkbox]:checked::after{transform:translateX(18px)}
 
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);
-  padding:6px 12px 8px;border-bottom:1px solid var(--rule)}
-.hrow{display:flex;align-items:center;gap:8px}
-.hrow h1{margin:0;font-size:22px;font-weight:600;flex:1;letter-spacing:-.01em}
-.vt{flex:1;min-width:0;font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-#jumpwrap{margin-top:6px}
-select,input[type=search],input[type=text]{width:100%;min-height:44px;font-size:16px;padding:0 12px;
-  background:var(--bg2);border:1px solid var(--rule);border-radius:10px}
-
-.tools{display:flex;gap:8px;padding:12px}
-.tools input{flex:1}
-#list{list-style:none;margin:0;padding:0 12px}
-.item{display:block;width:100%;text-align:left;border:none;border-bottom:1px solid var(--rule);
-  border-radius:0;padding:13px 4px;min-height:64px}
-.item b{display:block;font-weight:600;font-size:17px;line-height:1.35}
-.item span{color:var(--sub);font-size:13px}
-.note{color:var(--sub);font-size:14px;padding:0 16px;margin:8px 0 12px}
-.notice-box{background:var(--bg2);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;margin:12px;font-size:13px;color:var(--sub);line-height:1.4}
-#bk{margin:20px 12px 40px;color:var(--sub);font-size:14px}
-#bk summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:500}
-#bk textarea{min-height:110px;margin:8px 0;width:100%}
+/* ---------- 목록 ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg)}
+.ltop{padding:14px 20px 8px}
+.hrow{display:flex;align-items:center;gap:6px}
+.hrow h1{margin:0;font-size:30px;font-weight:800;flex:1;letter-spacing:-.03em}
+.search{position:relative;margin-top:12px}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--faint);width:18px;height:18px}
+.search input{padding-left:40px}
+.banner{margin:8px 20px 4px;padding:11px 14px;border-radius:14px;background:var(--accent-soft);color:var(--chord);font-size:13px;line-height:1.45;
+  display:flex;gap:10px;align-items:flex-start}
+.banner svg{width:17px;height:17px;margin-top:1px}
+#list{list-style:none;margin:0;padding:8px 16px 0;display:flex;flex-direction:column;gap:10px}
+.item{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+.item .it{display:block;font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.35;overflow-wrap:anywhere}
+.item .ia{display:block;font-size:13px;color:var(--sub);margin-top:2px}
+.item .ics{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.item .ics span{font:600 11.5px var(--mono);padding:3px 7px;border-radius:7px;background:var(--surface2);color:var(--ink)}
+.item .im{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:var(--faint)}
+.tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--accent-soft);color:var(--chord)}
+.note{color:var(--sub);font-size:14px;padding:0 20px;margin:12px 0}
+.fab{position:fixed;right:max(20px,calc(50% - 340px));bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:6;height:56px;padding:0 22px 0 18px;
+  border-radius:18px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;display:flex;align-items:center;gap:6px;
+  box-shadow:0 10px 24px rgba(240,89,30,.35)}
+#bk{margin:24px 16px 120px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:0 16px;color:var(--sub);font-size:14px}
+#bk[open]{padding-bottom:16px}
+#bk summary{cursor:pointer;min-height:52px;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--ink);list-style:none}
+#bk summary::-webkit-details-marker{display:none}
+#bk summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s}
+#bk[open] summary::after{transform:rotate(-135deg)}
+#bk textarea{min-height:110px;margin:8px 0;padding:10px 12px;font:13px/1.4 var(--mono)}
 .row2{display:flex;gap:8px}
+.row2>*{flex:1}
+.hint{color:var(--sub);font-size:13px;margin:0 0 6px;line-height:1.5}
 
-#sheet{--fs:15px;padding:12px 14px 60vh;
-  font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:var(--fs)}
-.blk{padding:6px 8px;overflow-x:auto;margin:2px 0}
-.ln{display:block;white-space:pre;line-height:1.5;font-variant-ligatures:none}
-.ln.tab{line-height:1.28;color:var(--dash)}
+/* ---------- 악보 보기 ---------- */
+#vhead{padding:6px 10px 10px;border-bottom:1px solid var(--line)}
+.vt{flex:1;min-width:0;text-align:center;line-height:1.3}
+.vt b{display:block;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vt span{display:block;font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.secnav{display:flex;gap:6px;overflow-x:auto;padding:10px 4px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.secnav::-webkit-scrollbar{display:none}
+.chip{flex:none;height:32px;padding:0 13px;border-radius:99px;font-size:13px;font-weight:600;color:var(--sub);background:var(--surface);border:1px solid var(--line);white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--bg);border-color:transparent}
+
+#chords{padding:14px 16px 2px}
+.ch-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ch-h b{font-size:13px;font-weight:700;color:var(--sub)}
+.ch-h button{min-height:32px;font-size:13px;font-weight:600;color:var(--sub);padding:0 4px}
+.cstrip{display:flex;gap:8px;overflow-x:auto;padding:8px 0 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cstrip::-webkit-scrollbar{display:none}
+.cstrip.all{flex-wrap:wrap;overflow:visible}
+.cc{flex:0 0 auto;width:76px;padding:8px 4px 6px;border-radius:14px;background:var(--surface);border:1px solid var(--line);text-align:center;scroll-snap-align:start}
+.cc.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.cn{font:700 13px/1.3 var(--mono);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+svg.cd{display:block;width:62px;height:auto;margin:0 auto}
+.cu{font-size:11px;color:var(--sub);line-height:1.3;margin-top:2px}
+.cc.unk{border-style:dashed;min-height:100px}
+
+#sheet{--fs:15px;padding:6px 14px 60vh;font-family:var(--mono);font-size:var(--fs)}
+.blk{padding:10px 12px;overflow-x:auto;margin:4px 0;border:1px solid transparent;border-radius:14px}
+.ln{display:block;white-space:pre;line-height:1.55;font-variant-ligatures:none}
+.ln.tab{line-height:1.3;color:var(--tab)}
 .ln.tab b{color:var(--fret);font-weight:700}
 .ln.tab i{font-style:normal;color:var(--sub)}
 .ln.ch{color:var(--chord);font-weight:700}
-.tabblk{background:var(--bg2);border-left:3px solid var(--rule);border-radius:0 6px 6px 0;margin:8px 0}
-.tabblk .chunk+.chunk{margin-top:14px;padding-top:8px;border-top:1px dashed var(--rule)}
+.c{border-radius:5px;cursor:pointer;background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent-soft);transition:background .15s,color .15s}
+.c:hover,.c.on{background:var(--accent);color:var(--accent-ink);box-shadow:0 0 0 2px var(--accent)}
+.tabblk{background:var(--surface);border-color:var(--line);margin:8px 0}
+.tabblk .chunk+.chunk{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+.txtblk{padding-top:4px;padding-bottom:4px}
 .txtblk .chunk+.chunk{margin-top:2px}
 .gap{height:8px}
-.sec{margin:22px 0 6px;font:600 14px/1 'IBM Plex Sans KR',system-ui,sans-serif}
-.sec span{display:inline-block;background:var(--tag-bg);color:var(--tag-ink);padding:7px 11px;border-radius:4px}
-#probe{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;
-  font:100px 'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace}
+.sec{display:flex;align-items:center;gap:10px;margin:22px 0 8px;font:800 12px/1 'Pretendard Variable',Pretendard,system-ui,sans-serif;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+#probe{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font:100px var(--mono)}
+.pgwrap{overflow-x:auto}
+.pg{display:block;max-width:none;height:auto;margin:6px 0 14px;border-radius:10px;background:#fff}
+#sheet.inv .pg{filter:invert(1) hue-rotate(180deg)}
 
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--bg);border-top:1px solid var(--rule);
-  display:flex;gap:8px;align-items:center;justify-content:center;
-  padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px))}
-.dock .play{flex:1;max-width:180px}
-.spd{min-width:58px;text-align:center;font-size:13px;color:var(--sub);line-height:1.25}
-.dock .sq{padding:0;width:44px}
-.panel{position:fixed;left:12px;right:12px;z-index:7;max-width:696px;margin:0 auto;
-  bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--bg2);border:1px solid var(--rule);
-  border-radius:14px;padding:6px 14px 10px}
-.prow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px}
+.dock{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:6;max-width:560px;margin:0 auto;height:66px;
+  border-radius:22px;background:var(--dock);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);
+  box-shadow:var(--shadow);display:flex;align-items:center;gap:4px;padding:0 8px;overflow:hidden}
+.spd{flex:1;display:flex;align-items:center;justify-content:center;gap:4px}
+.spd output{min-width:64px;text-align:center;font-size:11.5px;color:var(--sub);line-height:1.2}
+.spd output b{display:block;font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+.round{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface2);color:var(--ink)}
+.round[aria-expanded="true"]{background:var(--ink);color:var(--bg)}
+.playbtn{width:52px;height:52px;border-radius:16px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
+.playbtn svg{width:22px;height:22px;fill:currentColor;stroke:none}
+.prog{position:absolute;left:0;right:0;bottom:0;height:3px;background:transparent}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .15s linear}
+
+.panel{position:fixed;left:12px;right:12px;z-index:7;max-width:560px;margin:0 auto;max-height:62vh;overflow:auto;
+  bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--surface);border:1px solid var(--line);
+  border-radius:20px;padding:8px 16px 12px;box-shadow:var(--shadow)}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;font-size:15px}
+.prow+.prow{border-top:1px solid var(--line)}
 .step{display:flex;align-items:center;gap:6px}
-.step output{min-width:34px;text-align:center;font-variant-numeric:tabular-nums}
-.step button{width:44px;padding:0}
-.seg{display:flex}
-.seg button{border-radius:0;min-height:40px;font-size:14px;padding:0 10px}
-.seg button:first-child{border-radius:10px 0 0 10px}
-.seg button:last-child{border-radius:0 10px 10px 0;border-left:none}
-.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--btn-ink);border-color:transparent;font-weight:600}
-.hint{color:var(--sub);font-size:13px;margin:0 0 4px}
+.step output{min-width:44px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600}
+.step button{width:40px;height:40px;border-radius:12px;background:var(--surface2);font-size:18px}
+.seg{display:flex;background:var(--surface2);border-radius:13px;padding:3px}
+.seg button{min-height:38px;padding:0 12px;border-radius:10px;font-size:13.5px;font-weight:600;color:var(--sub);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+#modehint{margin:0 0 6px}
 
-#edit .body{padding:12px;display:flex;flex-direction:column;gap:10px}
-#etext{width:100%;min-height:52vh;font:16px/1.4 'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
-  white-space:pre;overflow:auto;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:10px}
+/* ---------- 코드 운지 시트 ---------- */
+.scrim{position:fixed;inset:0;z-index:20;background:var(--scrim);opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.open{opacity:1;pointer-events:auto}
+.popup{position:fixed;left:0;right:0;bottom:0;z-index:21;max-width:560px;margin:0 auto;background:var(--surface);border-radius:28px 28px 0 0;
+  padding:10px 22px calc(22px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 40px rgba(0,0,0,.2);
+  transform:translateY(105%);visibility:hidden;transition:transform .28s cubic-bezier(.2,.8,.2,1),visibility 0s .28s}
+.popup.open{transform:none;visibility:visible;transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.grab{width:38px;height:5px;border-radius:5px;background:var(--line);margin:0 auto 12px}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ph h3{margin:0;font:700 34px/1.1 var(--mono);letter-spacing:-.02em;overflow-wrap:anywhere}
+.ph #pfull{display:block;font-size:13px;color:var(--sub);margin-top:4px}
+.pbody{display:flex;gap:16px;align-items:center;margin-top:10px;min-height:150px}
+#pdia{flex:none;width:150px;cursor:pointer}
+#pdia svg{width:150px;display:block}
+.pinfo{flex:1;min-width:0;font-size:13px;color:var(--sub);line-height:1.6}
+.plabel{font-size:12px;font-weight:600}
+.notes{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 12px}
+.notes span{font:600 12px var(--mono);padding:3px 7px;border-radius:7px;background:var(--surface2);color:var(--ink)}
+.voic{display:flex;gap:4px;margin-top:4px;align-items:center}
+.voic button{width:24px;height:24px;display:grid;place-items:center}
+.voic button::before{content:"";width:7px;height:7px;border-radius:9px;background:var(--line);transition:width .2s}
+.voic button[aria-pressed="true"]::before{background:var(--accent);width:18px}
+.pnote{margin:8px 0 0;font-size:12px}
+.pact{display:flex;gap:8px;margin-top:16px}
+.pact .seg button{min-height:46px}
+.sound{flex:1;min-height:52px;border-radius:16px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:15px;
+  display:flex;align-items:center;justify-content:center;gap:8px}
+.sound.ring{animation:ring .45s}
+@keyframes ring{30%{transform:scale(.95)}}
+
+.cd-line{stroke:var(--faint);stroke-width:.9}
+.cd-nut{fill:var(--ink)}
+.cd-dot{fill:var(--accent)}
+.cd-num{fill:var(--accent-ink);font:700 7px 'Pretendard Variable',system-ui,sans-serif;text-anchor:middle}
+.cd-x{fill:var(--faint);font:700 8px system-ui,sans-serif;text-anchor:middle}
+.cd-o{fill:none;stroke:var(--sub);stroke-width:1.1}
+.cd-fr{fill:var(--sub);font:600 7px system-ui,sans-serif;text-anchor:end}
+.cd-str{fill:var(--faint);font:600 5.5px var(--mono);text-anchor:middle}
+
+/* ---------- 편집 ---------- */
+#edit .top{padding:6px 10px;border-bottom:1px solid var(--line)}
+#edit .vt{font-weight:700;font-size:16px}
+#save{min-height:40px;padding:0 16px;border-radius:12px;font-size:15px}
+#edit .body{padding:14px 16px 40px;display:flex;flex-direction:column;gap:12px}
+#etext{min-height:52vh;padding:12px 14px;font:15px/1.45 var(--mono);white-space:pre;overflow:auto}
 #emsg{color:var(--danger);font-size:14px;min-height:20px;margin:0}
-#imgsec{border-top:1px solid var(--rule);padding-top:12px}
-#imgsec h3{margin:0 0 4px;font-size:15px;font-weight:600}
+#imgsec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+#imgsec h3{margin:0 0 4px;font-size:15px;font-weight:700}
 #thumbs{display:flex;flex-direction:column;gap:12px;margin:8px 0 10px}
-.th{border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--bg2)}
+#thumbs:empty{display:none}
+.th{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface2)}
 .th img{display:block;width:100%;max-height:240px;object-fit:contain;background:#fff}
 .tb{display:flex;flex-wrap:wrap;gap:6px;padding:8px}
-.tb button{min-height:40px;font-size:14px;padding:0 10px}
-#pastebox{min-height:64px;border:1px dashed var(--sub);border-radius:10px;padding:10px;color:var(--ink);font-size:16px;margin-top:8px;
+.tb button{min-height:38px;font-size:14px;padding:0 12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:600}
+.tb button.danger{border-color:var(--danger)}
+#pastebox{min-height:64px;border:1.5px dashed var(--line);border-radius:14px;padding:12px;color:var(--ink);font-size:16px;margin-top:8px;
   -webkit-user-select:text;user-select:text;outline:none}
+#pastebox:focus{border-color:var(--accent)}
 #pastebox:empty::before{content:attr(data-ph);color:var(--sub);font-size:14px}
 #imsg{min-height:20px;margin:6px 0 0}
-.pgwrap{overflow-x:auto}
-.pg{display:block;max-width:none;height:auto;margin:6px 0 14px;border-radius:4px;background:#fff}
-#sheet.inv .pg{filter:invert(1) hue-rotate(180deg)}
-.panel{max-height:62vh;overflow:auto}
-#chords{padding:12px 12px 2px;border-bottom:1px solid var(--rule)}
-.ch-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.ch-h b{font-size:15px;font-weight:600}
-.ch-h button{min-height:36px;font-size:14px;padding:0 10px;color:var(--sub)}
-#cmeta{margin:2px 0 6px;color:var(--sub);font-size:13px}
-.cstrip{display:flex;gap:6px;overflow-x:auto;padding:6px 0 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-.cstrip.all{flex-wrap:wrap;overflow:visible}
-.cc{flex:0 0 auto;width:80px;text-align:center;scroll-snap-align:start}
-.cn{font:700 15px/1.3 'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;margin-bottom:2px;white-space:nowrap}
-svg.cd{display:block;width:80px;height:auto}
-.cd-line{stroke:var(--sub);stroke-width:.8}
-.cd-nut{fill:var(--ink)}
-.cd-dot{fill:var(--ink)}
-.cd-num{fill:var(--bg);font:700 7px 'IBM Plex Sans KR',system-ui,sans-serif;text-anchor:middle}
-.cd-x{fill:var(--sub);font:700 8px system-ui,sans-serif;text-anchor:middle}
-.cd-o{fill:none;stroke:var(--sub);stroke-width:1}
-.cd-fr{fill:var(--sub);font:600 7px system-ui,sans-serif;text-anchor:end}
-.cu{font-size:11px;color:var(--sub);line-height:1.3;margin-top:2px}
-.cc.unk{border:1px dashed var(--rule);border-radius:8px;padding:6px 2px;min-height:96px}
-@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -154,18 +241,19 @@ svg.cd{display:block;width:80px;height:auto}
 <div id="app">
 
   <section id="lib">
-    <header class="top">
+    <header class="top ltop">
       <div class="hrow">
-        <h1>타브 리더</h1>
-        <button id="theme" class="link" type="button">테마: 자동</button>
+        <h1>내 악보</h1>
+        <button id="theme" class="icon boxed" type="button"></button>
+      </div>
+      <div class="search">
+        <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="곡 제목 검색" aria-label="곡 검색" autocomplete="off">
       </div>
     </header>
-    <div class="notice-box">
-      📱 <b>저장 안내:</b> 곡과 이미지는 현재 사용 중인 브라우저 기기에만 저장되며, 기기 간 자동 동기화는 지원되지 않습니다. 다른 기기에서 사용하려면 아래 백업 기능을 이용하세요.
-    </div>
-    <div class="tools">
-      <input id="q" type="search" placeholder="곡 검색" aria-label="곡 검색" autocomplete="off">
-      <button id="addBtn" class="primary" type="button">새 곡</button>
+    <div class="banner">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+      <div><b>이 기기에만 저장돼요.</b> 기기 간 자동 동기화는 없으니, 다른 기기에서 쓰려면 아래 백업 · 복원을 이용하세요.</div>
     </div>
     <p id="warn" class="note" hidden>이 환경에서는 브라우저 저장이 막혀 있어 곡이 저장되지 않습니다.</p>
     <ul id="list"></ul>
@@ -173,30 +261,30 @@ svg.cd{display:block;width:80px;height:auto}
     <details id="bk">
       <summary>백업 · 복원 (이미지 포함)</summary>
       <p class="hint">
-        곡 데이터와 붙여넣은 이미지(base64)를 JSON 텍스트 형식으로 함께 내보내거나 복원할 수 있습니다. 
+        곡 데이터와 붙여넣은 이미지(base64)를 JSON 텍스트 형식으로 함께 내보내거나 복원할 수 있습니다.
         <br><b>주의:</b> 이미지가 포함된 경우 백업 텍스트의 용량이 매우 커질 수 있습니다.
       </p>
       <textarea id="bkbox" aria-label="백업 텍스트" placeholder="내보내기를 누르면 모든 곡과 이미지 데이터가 여기에 출력됩니다. 복원하려면 텍스트를 여기에 붙여넣으세요."></textarea>
       <div class="row2">
-        <button id="bkout" type="button">내보내기</button>
-        <button id="bkin" type="button">복원 (합치기)</button>
+        <button id="bkout" class="btn" type="button">내보내기</button>
+        <button id="bkin" class="btn" type="button">복원 (합치기)</button>
       </div>
       <p id="bkmsg" class="hint"></p>
     </details>
+    <button id="addBtn" class="fab" type="button"><svg class="i" viewBox="0 0 24 24" style="stroke-width:2.4"><path d="M12 5v14M5 12h14"/></svg>새 곡</button>
   </section>
 
   <section id="view" hidden>
     <header class="top" id="vhead">
       <div class="hrow">
-        <button id="back" class="link" type="button">← 목록</button>
-        <div id="vtitle" class="vt"></div>
-        <button id="editBtn" class="link" type="button">편집</button>
+        <button id="back" class="icon" type="button" aria-label="목록으로"><svg class="i" viewBox="0 0 24 24" style="width:24px;height:24px"><path d="m15 5-7 7 7 7"/></svg></button>
+        <div class="vt"><b id="vtitle"></b><span id="vsub" hidden></span></div>
+        <button id="editBtn" class="icon" type="button" aria-label="편집"><svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></button>
       </div>
-      <div id="jumpwrap"><select id="jump" aria-label="섹션으로 이동"></select></div>
+      <nav id="jumpwrap" class="secnav" aria-label="섹션으로 이동"></nav>
     </header>
     <section id="chords" hidden aria-label="코드 운지">
-      <div class="ch-h"><b>코드</b><button id="call" type="button">모두 보기</button></div>
-      <p id="cmeta" hidden></p>
+      <div class="ch-h"><b>이 곡의 코드</b><button id="call" type="button">모두 보기</button></div>
       <div id="cstrip" class="cstrip"></div>
     </section>
     <article id="sheet" aria-label="악보"></article>
@@ -218,20 +306,23 @@ svg.cd{display:block;width:80px;height:auto}
       <div class="prow"><label for="wake">보는 동안 화면 켜 두기</label><input id="wake" type="checkbox"></div>
     </div>
     <nav class="dock" aria-label="재생 조작">
-      <button id="gear" type="button" aria-expanded="false" aria-controls="panel">설정</button>
-      <button id="slow" class="sq" type="button" aria-label="느리게">−</button>
-      <div class="spd" id="lvl"></div>
-      <button id="fast" class="sq" type="button" aria-label="빠르게">+</button>
-      <button id="play" class="primary play" type="button" aria-pressed="false">재생</button>
+      <button id="gear" class="round" type="button" aria-label="설정" aria-expanded="false" aria-controls="panel"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
+      <div class="spd">
+        <button id="slow" class="round" type="button" aria-label="느리게"><svg class="i" viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+        <output id="lvl"></output>
+        <button id="fast" class="round" type="button" aria-label="빠르게"><svg class="i" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></button>
+      </div>
+      <button id="play" class="playbtn" type="button" aria-label="자동 스크롤 재생" aria-pressed="false"></button>
+      <div class="prog" aria-hidden="true"><i id="prog"></i></div>
     </nav>
   </section>
 
   <section id="edit" hidden>
     <header class="top">
       <div class="hrow">
-        <button id="cancel" class="link" type="button">취소</button>
+        <button id="cancel" class="textbtn" type="button">취소</button>
         <div class="vt" id="etop">새 곡</div>
-        <button id="save" class="primary" type="button">저장</button>
+        <button id="save" class="btn primary" type="button">저장</button>
       </div>
     </header>
     <div class="body">
@@ -243,8 +334,8 @@ svg.cd{display:block;width:80px;height:auto}
         <div id="thumbs"></div>
         <div id="imgtools">
           <div class="row2">
-            <label class="btn" for="imgfile" style="flex:1">사진·파일 추가</label>
-            <button id="imgpaste" type="button" style="flex:1">클립보드에서 붙여넣기</button>
+            <label class="btn" for="imgfile">사진·파일 추가</label>
+            <button id="imgpaste" class="btn" type="button">클립보드에서 붙여넣기</button>
           </div>
           <input id="imgfile" type="file" accept="image/*" multiple hidden>
           <div id="pastebox" contenteditable="true" role="textbox" aria-label="이미지 붙여넣기 칸" data-ph="이미지를 복사한 뒤, 여기를 길게 눌러 ‘붙여넣기’를 선택하세요."></div>
@@ -254,9 +345,31 @@ svg.cd{display:block;width:80px;height:auto}
       <label class="btn" for="file">텍스트 파일(.txt)에서 불러오기</label>
       <input id="file" type="file" accept=".txt,text/plain" hidden>
       <p id="emsg" role="status"></p>
-      <button id="del" class="danger" type="button" hidden>이 곡 삭제</button>
+      <button id="del" class="btn danger" type="button" hidden>이 곡 삭제</button>
     </div>
   </section>
+</div>
+
+<div id="scrim" class="scrim"></div>
+<div id="cpop" class="popup" role="dialog" aria-modal="true" aria-labelledby="pname" aria-hidden="true">
+  <div class="grab"></div>
+  <div class="ph">
+    <div><h3 id="pname"></h3><span id="pfull"></span></div>
+    <button id="pclose" class="icon" type="button" aria-label="닫기"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="pbody">
+    <div id="pdia" title="눌러서 다른 운지 보기"></div>
+    <div class="pinfo">
+      <div class="plabel">구성음</div>
+      <div id="pnotes" class="notes"></div>
+      <div id="pvwrap"><div class="plabel">운지 <span id="pvn"></span></div><div id="pvoic" class="voic"></div></div>
+      <p id="pnote" class="pnote" hidden></p>
+    </div>
+  </div>
+  <div class="pact">
+    <div class="seg" id="pmode"><button type="button" data-p="strum">스트럼</button><button type="button" data-p="arp">아르페지오</button></div>
+    <button id="psound" class="sound" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>소리 듣기</button>
+  </div>
 </div>
 
 <script>
@@ -457,7 +570,12 @@ function rowHTML(r,P){
     return '<span class="ln tab"><i>'+esc(t.slice(0,P))+'</i>'+esc(t.slice(P)).replace(/[^-|]+/g,'<b>$&</b>')+'</span>';
   }
   if(!t.trim())t=' ';
-  return '<span class="ln'+(r.k==='chord'?' ch':'')+'">'+esc(t)+'</span>';
+  if(r.k==='chord'){
+    // 코드 이름을 탭할 수 있게 감싼다 (폭은 그대로라 정렬이 유지됨)
+    return '<span class="ln ch">'+t.split(/(\s+)/).map(x=>CH.test(x)
+      ?'<span class="c" role="button" tabindex="0" data-c="'+esc(x)+'">'+esc(x)+'</span>':esc(x)).join('')+'</span>';
+  }
+  return '<span class="ln">'+esc(t)+'</span>';
 }
 function renderBlocks(bl,maxCols){
   let h='';const heads=[];
@@ -512,25 +630,32 @@ const EF={'':[[0,2,2,1,0,0],[1,3,4,2,1,1]],m:[[0,2,2,0,0,0],[1,3,4,1,1,1]],'7':[
 const AF={'':[[-1,0,2,2,2,0],[0,1,3,3,3,1]],m:[[-1,0,2,2,1,0],[0,1,3,4,2,1]],'7':[[-1,0,2,0,2,0],[0,1,3,1,4,1]],
   m7:[[-1,0,2,0,1,0],[0,1,3,1,2,1]],maj7:[[-1,0,2,1,2,0],[0,1,3,2,4,1]],sus2:[[-1,0,2,2,0,0],null],sus4:[[-1,0,2,2,3,0],null]};
 
-function shapeFor(pc,q,bass){
-  if(q===null||pc===undefined)return null;
-  if(bass!==null&&bass!==undefined){const s=SLASH[pc+'|'+q+'|'+bass];if(s)return s;}
-  const o=LIB[pc+'|'+q];if(o)return o;
+// 쓸 수 있는 운지를 모두 모은다: 슬래시 코드 → 개방현 → 바레(E폼/A폼, 낮은 프렛 순)
+function shapesFor(pc,q,bass){
+  if(q===null||pc===undefined)return [];
+  const out=[],key=s=>s.f.join(',');
+  const add=s=>{if(s&&!out.some(o=>key(o)===key(s)))out.push(s);};
+  if(bass!==null&&bass!==undefined)add(SLASH[pc+'|'+q+'|'+bass]);
+  add(LIB[pc+'|'+q]);
   const cs=[];
   if(EF[q])cs.push({f:((pc-4+12)%12)||12,t:EF[q]});
   if(AF[q])cs.push({f:((pc-9+12)%12)||12,t:AF[q]});
-  if(!cs.length)return null;
-  cs.sort((a,b)=>a.f-b.f);const c=cs[0];
-  return{f:c.t[0].map(x=>x<0?-1:x+c.f),fg:c.t[1]||[0,0,0,0,0,0]};
+  cs.sort((a,b)=>a.f-b.f).forEach(c=>{
+    if(out.length&&c.f>=10)return; // 개방현 운지가 있으면 너무 높은 바레는 생략
+    add({f:c.t[0].map(x=>x<0?-1:x+c.f),fg:c.t[1]||[0,0,0,0,0,0]});
+  });
+  return out;
 }
-function chordSVG(sh,label){
+function shapeFor(pc,q,bass){return shapesFor(pc,q,bass)[0]||null;}
+function chordSVG(sh,label,big){
   const f=sh.f,fg=sh.fg||[];
   const pos=f.filter(x=>x>0),mn=pos.length?Math.min(...pos):1,mx=pos.length?Math.max(...pos):0;
   const base=(mx>5||mn>=3)?mn:1;
   const X0=16,DX=10,Y0=24,DY=13,R=5,sx=i=>X0+i*DX,fy=r=>Y0+(r-0.5)*DY;
-  let s='<svg class="cd" viewBox="0 0 74 96" role="img" aria-label="'+esc(label)+' 운지">';
+  let s='<svg class="cd" viewBox="0 0 74 '+(big?106:96)+'" role="img" aria-label="'+esc(label)+' 운지">';
+  if(big)['E','A','D','G','B','e'].forEach((l,i)=>{s+='<text class="cd-str" x="'+sx(i)+'" y="'+(Y0+5*DY+12)+'">'+l+'</text>';});
   for(let r=0;r<=5;r++){
-    if(r===0&&base===1)s+='<rect class="cd-nut" x="'+X0+'" y="'+(Y0-1.5)+'" width="'+5*DX+'" height="3"/>';
+    if(r===0&&base===1)s+='<rect class="cd-nut" x="'+(X0-.5)+'" y="'+(Y0-2)+'" width="'+(5*DX+1)+'" height="3.2" rx="1"/>';
     else s+='<line class="cd-line" x1="'+X0+'" x2="'+(X0+5*DX)+'" y1="'+(Y0+r*DY)+'" y2="'+(Y0+r*DY)+'"/>';
   }
   for(let i=0;i<6;i++)s+='<line class="cd-line" x1="'+sx(i)+'" x2="'+sx(i)+'" y1="'+Y0+'" y2="'+(Y0+5*DY)+'"/>';
@@ -562,10 +687,11 @@ function chordSVG(sh,label){
 function chordCard(tok){
   const c=parseChord(tok);
   const sh=c?shapeFor(c.pc,c.q,c.bass):null;
-  if(!sh)return '<div class="cc unk"><div class="cn">'+esc(tok)+'</div><div class="cu">운지 정보 없음</div></div>';
+  const open='<button class="cc'+(sh?'':' unk')+'" type="button" data-c="'+esc(tok)+'"><div class="cn">'+esc(tok)+'</div>';
+  if(!sh)return open+'<div class="cu">운지 정보 없음</div></button>';
   const exact=c.bass!==null&&SLASH[c.pc+'|'+c.q+'|'+c.bass];
   const note=(c.bass!==null&&c.bass!==c.pc&&!exact)?'<div class="cu">베이스 '+esc(c.bassName)+' 별도</div>':'';
-  return '<div class="cc"><div class="cn">'+esc(tok)+'</div>'+chordSVG(sh,tok)+note+'</div>';
+  return open+chordSVG(sh,tok)+note+'</button>';
 }
 function songChords(bl){
   const seen={},out=[];
@@ -579,7 +705,80 @@ function songMeta(text){
     const m=/^\s*(capo|tuning|key)\s*[:\-]\s*(.+?)\s*$/i.exec(l);
     if(m)out.push(names[m[1].toLowerCase()]+' '+m[2]);
   });
-  return out.join(' · ');
+  return out;
+}
+
+// ---------- 코드 소리 (Karplus-Strong 기타 줄 합성) ----------
+const OPEN_MIDI=[40,45,50,55,59,64]; // E2 A2 D3 G3 B3 E4
+let actx=null;const pluckCache={};
+function pluck(midi){
+  if(pluckCache[midi])return pluckCache[midi];
+  const sr=actx.sampleRate,freq=440*Math.pow(2,(midi-69)/12),N=Math.round(sr/freq),len=Math.floor(sr*3);
+  const buf=actx.createBuffer(1,len,sr),out=buf.getChannelData(0),ring=new Float32Array(N);
+  let prev=0;for(let i=0;i<N;i++){prev=ring[i]=.5*(Math.random()*2-1)+.5*prev;} // 첫 어택을 약간 부드럽게
+  const decay=.996-Math.min(.006,freq/60000);
+  for(let i=0;i<len;i++){const k=i%N,n=(k+1)%N;out[i]=ring[k];ring[k]=decay*.5*(ring[k]+ring[n]);}
+  return pluckCache[midi]=buf;
+}
+function playShape(sh,mode,bassPc){
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended')actx.resume();
+  }catch(e){return false;}
+  const master=actx.createGain();master.gain.value=.3;
+  const lp=actx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=4200;
+  master.connect(lp);lp.connect(actx.destination);
+  const notes=[];
+  if(bassPc!==null&&bassPc!==undefined)notes.push(40+((bassPc-4+12)%12)); // 운지에 없는 베이스음은 따로 친다
+  sh.f.forEach((fr,i)=>{if(fr>=0)notes.push(OPEN_MIDI[i]+fr);});
+  const gap=mode==='arp'?.22:.028,t0=actx.currentTime+.03;
+  notes.forEach((m,k)=>{
+    const src=actx.createBufferSource();src.buffer=pluck(m);
+    const g=actx.createGain();g.gain.value=.8+k/20;
+    src.connect(g);g.connect(master);src.start(t0+k*gap);
+  });
+  return true;
+}
+
+// ---------- 코드 운지 시트 ----------
+const QK={'':'메이저',m:'마이너','7':'세븐스',maj7:'메이저 세븐스',m7:'마이너 세븐스',sus4:'서스 4',sus2:'서스 2',add9:'애드 9','6':'식스'};
+const SHARP=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],FLAT=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const pop={tok:null,c:null,shapes:[],vi:0};
+function openPop(tok){
+  const c=parseChord(tok);
+  pop.tok=tok;pop.c=c;pop.shapes=c?shapesFor(c.pc,c.q,c.bass):[];pop.vi=0;
+  $('#pname').textContent=tok;
+  let full='';
+  if(c&&c.q!==null){full=tok.match(/^[A-G][#b]?/)[0]+' '+QK[c.q];if(c.bass!==null&&c.bass!==c.pc)full+=' · 베이스 '+c.bassName;}
+  $('#pfull').textContent=full;
+  document.querySelectorAll('[data-c].on').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('[data-c]').forEach(e=>{if(e.dataset.c===tok)e.classList.add('on');});
+  drawPop();
+  $('#scrim').classList.add('open');$('#cpop').classList.add('open');$('#cpop').setAttribute('aria-hidden','false');
+  setTimeout(()=>{$('#psound').disabled?$('#pclose').focus():$('#psound').focus();},50);
+}
+function drawPop(){
+  const sh=pop.shapes[pop.vi],c=pop.c,n=pop.shapes.length;
+  const flat=/^[A-G]b/.test(pop.tok||'');
+  $('#pdia').innerHTML=sh?chordSVG(sh,pop.tok,true):'<p class="hint">이 코드는 아직 운지 정보가 없습니다.</p>';
+  const names=[];
+  if(sh){
+    if(c.bass!==null&&c.bass!==c.pc&&!SLASH[c.pc+'|'+c.q+'|'+c.bass])names.push((flat?FLAT:SHARP)[c.bass]);
+    sh.f.forEach((fr,i)=>{if(fr<0)return;const nn=(flat?FLAT:SHARP)[(OPEN_MIDI[i]+fr)%12];if(!names.includes(nn))names.push(nn);});
+  }
+  $('#pnotes').innerHTML=names.map(x=>'<span>'+x+'</span>').join('')||'<span>—</span>';
+  $('#pvwrap').hidden=n<2;
+  $('#pvn').textContent=n>1?(pop.vi+1)+' / '+n:'';
+  $('#pvoic').innerHTML=pop.shapes.map((_,i)=>'<button type="button" data-v="'+i+'" aria-label="운지 '+(i+1)+'" aria-pressed="'+(i===pop.vi)+'"></button>').join('');
+  const extra=sh&&c.bass!==null&&c.bass!==c.pc&&!SLASH[c.pc+'|'+c.q+'|'+c.bass];
+  $('#pnote').hidden=!extra;$('#pnote').textContent=extra?'베이스 '+c.bassName+'는 운지 밖에서 따로 짚어 주세요.':'';
+  $('#psound').disabled=!sh;
+  document.querySelectorAll('#pmode button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===(cfg.strum||'strum'))));
+}
+function closePop(){
+  if(!$('#cpop').classList.contains('open'))return;
+  $('#scrim').classList.remove('open');$('#cpop').classList.remove('open');$('#cpop').setAttribute('aria-hidden','true');
+  document.querySelectorAll('[data-c].on').forEach(e=>e.classList.remove('on'));
 }
 
 // ---------- 예시 데이터 ----------
@@ -616,7 +815,7 @@ const store={
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 };
 let songs=store.get('tr.songs',null);
-const cfg=Object.assign({size:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:true,chordsAll:false},store.get('tr.cfg',{}));
+const cfg=Object.assign({size:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:true,chordsAll:false,strum:'strum'},store.get('tr.cfg',{}));
 const saveCfg=()=>store.set('tr.cfg',cfg);
 const saveSongs=()=>store.set('tr.songs',songs);
 if(!Array.isArray(songs)){songs=[demo()];saveSongs();}
@@ -630,17 +829,32 @@ function show(n){for(const k in V)V[k].hidden=(k!==n);window.scrollTo(0,0);}
 function applyTheme(){
   const r=document.documentElement;
   if(cfg.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',cfg.theme);
-  $('#theme').textContent='테마: '+({auto:'자동',light:'밝게',dark:'어둡게'}[cfg.theme]);
+  const label='테마: '+({auto:'자동',light:'밝게',dark:'어둡게'}[cfg.theme]);
+  const ic={auto:'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/>',
+    light:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    dark:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'}[cfg.theme];
+  $('#theme').innerHTML='<svg class="i" viewBox="0 0 24 24">'+ic+'</svg>';
+  $('#theme').setAttribute('aria-label',label);$('#theme').title=label;
+  const dark=cfg.theme==='dark'||(cfg.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  document.querySelector('meta[name="theme-color"]').content=dark?'#0D0E11':'#F5F4F0';
 }
 $('#theme').onclick=()=>{cfg.theme={auto:'light',light:'dark',dark:'auto'}[cfg.theme];saveCfg();applyTheme();};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
 
 // ---------- 곡 목록 ----------
 function fmtDate(t){try{return new Date(t).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});}catch(e){return '';}}
 function renderList(){
   const q=$('#q').value.trim().toLowerCase();
   const arr=songs.filter(s=>!q||s.title.toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
-  $('#list').innerHTML=arr.map(s=>'<li><button class="item" type="button" data-id="'+esc(s.id)+'"><b>'+esc(s.title)+'</b><span>'+
-    (s.text.split('\n').filter(x=>x.trim()).length?s.text.split('\n').filter(x=>x.trim()).length+'줄 · ':'')+((s.images||[]).length?'이미지 '+s.images.length+'장 · ':'')+fmtDate(s.updated)+'</span></button></li>').join('');
+  $('#list').innerHTML=arr.map(s=>{
+    const lines=s.text.split('\n').filter(x=>x.trim()).length,imgs=(s.images||[]).length;
+    const info=[lines?lines+'줄':'',imgs?'이미지 '+imgs+'장':''].filter(Boolean).join(' · ');
+    const chs=songChords(parse(s.text||'')),shown=chs.slice(0,7);
+    return '<li><button class="item" type="button" data-id="'+esc(s.id)+'"><span class="it">'+esc(s.title)+'</span>'+
+      (info?'<span class="ia">'+info+'</span>':'')+
+      (shown.length?'<span class="ics">'+shown.map(c=>'<span>'+esc(c)+'</span>').join('')+(chs.length>7?'<span>+'+(chs.length-7)+'</span>':'')+'</span>':'')+
+      '<span class="im"><span>'+fmtDate(s.updated)+'</span><span class="tags">'+songMeta(s.text||'').map(t=>'<span class="tag">'+esc(t)+'</span>').join('')+'</span></span></button></li>';
+  }).join('');
   $('#empty').textContent=songs.length?(arr.length?'':'검색 결과가 없습니다.'):'저장된 곡이 없습니다. 새 곡을 눌러 타브 텍스트를 붙여넣어 보세요.';
   $('#warn').hidden=storageOK;
 }
@@ -703,6 +917,7 @@ function getRatio(){if(!ratio){ratio=$('#probe').getBoundingClientRect().width/1
 function openSong(id){
   cur=songs.find(s=>s.id===id);if(!cur)return;
   parsed=parse(cur.text||'');$('#vtitle').textContent=cur.title;
+  const meta=songMeta(cur.text||'').join(' · ');$('#vsub').textContent=meta;$('#vsub').hidden=!meta;
   show('view');syncUI();layout(false);wake(true);
 }
 
@@ -710,13 +925,13 @@ async function layout(keep){
   if(V.view.hidden||!parsed)return;
   const sheet=$('#sheet'),de=document.documentElement;
   const y=keep?window.scrollY/Math.max(1,de.scrollHeight):0;
-  const avail=sheet.clientWidth-48;const r=getRatio();
+  const avail=sheet.clientWidth-56;const r=getRatio();
   let fs=cfg.size,mc=Infinity;
   if(cfg.mode==='reflow'){mc=Math.floor((avail-2)/(fs*r));}
   else{const W=Math.max(10,maxWidth(parsed));fs=Math.max(7,Math.min(cfg.size,Math.floor(avail/(W*r)*10)/10));}
   sheet.style.setProperty('--fs',fs+'px');
   const out=renderBlocks(parsed,mc);
-  
+
   const imgs=(cur&&cur.images)||[];
   let ih='';
   for(let i=0; i<imgs.length; i++){
@@ -727,12 +942,12 @@ async function layout(keep){
         '" src="'+src+'" style="width:'+cfg.zoom+'%" decoding="async"></div>';
     }
   }
-  
+
   sheet.classList.toggle('inv',!!cfg.invert);
   sheet.innerHTML=ih+out.html;heads=imgs.map((_,i)=>'이미지 '+(i+1)).concat(out.heads);
   renderChords();fillJump();
   if(keep)window.scrollTo(0,y*de.scrollHeight);
-  syncJump();
+  syncJump();syncProg();
 }
 
 function renderChords(){
@@ -740,51 +955,78 @@ function renderChords(){
   const list=(cfg.chords===false||!parsed)?[]:songChords(parsed);
   box.hidden=!list.length;
   if(!list.length)return;
-  const meta=songMeta((cur&&cur.text)||'');
-  $('#cmeta').textContent=meta;$('#cmeta').hidden=!meta;
   $('#cstrip').classList.toggle('all',!!cfg.chordsAll);
   $('#cstrip').innerHTML=list.map(chordCard).join('');
   $('#call').textContent=cfg.chordsAll?'한 줄로':'모두 보기';
 }
 function syncUI(){
   $('#fsv').textContent=cfg.size;
-  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===cfg.mode)));
+  document.querySelectorAll('#panel .seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===cfg.mode)));
   $('#modehint').textContent=cfg.mode==='reflow'
     ?'마디와 공백 기준으로 줄을 나눠 큰 글자로 보여줍니다.'
     :'원본 배치를 그대로 두고 화면 너비에 맞게 글자를 줄입니다.';
-  $('#lvl').textContent='속도 '+cfg.level;
+  $('#lvl').innerHTML='<b>'+cfg.level+'</b>스크롤 속도';
   $('#wake').checked=cfg.wake;
   $('#showch').checked=cfg.chords!==false;
   $('#zv').textContent=cfg.zoom+'%';$('#inv').checked=!!cfg.invert;
   $('#imgrows').hidden=!(cur&&(cur.images||[]).length);
 }
 function fillJump(){
-  const j=$('#jump');
-  j.innerHTML='<option value="top">처음</option>'+heads.map((h,i)=>'<option value="'+i+'">'+esc(h)+'</option>').join('');
-  $('#jumpwrap').hidden=!heads.length;
+  $('#jumpwrap').innerHTML=heads.map((h,i)=>'<button class="chip" type="button" data-j="'+i+'">'+esc(h)+'</button>').join('');
+  $('#jumpwrap').hidden=!heads.length;curJ=null;
 }
-$('#jump').addEventListener('change',e=>{
-  const v=e.target.value;
-  if(v==='top'){window.scrollTo(0,0);return;}
-  const el=$('#sheet').querySelectorAll('.sec')[Number(v)];
+$('#jumpwrap').addEventListener('click',e=>{
+  const b=e.target.closest('[data-j]');if(!b)return;
+  const el=$('#sheet').querySelectorAll('.sec')[Number(b.dataset.j)];
   if(el){const hb=$('#vhead').getBoundingClientRect().bottom;window.scrollTo(0,window.scrollY+el.getBoundingClientRect().top-hb-8);}
 });
+let curJ=null;
 function syncJump(){
-  if(V.view.hidden)return;
-  const top=$('#vhead').getBoundingClientRect().bottom+10;let c='top';
+  if(V.view.hidden||!heads.length)return;
+  const top=$('#vhead').getBoundingClientRect().bottom+10;let c='0';
   $('#sheet').querySelectorAll('.sec').forEach((h,i)=>{if(h.getBoundingClientRect().top<=top)c=String(i);});
-  const j=$('#jump');if(j.value!==c)j.value=c;
+  if(c===curJ)return;curJ=c;
+  $('#jumpwrap').querySelectorAll('.chip').forEach(b=>{
+    const on=b.dataset.j===c;b.classList.toggle('on',on);
+    if(on){const w=$('#jumpwrap');w.scrollTo({left:b.offsetLeft-w.clientWidth/2+b.offsetWidth/2,behavior:'smooth'});}
+  });
+}
+function syncProg(){
+  const max=document.documentElement.scrollHeight-innerHeight;
+  $('#prog').style.width=(max>0?Math.min(100,scrollY/max*100):0)+'%';
 }
 let sp=0;
-addEventListener('scroll',()=>{if(sp)return;sp=1;requestAnimationFrame(()=>{sp=0;syncJump();});},{passive:true});
+addEventListener('scroll',()=>{if(sp)return;sp=1;requestAnimationFrame(()=>{sp=0;syncJump();syncProg();});},{passive:true});
 let lastW=innerWidth,rt=0;
 addEventListener('resize',()=>{if(innerWidth===lastW)return;lastW=innerWidth;clearTimeout(rt);rt=setTimeout(()=>layout(true),150);});
+
+// 코드 탭 → 운지 시트
+$('#view').addEventListener('click',e=>{const c=e.target.closest('[data-c]');if(c)openPop(c.dataset.c);});
+$('#sheet').addEventListener('keydown',e=>{
+  const c=e.target.closest&&e.target.closest('.c');
+  if(c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openPop(c.dataset.c);}
+});
+$('#scrim').onclick=closePop;$('#pclose').onclick=closePop;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePop();});
+$('#pdia').onclick=()=>{if(pop.shapes.length>1){pop.vi=(pop.vi+1)%pop.shapes.length;drawPop();}};
+$('#pvoic').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(b){pop.vi=Number(b.dataset.v);drawPop();}});
+$('#pmode').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b){cfg.strum=b.dataset.p;saveCfg();drawPop();}});
+$('#psound').onclick=()=>{
+  const sh=pop.shapes[pop.vi];if(!sh)return;
+  const c=pop.c,extraBass=(c.bass!==null&&c.bass!==c.pc&&!SLASH[c.pc+'|'+c.q+'|'+c.bass])?c.bass:null;
+  playShape(sh,cfg.strum||'strum',extraBass);
+  const b=$('#psound');b.classList.remove('ring');void b.offsetWidth;b.classList.add('ring');
+};
+// 시트를 아래로 끌어서 닫기
+let dragY=null;
+$('#cpop').addEventListener('touchstart',e=>{dragY=e.target.closest('button')?null:e.touches[0].clientY;},{passive:true});
+$('#cpop').addEventListener('touchend',e=>{if(dragY!==null&&e.changedTouches[0].clientY-dragY>60)closePop();dragY=null;},{passive:true});
 
 // 설정 패널 조작
 $('#gear').onclick=()=>{const p=$('#panel');p.hidden=!p.hidden;$('#gear').setAttribute('aria-expanded',String(!p.hidden));};
 $('#fsm').onclick=()=>{cfg.size=Math.max(11,cfg.size-1);saveCfg();syncUI();layout(true);};
 $('#fsp').onclick=()=>{cfg.size=Math.min(26,cfg.size+1);saveCfg();syncUI();layout(true);};
-document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{cfg.mode=b.dataset.m;saveCfg();syncUI();layout(true);});
+document.querySelectorAll('#panel .seg button').forEach(b=>b.onclick=()=>{cfg.mode=b.dataset.m;saveCfg();syncUI();layout(true);});
 $('#call').onclick=()=>{cfg.chordsAll=!cfg.chordsAll;saveCfg();renderChords();};
 $('#showch').onchange=e=>{cfg.chords=e.target.checked;saveCfg();renderChords();};
 const ZOOMS=[100,125,150,200,250,300];
@@ -805,9 +1047,12 @@ function tick(t){
   }
   raf=requestAnimationFrame(tick);
 }
+const ICON_PLAY='<svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg>';
+const ICON_PAUSE='<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
 function setPlay(on){
   playing=on;cancelAnimationFrame(raf);
-  $('#play').textContent=on?'정지':'재생';$('#play').setAttribute('aria-pressed',String(on));
+  $('#play').innerHTML=on?ICON_PAUSE:ICON_PLAY;
+  $('#play').setAttribute('aria-label',on?'자동 스크롤 정지':'자동 스크롤 재생');$('#play').setAttribute('aria-pressed',String(on));
   if(on){
     if(innerHeight+scrollY>=document.documentElement.scrollHeight-2)window.scrollTo(0,0);
     last=performance.now();acc=0;raf=requestAnimationFrame(tick);
@@ -830,8 +1075,8 @@ async function wake(on){
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!V.view.hidden)wake(true);});
 
-$('#back').onclick=()=>{setPlay(false);wake(false);$('#panel').hidden=true;show('lib');renderList();};
-$('#editBtn').onclick=()=>{setPlay(false);openEdit(cur.id);};
+$('#back').onclick=()=>{closePop();setPlay(false);wake(false);$('#panel').hidden=true;show('lib');renderList();};
+$('#editBtn').onclick=()=>{closePop();setPlay(false);openEdit(cur.id);};
 
 // ---------- 곡 편집 및 이미지 추가 ----------
 let editingId=null,delT=0;
@@ -974,7 +1219,7 @@ $('#del').onclick=async()=>{
   $('#del').dataset.arm='';cur=null;editingId=null;show('lib');renderList();
 };
 
-applyTheme();renderList();
+applyTheme();renderList();setPlay(false);
 })();
 </script>
 </body>
