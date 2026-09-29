@@ -124,6 +124,15 @@ input[type=checkbox]:checked::after{transform:translateX(18px)}
 svg.cd{display:block;width:62px;height:auto;margin:0 auto}
 .cu{font-size:11px;color:var(--sub);line-height:1.3;margin-top:2px}
 .cc.unk{border-style:dashed;min-height:100px}
+.pinbar{display:flex;gap:6px;overflow-x:auto;padding:8px 4px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pinbar::-webkit-scrollbar{display:none}
+.pinbar .cc{width:54px;padding:5px 2px 3px;border-radius:11px}
+.pinbar .cn{font-size:11.5px;margin-bottom:0}
+.pinbar svg.cd{width:44px}
+.pinbar .cu{display:none}
+.pinbar .cc.unk{min-height:0}
+#trv{min-width:56px;height:40px;border-radius:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+#trv.on{color:var(--accent)}
 
 #sheet{--fs:15px;padding:6px 14px 60vh;font-family:var(--mono);font-size:var(--fs)}
 .blk{padding:10px 12px;overflow-x:auto;margin:4px 0;border:1px solid transparent;border-radius:14px}
@@ -253,7 +262,7 @@ svg.cd{display:block;width:62px;height:auto;margin:0 auto}
     </header>
     <div class="banner">
       <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
-      <div><b>이 기기에만 저장돼요.</b> 기기 간 자동 동기화는 없으니, 다른 기기에서 쓰려면 아래 백업 · 복원을 이용하세요.</div>
+      <div><b>곡과 이미지는 이 기기에만 저장됩니다.</b> 기기 간 자동 동기화는 지원되지 않습니다. 다른 기기에서 사용하려면 아래 백업 · 복원 기능을 이용할 수 있습니다.</div>
     </div>
     <p id="warn" class="note" hidden>이 환경에서는 브라우저 저장이 막혀 있어 곡이 저장되지 않습니다.</p>
     <ul id="list"></ul>
@@ -282,6 +291,7 @@ svg.cd{display:block;width:62px;height:auto;margin:0 auto}
         <button id="editBtn" class="icon" type="button" aria-label="편집"><svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></button>
       </div>
       <nav id="jumpwrap" class="secnav" aria-label="섹션으로 이동"></nav>
+      <div id="pinbar" class="pinbar" aria-label="이 곡의 코드 (고정)" hidden></div>
     </header>
     <section id="chords" hidden aria-label="코드 운지">
       <div class="ch-h"><b>이 곡의 코드</b><button id="call" type="button">모두 보기</button></div>
@@ -289,6 +299,9 @@ svg.cd{display:block;width:62px;height:auto;margin:0 auto}
     </section>
     <article id="sheet" aria-label="악보"></article>
     <div class="panel" id="panel" hidden>
+      <div class="prow"><span>조옮김</span>
+        <div class="step"><button id="trm" type="button" aria-label="반음 내리기">−</button><button id="trv" type="button" title="눌러서 원래 키로"></button><button id="trp" type="button" aria-label="반음 올리기">+</button></div>
+      </div>
       <div class="prow"><span>글자 크기</span>
         <div class="step"><button id="fsm" type="button" aria-label="글자 작게">−</button><output id="fsv"></output><button id="fsp" type="button" aria-label="글자 크게">+</button></div>
       </div>
@@ -297,6 +310,7 @@ svg.cd{display:block;width:62px;height:auto;margin:0 auto}
       </div>
       <p class="hint" id="modehint"></p>
       <div class="prow"><label for="showch">맨 위에 코드 운지 보기</label><input id="showch" type="checkbox"></div>
+      <div class="prow"><label for="pin">자동 스크롤 중 코드 고정</label><input id="pin" type="checkbox"></div>
       <div id="imgrows" hidden>
         <div class="prow"><span>이미지 배율</span>
           <div class="step"><button id="zm" type="button" aria-label="이미지 작게">−</button><output id="zv"></output><button id="zp" type="button" aria-label="이미지 크게">+</button></div>
@@ -708,6 +722,35 @@ function songMeta(text){
   return out;
 }
 
+// ---------- 조옮김 ----------
+const SHARP_N=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],FLAT_N=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const FLAT_KEYS=[5,10,3,8,1]; // F Bb Eb Ab Db 장조 (단조는 나란한조로 판단)
+const normTr=x=>{let v=((x%12)+12)%12;return v>6?v-12:v;};
+const fmtTr=n=>n?(n>0?'+'+n:'−'+(-n)):'원키';
+function trTok(t,n,N){
+  return t.replace(/^([A-G][#b]?)(.*?)(?:\/([A-G][#b]?))?$/,(m,r,q,b)=>N[(PCS[r]+n+120)%12]+q+(b?'/'+N[(PCS[b]+n+120)%12]:''));
+}
+// 코드 이름 길이가 바뀌어도 원래 열 위치를 최대한 지킨다 (뒤 공백을 흡수하거나 채움)
+function trLine(line,n,N){
+  let out='';
+  line.replace(/\S+/g,(tok,idx)=>{
+    const nt=CH.test(tok)?trTok(tok,n,N):tok;
+    if(out.length<idx)out=out.padEnd(idx);else if(out.length)out+=' ';
+    out+=nt;return tok;
+  });
+  return out;
+}
+function applyTr(bl,n){
+  if(!n)return bl;
+  // 첫 코드를 곡의 조로 보고 ♯/♭ 표기를 한쪽으로 통일
+  const first=songChords(bl).map(parseChord).find(c=>c&&c.q!==null);
+  let N=SHARP_N;
+  if(first){const tonic=(first.pc+n+120+(/^m/.test(first.q)?3:0))%12;if(FLAT_KEYS.includes(tonic))N=FLAT_N;}
+  bl.forEach(b=>(b.rows||[]).forEach(r=>{if(r.k==='chord')r.s=trLine(r.s,n,N);}));
+  return bl;
+}
+const parseSong=s=>applyTr(parse((s&&s.text)||''),(s&&s.tr)||0);
+
 // ---------- 코드 소리 ----------
 // 실제 기타 녹음 샘플(FluidR3 GM 사운드폰트, MIT)을 쓰고, 불러오지 못하면 합성음으로 대신한다.
 const OPEN_MIDI=[40,45,50,55,59,64]; // E2 A2 D3 G3 B3 E4
@@ -859,7 +902,7 @@ const store={
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 };
 let songs=store.get('tr.songs',null);
-const cfg=Object.assign({size:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:true,chordsAll:false,strum:'strum'},store.get('tr.cfg',{}));
+const cfg=Object.assign({size:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:true,chordsAll:false,strum:'strum',pin:true},store.get('tr.cfg',{}));
 const saveCfg=()=>store.set('tr.cfg',cfg);
 const saveSongs=()=>store.set('tr.songs',songs);
 if(!Array.isArray(songs)){songs=[demo()];saveSongs();}
@@ -893,7 +936,7 @@ function renderList(){
   $('#list').innerHTML=arr.map(s=>{
     const lines=s.text.split('\n').filter(x=>x.trim()).length,imgs=(s.images||[]).length;
     const info=[lines?lines+'줄':'',imgs?'이미지 '+imgs+'장':''].filter(Boolean).join(' · ');
-    const chs=songChords(parse(s.text||'')),shown=chs.slice(0,7);
+    const chs=songChords(parseSong(s)),shown=chs.slice(0,7);
     return '<li><button class="item" type="button" data-id="'+esc(s.id)+'"><span class="it">'+esc(s.title)+'</span>'+
       (info?'<span class="ia">'+info+'</span>':'')+
       (shown.length?'<span class="ics">'+shown.map(c=>'<span>'+esc(c)+'</span>').join('')+(chs.length>7?'<span>+'+(chs.length-7)+'</span>':'')+'</span>':'')+
@@ -945,7 +988,7 @@ $('#bkin').onclick=async()=>{
         }
       }
       
-      const s={id,title:x.title,text:x.text,images:imgIds,updated:Number(x.updated)||Date.now()};
+      const s={id,title:x.title,text:x.text,images:imgIds,updated:Number(x.updated)||Date.now(),tr:normTr(Number(x.tr)||0)};
       const k=songs.findIndex(y=>y.id===id);
       if(k>=0)songs[k]=s; else songs.push(s);
       n++;
@@ -961,8 +1004,7 @@ function getRatio(){if(!ratio){ratio=$('#probe').getBoundingClientRect().width/1
 function openSong(id,noPush){
   cur=songs.find(s=>s.id===id);if(!cur)return;
   if(!noPush)history.pushState({v:'view',id},'');
-  parsed=parse(cur.text||'');$('#vtitle').textContent=cur.title;
-  const meta=songMeta(cur.text||'').join(' · ');$('#vsub').textContent=meta;$('#vsub').hidden=!meta;
+  parsed=parseSong(cur);$('#vtitle').textContent=cur.title;syncSub();
   show('view');syncUI();layout(false);wake(true);
 }
 
@@ -990,11 +1032,28 @@ async function layout(keep){
 
   sheet.classList.toggle('inv',!!cfg.invert);
   sheet.innerHTML=ih+out.html;heads=imgs.map((_,i)=>'이미지 '+(i+1)).concat(out.heads);
-  renderChords();fillJump();
+  renderChords();fillJump();renderPin();
   if(keep)window.scrollTo(0,y*de.scrollHeight);
   syncJump();syncProg();
 }
 
+function syncSub(){
+  const meta=songMeta((cur&&cur.text)||'');if(cur&&cur.tr)meta.push('조옮김 '+fmtTr(cur.tr));
+  $('#vsub').textContent=meta.join(' · ');$('#vsub').hidden=!meta.length;
+}
+function setTr(v){
+  if(!cur)return;
+  cur.tr=normTr(v);saveSongs();closePop();
+  parsed=parseSong(cur);syncSub();syncUI();layout(true);
+}
+// 자동 스크롤 중에는 코드를 헤더 아래에 고정 (헤더 높이가 바뀌어도 보던 위치 유지)
+function renderPin(){
+  const pb=$('#pinbar'),before=$('#vhead').offsetHeight;
+  const list=(playing&&cfg.pin!==false&&parsed&&!V.view.hidden)?songChords(parsed):[];
+  pb.hidden=!list.length;pb.innerHTML=list.length?list.map(chordCard).join(''):'';
+  const d=$('#vhead').offsetHeight-before;
+  if(d&&scrollY>0)window.scrollBy(0,d);
+}
 function renderChords(){
   const box=$('#chords');
   const list=(cfg.chords===false||!parsed)?[]:songChords(parsed);
@@ -1012,7 +1071,8 @@ function syncUI(){
     :'원본 배치를 그대로 두고 화면 너비에 맞게 글자를 줄입니다.';
   $('#lvl').innerHTML='<b>'+cfg.level+'</b>스크롤 속도';
   $('#wake').checked=cfg.wake;
-  $('#showch').checked=cfg.chords!==false;
+  $('#showch').checked=cfg.chords!==false;$('#pin').checked=cfg.pin!==false;
+  const tr=(cur&&cur.tr)||0;$('#trv').textContent=fmtTr(tr);$('#trv').classList.toggle('on',!!tr);
   $('#zv').textContent=cfg.zoom+'%';$('#inv').checked=!!cfg.invert;
   $('#imgrows').hidden=!(cur&&(cur.images||[]).length);
 }
@@ -1074,6 +1134,10 @@ $('#fsp').onclick=()=>{cfg.size=Math.min(26,cfg.size+1);saveCfg();syncUI();layou
 document.querySelectorAll('#panel .seg button').forEach(b=>b.onclick=()=>{cfg.mode=b.dataset.m;saveCfg();syncUI();layout(true);});
 $('#call').onclick=()=>{cfg.chordsAll=!cfg.chordsAll;saveCfg();renderChords();};
 $('#showch').onchange=e=>{cfg.chords=e.target.checked;saveCfg();renderChords();};
+$('#pin').onchange=e=>{cfg.pin=e.target.checked;saveCfg();renderPin();};
+$('#trm').onclick=()=>setTr(((cur&&cur.tr)||0)-1);
+$('#trp').onclick=()=>setTr(((cur&&cur.tr)||0)+1);
+$('#trv').onclick=()=>setTr(0);
 const ZOOMS=[100,125,150,200,250,300];
 $('#zm').onclick=()=>{cfg.zoom=ZOOMS[Math.max(0,ZOOMS.indexOf(cfg.zoom)-1)];saveCfg();syncUI();layout(true);};
 $('#zp').onclick=()=>{cfg.zoom=ZOOMS[Math.min(ZOOMS.length-1,ZOOMS.indexOf(cfg.zoom)+1)];saveCfg();syncUI();layout(true);};
@@ -1102,6 +1166,7 @@ function setPlay(on){
     if(innerHeight+scrollY>=document.documentElement.scrollHeight-2)window.scrollTo(0,0);
     last=performance.now();acc=0;raf=requestAnimationFrame(tick);
   }
+  renderPin();
 }
 $('#play').onclick=()=>setPlay(!playing);
 $('#slow').onclick=()=>{cfg.level=Math.max(1,cfg.level-1);saveCfg();syncUI();};
