@@ -1026,12 +1026,15 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&silentEl)s
 async function playShape(sh,mode,bassPc){
   unlockAudio();
   if(!audio())return false;
+  // iOS는 탭한 그 순간(동기)에 무언가 재생을 시작해야 오디오를 풀어 준다. await 전에 먼저 깨운다.
+  try{const r=actx.resume();const s=actx.createBufferSource();s.buffer=actx.createBuffer(1,1,22050);s.connect(actx.destination);s.start(0);if(r&&r.catch)r.catch(()=>{});}catch(e){}
   if(actx.state!=='running')try{await actx.resume();}catch(e){} // suspended·interrupted 모두 복구
+  if(actx.state!=='running')return false;
   const notes=[];
   if(bassPc!==null&&bassPc!==undefined)notes.push(40+((bassPc-4+12)%12)); // 운지에 없는 베이스음은 따로 친다
   sh.f.forEach((fr,i)=>{if(fr>=0)notes.push(OPEN_MIDI[i]+fr);});
-  // 샘플을 최대 2.5초 기다리고, 늦거나 실패한 음만 합성음으로 친다
-  const timeout=new Promise(r=>setTimeout(r,2500,null));
+  // 샘플을 잠깐(0.7초)만 기다리고, 늦거나 실패한 음은 바로 합성음으로 친다 (처음 받을 때 무음으로 보이지 않게)
+  const timeout=new Promise(r=>setTimeout(r,700,null));
   const bufs=await Promise.all(notes.map(m=>Promise.race([loadSample(m).catch(()=>null),timeout])));
   const gap=mode==='arp'?.24:.032,t0=actx.currentTime+.03;
   notes.forEach((m,k)=>{
@@ -1367,7 +1370,9 @@ $('#pmode').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if
 $('#psound').onclick=()=>{
   const sh=pop.shapes[pop.vi];if(!sh)return;
   const extraBass=sh.nb?pop.c.bass:null;
-  playShape(sh,cfg.strum||'strum',extraBass);
+  playShape(sh,cfg.strum||'strum',extraBass).then(ok=>{
+    if(ok===false){const n=$('#pnote');n.hidden=false;n.textContent='소리를 낼 수 없습니다. 무음 스위치와 볼륨을 확인한 뒤 다시 눌러 주십시오.';}
+  }).catch(()=>{});
   const b=$('#psound');b.classList.remove('ring');void b.offsetWidth;b.classList.add('ring');
 };
 // 시트를 아래로 끌어서 닫기
