@@ -64,7 +64,7 @@ button:disabled{opacity:.35;cursor:default}
 .search input::placeholder{color:var(--sub)}
 .search input::-webkit-search-cancel-button{-webkit-appearance:none}
 .ghead{margin:22px 36px 7px;font-size:13px;color:var(--sub);text-transform:uppercase;letter-spacing:.02em}
-.gfoot{margin:7px 36px 0;font-size:13px;line-height:1.4;color:var(--sub)}
+.gfoot{margin:8px 36px 0;font-size:13px;line-height:1.4;color:var(--sub)}
 .group{list-style:none;margin:0 16px;padding:0;background:var(--cell);border-radius:10px;overflow:hidden}
 .group .cellrow~.cellrow{box-shadow:inset 0 .5px 0 var(--sep)}
 .cellrow .lab{color:var(--ink)}
@@ -108,25 +108,6 @@ button.cellrow:active,label.cellrow:active{background:var(--fill)}
 .item .ico{width:34px;height:34px;border-radius:8px}
 .item .ico svg{width:20px;height:20px}
 
-/* 애플 뮤직 앨범처럼 곡마다 색 카드 */
-.cards{list-style:none;margin:0 16px 16px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.card{position:relative;display:flex;flex-direction:column;justify-content:space-between;width:100%;aspect-ratio:1/.86;padding:12px 14px 13px;
-  border-radius:16px;overflow:hidden;text-align:left;color:#fff;background:var(--c);
-  background:linear-gradient(155deg,color-mix(in srgb,var(--c) 62%,#fff) 0%,var(--c) 58%,color-mix(in srgb,var(--c) 82%,#000) 100%);
-  box-shadow:0 1px 2px rgba(0,0,0,.08),0 6px 16px color-mix(in srgb,var(--c) 28%,transparent);transition:transform .12s}
-.card:active{transform:scale(.97)}
-.card .badge{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.24);display:grid;place-items:center;position:relative;z-index:1}
-.card .badge svg{width:19px;height:19px;fill:#fff}
-.card .ct{position:relative;z-index:1;font-size:17px;font-weight:700;line-height:1.25;letter-spacing:-.01em;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 1px 2px rgba(0,0,0,.12)}
-.card .deco{position:absolute;right:-10px;top:-6px;width:92px;opacity:.28;transform:rotate(8deg);pointer-events:none}
-.card .deco svg{width:100%;display:block}
-.card .deco .cd-line{stroke:#fff;stroke-width:1.4}
-.card .deco .cd-nut,.card .deco .cd-dot{fill:#fff}
-.card .deco .cd-o{stroke:#fff}
-.card .deco .cd-x,.card .deco .cd-fr{fill:#fff}
-.card .deco .cd-num{display:none}
-
 /* ---------- 악보 보기 ---------- */
 #vhead{box-shadow:0 .5px 0 var(--sep)}
 #back{padding-left:2px}
@@ -146,8 +127,8 @@ button.cellrow:active,label.cellrow:active{background:var(--fill)}
 .pinbar .cu{display:none}
 .pinbar .cc.unk{min-height:0}
 
-#chords{padding:16px 16px 4px}
-.ch-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:6px}
+#chords{padding:10px 16px 2px}
+.ch-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:2px}
 .ch-h b{font-size:20px;font-weight:700;letter-spacing:.01em}
 .ch-h button{font-size:15px;color:var(--tint)}
 .cstrip{display:flex;gap:10px;overflow-x:auto;padding:4px 0 6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -163,24 +144,24 @@ svg.cd{display:block;width:60px;height:auto;margin:0 auto}
 .cc.unk{min-height:96px;display:flex;flex-direction:column;justify-content:center}
 
 #sheet{--fs:15px;padding:4px 16px 60vh;font-family:var(--mono);font-size:var(--fs)}
-.blk{padding:10px 12px;overflow-x:auto;margin:4px 0;border-radius:12px}
+.blk{padding:6px 10px;overflow-x:auto;margin:2px 0;border-radius:12px}
 .blk,.pgwrap{scrollbar-width:none}.blk::-webkit-scrollbar,.pgwrap::-webkit-scrollbar{display:none}
-.ln{display:block;white-space:pre;line-height:1.55;font-variant-ligatures:none}
-.ln.tab{line-height:1.3;color:var(--tab)}
+.ln{display:block;white-space:pre;line-height:1.35;font-variant-ligatures:none}
+.ln.tab{line-height:1.15;color:var(--tab)}
 .ln.tab b{color:var(--fret);font-weight:600}
 .ln.tab i{font-style:normal;color:var(--sub)}
-.ln.ch{color:var(--tint);font-weight:600}
+.ln.ch{color:var(--tint);font-weight:600;line-height:1.2}
 .c{border-radius:5px;cursor:pointer;transition:background .15s}
 .c:hover{background:var(--tint-soft);box-shadow:0 0 0 2px var(--tint-soft)}
 .c.on{background:var(--tint);color:var(--on-tint);box-shadow:0 0 0 2px var(--tint)}
-.tabblk{background:var(--fill2);margin:8px 0}
-.tabblk .chunk+.chunk{margin-top:12px;padding-top:10px;box-shadow:inset 0 .5px 0 var(--sep)}
+.tabblk{background:var(--fill2);margin:4px 0}
+.tabblk .chunk+.chunk{margin-top:6px;padding-top:6px;box-shadow:inset 0 .5px 0 var(--sep)}
 .txtblk{padding-top:2px;padding-bottom:2px}
 .txtblk .chunk+.chunk{margin-top:2px}
-.gap{height:8px}
-.sec{display:flex;align-items:center;gap:10px;margin:26px 0 8px;font:700 20px/1.2 var(--font);letter-spacing:.01em;color:var(--ink)}
-.sec .ico{width:26px;height:26px;border-radius:7px}
-.sec .ico svg{width:16px;height:16px}
+.gap{height:4px}
+.sec{display:flex;align-items:center;gap:8px;margin:16px 0 4px;font:700 17px/1.2 var(--font);letter-spacing:.01em;color:var(--ink)}
+.sec .ico{width:22px;height:22px;border-radius:6px}
+.sec .ico svg{width:14px;height:14px}
 .tabblk{border-left:3px solid var(--c,transparent);border-radius:4px 12px 12px 4px}
 #probe{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font:100px var(--mono)}
 .pgwrap{overflow-x:auto}
@@ -308,7 +289,7 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
       <input id="q" type="search" placeholder="검색" aria-label="곡 검색" autocomplete="off">
     </div>
     <p id="warn" class="gfoot" hidden>이 환경에서는 브라우저 저장이 막혀 있어 곡이 저장되지 않습니다.</p>
-    <ul id="list" class="cards"></ul>
+    <ul id="list" class="group"></ul>
     <p id="empty" class="note"></p>
     <p class="gfoot">곡과 이미지는 이 기기에만 저장됩니다. 기기 간 자동 동기화는 지원되지 않습니다. 다른 기기에서 사용하려면 아래 백업 및 복원 기능을 이용할 수 있습니다.</p>
 
@@ -639,14 +620,28 @@ function rowHTML(r,P){
   }
   return '<span class="ln">'+esc(t)+'</span>';
 }
-function renderBlocks(bl,maxCols){
+// 휴대폰 폭에서 타브가 한 마디씩 끊기면, 글자를 최대 22%까지 줄여 두 마디가 한 줄에 들어가게 한다
+function tabFit(b,maxCols,fit){
+  const row=b.rows.find(r=>r.k==='tab');if(!row)return null;
+  const W=Math.max(...b.rows.map(r=>widen(r.s).length+widen(r.suffix).length));if(W<=maxCols)return null;
+  const bars=[];for(let i=b.P-1;i<row.s.length;i++)if(row.s[i]==='|')bars.push(i);
+  if(bars.length<3)return null;
+  const d=bars.slice(1).map((x,i)=>x-bars[i]).sort((x,y)=>x-y),M=d[Math.floor(d.length/2)];
+  const need=b.P+2*M+1;if(need<=maxCols)return null;
+  const f2=Math.floor(fit.avail/(need*fit.r)*10)/10;if(f2<fit.fs*.78)return null;
+  return{fs:f2,cols:Math.floor((fit.avail-2)/(f2*fit.r))};
+}
+function renderBlocks(bl,maxCols,fit){
   let h='';const heads=[];let cur_c='';
   bl.forEach(b=>{
     if(b.t==='gap'){h+='<div class="gap"></div>';}
     else if(b.t==='head'){h+=secHead(b.text);heads.push(b.text);cur_c=secColor(b.text);}
     else{
-      const cs=chunkBlock(b,maxCols);
-      h+='<div class="blk '+(b.t==='tab'?'tabblk':'txtblk')+'"'+(b.t==='tab'&&cur_c?' style="--c:'+cur_c+'"':'')+'>'+
+      let cols=maxCols,st=b.t==='tab'&&cur_c?'--c:'+cur_c+';':'';
+      const t=b.t==='tab'&&fit?tabFit(b,maxCols,fit):null;
+      if(t){cols=t.cols;st+='font-size:'+t.fs+'px;';}
+      const cs=chunkBlock(b,cols);
+      h+='<div class="blk '+(b.t==='tab'?'tabblk':'txtblk')+'"'+(st?' style="'+st+'"':'')+'>'+
         cs.map(c=>'<div class="chunk">'+c.map(r=>rowHTML(r,b.P)).join('')+'</div>').join('')+'</div>';
     }
   });
@@ -1119,8 +1114,9 @@ const store={
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 };
 let songs=store.get('tr.songs',null);
-const cfg=Object.assign({size:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:true,chordsAll:false,strum:'strum',pin:true},store.get('tr.cfg',{}));
+const cfg=Object.assign({size:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:false,chordsAll:false,strum:'strum',pin:true},store.get('tr.cfg',{}));
 const saveCfg=()=>store.set('tr.cfg',cfg);
+if(!cfg.v){cfg.v=2;cfg.chords=false;saveCfg();} // 화면을 넓게 쓰도록 코드 카드 줄 기본 숨김 (설정에서 다시 켤 수 있음)
 const saveSongs=()=>store.set('tr.songs',songs);
 if(!Array.isArray(songs)){songs=[demo()];saveSongs();}
 const uid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -1165,19 +1161,15 @@ function fmtDate(t){try{return new Date(t).toLocaleDateString('ko-KR',{month:'lo
 function renderList(){
   const q=$('#q').value.trim().toLowerCase();
   const arr=songs.filter(s=>!q||s.title.toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
-  $('#list').innerHTML=arr.map(s=>{
-    // 카드 장식: 곡의 첫 코드 운지 모양을 흐리게
-    const first=songChords(parseSong(s)).map(t=>[t,shapeFor(parseChord(t))]).find(x=>x[1]);
-    return '<li><button class="card" type="button" data-id="'+esc(s.id)+'" style="--c:'+songColor(s.id)+'">'+
-      (first?'<span class="deco" aria-hidden="true">'+chordSVG(first[1],first[0])+'</span>':'')+
-      '<span class="badge">'+NOTE_SVG+'</span><span class="ct">'+esc(s.title)+'</span></button></li>';
-  }).join('');
+  $('#list').innerHTML=arr.map(s=>'<li><button class="item" type="button" data-id="'+esc(s.id)+'">'+
+    '<span class="ico" style="--c:'+songColor(s.id)+'">'+NOTE_SVG+'</span><span class="it">'+esc(s.title)+'</span>'+
+    '<svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="m1 1 6 6-6 6"/></svg></button></li>').join('');
   $('#list').hidden=!arr.length;
   $('#count').textContent=songs.length?songs.length+'개의 악보':'';
   $('#empty').textContent=songs.length?(arr.length?'':'검색 결과가 없습니다.'):'저장된 곡이 없습니다. 새 곡을 눌러 타브 텍스트를 붙여넣어 보세요.';
   $('#warn').hidden=storageOK;
 }
-$('#list').addEventListener('click',e=>{const b=e.target.closest('.card');if(b)openSong(b.dataset.id);});
+$('#list').addEventListener('click',e=>{const b=e.target.closest('.item');if(b)openSong(b.dataset.id);});
 $('#q').addEventListener('input',renderList);
 $('#addBtn').onclick=()=>openEdit(null);
 $('#bktoggle').onclick=()=>{
@@ -1261,12 +1253,12 @@ async function layout(keep){
   if(V.view.hidden||!parsed)return;
   const sheet=$('#sheet'),de=document.documentElement;
   const y=keep?window.scrollY/Math.max(1,de.scrollHeight):0;
-  const avail=sheet.clientWidth-56;const r=getRatio();
+  const avail=sheet.clientWidth-55;const r=getRatio();
   let fs=cfg.size,mc=Infinity;
   if(cfg.mode==='reflow'){mc=Math.floor((avail-2)/(fs*r));}
   else{const W=Math.max(10,maxWidth(parsed));fs=Math.max(7,Math.min(cfg.size,Math.floor(avail/(W*r)*10)/10));}
   sheet.style.setProperty('--fs',fs+'px');
-  const out=renderBlocks(parsed,mc);
+  const out=renderBlocks(parsed,mc,cfg.mode==='reflow'?{avail,r,fs}:null);
 
   const imgs=(cur&&cur.images)||[];
   let ih='';
