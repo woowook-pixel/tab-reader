@@ -4,12 +4,15 @@
 <meta charset="utf-8">
 <title>타브 리더 - 독립형 기타 타브/코드 뷰어</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="light">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="타브 리더">
-<meta name="theme-color" content="#F2F2F7">
+<meta name="theme-color" content="#F9F9F9">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon-64.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 
 <style>
@@ -23,22 +26,6 @@
   --sheet:#FFFFFF; --shadow:0 8px 40px rgba(0,0,0,.12);
   --font:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretendard Variable',Pretendard,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;
   --mono:ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#000000; --page:#000000; --cell:#1C1C1E; --fill:rgba(118,118,128,.24); --fill2:#1C1C1E;
-    --ink:#FFFFFF; --sub:rgba(235,235,245,.6); --faint:rgba(235,235,245,.3); --sep:rgba(84,84,88,.6);
-    --tint:#0A84FF; --tint-soft:rgba(10,132,255,.2); --on-tint:#FFFFFF; --green:#30D158; --red:#FF453A;
-    --bar:rgba(22,22,24,.8); --tab:rgba(235,235,245,.38); --fret:#FFFFFF; --scrim:rgba(0,0,0,.45);
-    --sheet:#1C1C1E; --shadow:0 8px 40px rgba(0,0,0,.6);
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#000000; --page:#000000; --cell:#1C1C1E; --fill:rgba(118,118,128,.24); --fill2:#1C1C1E;
-  --ink:#FFFFFF; --sub:rgba(235,235,245,.6); --faint:rgba(235,235,245,.3); --sep:rgba(84,84,88,.6);
-  --tint:#0A84FF; --tint-soft:rgba(10,132,255,.2); --on-tint:#FFFFFF; --green:#30D158; --red:#FF453A;
-  --bar:rgba(22,22,24,.8); --tab:rgba(235,235,245,.38); --fret:#FFFFFF; --scrim:rgba(0,0,0,.45);
-  --sheet:#1C1C1E; --shadow:0 8px 40px rgba(0,0,0,.6);
 }
 *,*::before,*::after{box-sizing:inherit}
 html{background:var(--bg);-webkit-text-size-adjust:100%}
@@ -80,12 +67,13 @@ button:disabled{opacity:.35;cursor:default}
 .gfoot{margin:7px 36px 0;font-size:13px;line-height:1.4;color:var(--sub)}
 .group{list-style:none;margin:0 16px;padding:0;background:var(--cell);border-radius:10px;overflow:hidden}
 .group .cellrow+.cellrow{box-shadow:inset 0 .5px 0 var(--sep)}
+.cellrow .lab{color:var(--ink)}
 .group>li{position:relative}
-.group>li+li::before{content:"";position:absolute;left:16px;right:0;top:0;height:.5px;background:var(--sep);z-index:1}
-.item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 14px 11px 16px;min-height:64px;background:var(--cell)}
+.group>li+li::before{content:"";position:absolute;left:62px;right:0;top:0;height:.5px;background:var(--sep);z-index:1}
+.item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:8px 14px 8px 14px;min-height:52px;background:var(--cell)}
 .item:active{background:var(--fill)}
 .item .rm{flex:1;min-width:0}
-.item .it{display:block;font-size:17px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .it{flex:1;min-width:0;font-size:17px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .item .ia{display:block;font-size:15px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .item .ia em{font-style:normal;color:var(--ink);opacity:.85;margin-right:6px}
 .item .ia code{font:inherit;font-family:var(--mono);font-size:13.5px}
@@ -110,6 +98,16 @@ button.cellrow:active,label.cellrow:active{background:var(--fill)}
 .tbtn svg.i{width:24px;height:24px}
 #lib{padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
 
+/* 설정 앱 스타일의 색 아이콘 */
+.ico{width:29px;height:29px;border-radius:7px;display:inline-grid;place-items:center;color:#fff;flex:none;background:var(--c,#8E8E93)}
+.ico svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ico svg.f{fill:#fff;stroke:none}
+.ico b{font-size:14px;font-weight:700;letter-spacing:-.02em}
+.lab{display:flex;align-items:center;gap:12px;min-width:0}
+.cellrow .lab{flex:1}
+.item .ico{width:34px;height:34px;border-radius:8px}
+.item .ico svg{width:20px;height:20px}
+
 /* ---------- 악보 보기 ---------- */
 #vhead{box-shadow:0 .5px 0 var(--sep)}
 #back{padding-left:2px}
@@ -117,7 +115,10 @@ button.cellrow:active,label.cellrow:active{background:var(--fill)}
 .secnav{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .secnav::-webkit-scrollbar{display:none}
 .chip{flex:none;height:30px;padding:0 14px;border-radius:15px;font-size:14px;font-weight:500;background:var(--fill);color:var(--ink);white-space:nowrap}
-.chip.on{background:var(--ink);color:var(--page);font-weight:600}
+.chip{display:inline-flex;align-items:center;gap:6px}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,#8E8E93)}
+.chip.on{background:var(--c,var(--ink));color:#fff;font-weight:600}
+.chip.on::before{background:rgba(255,255,255,.85)}
 .pinbar{display:flex;gap:8px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .pinbar::-webkit-scrollbar{display:none}
 .pinbar .cc{width:52px;padding:4px 2px 2px}
@@ -144,6 +145,7 @@ svg.cd{display:block;width:60px;height:auto;margin:0 auto}
 
 #sheet{--fs:15px;padding:4px 16px 60vh;font-family:var(--mono);font-size:var(--fs)}
 .blk{padding:10px 12px;overflow-x:auto;margin:4px 0;border-radius:12px}
+.blk,.pgwrap{scrollbar-width:none}.blk::-webkit-scrollbar,.pgwrap::-webkit-scrollbar{display:none}
 .ln{display:block;white-space:pre;line-height:1.55;font-variant-ligatures:none}
 .ln.tab{line-height:1.3;color:var(--tab)}
 .ln.tab b{color:var(--fret);font-weight:600}
@@ -157,7 +159,10 @@ svg.cd{display:block;width:60px;height:auto;margin:0 auto}
 .txtblk{padding-top:2px;padding-bottom:2px}
 .txtblk .chunk+.chunk{margin-top:2px}
 .gap{height:8px}
-.sec{margin:26px 0 8px;font:700 20px/1.2 var(--font);letter-spacing:.01em;color:var(--ink)}
+.sec{display:flex;align-items:center;gap:10px;margin:26px 0 8px;font:700 20px/1.2 var(--font);letter-spacing:.01em;color:var(--ink)}
+.sec .ico{width:26px;height:26px;border-radius:7px}
+.sec .ico svg{width:16px;height:16px}
+.tabblk{border-left:3px solid var(--c,transparent);border-radius:4px 12px 12px 4px}
 #probe{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font:100px var(--mono)}
 .pgwrap{overflow-x:auto}
 .pg{display:block;max-width:none;height:auto;margin:6px 0 14px;border-radius:10px;background:#fff}
@@ -185,8 +190,6 @@ svg.cd{display:block;width:60px;height:auto;margin:0 auto}
 .step{display:flex;align-items:center}
 .step output,#trv{order:-1;margin-right:12px;min-width:40px;text-align:right;color:var(--sub);font-variant-numeric:tabular-nums}
 #trv.on{color:var(--tint);font-weight:600}
-:root[data-theme="dark"] .panel{background:#1C1C1E}:root[data-theme="dark"] .panel .prow{background:#2C2C2E}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .panel{background:#1C1C1E}:root:not([data-theme="light"]) .panel .prow{background:#2C2C2E}}
 .step button:not(#trv){width:47px;height:32px;background:var(--fill);font-size:20px;line-height:1;color:var(--ink)}
 .step button:not(#trv):first-of-type{border-radius:8px 0 0 8px;box-shadow:inset -.5px 0 0 var(--sep)}
 .step button:not(#trv):last-of-type{border-radius:0 8px 8px 0}
@@ -194,8 +197,6 @@ svg.cd{display:block;width:60px;height:auto;margin:0 auto}
 .seg{display:flex;background:var(--fill);border-radius:9px;padding:2px}
 .seg button{min-height:28px;padding:0 12px;border-radius:7px;font-size:13px;font-weight:500;white-space:nowrap}
 .seg button[aria-pressed="true"]{background:var(--cell);font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)}
-:root[data-theme="dark"] .seg button[aria-pressed="true"]{background:#636366}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button[aria-pressed="true"]{background:#636366}}
 /* iOS 스위치 */
 input[type=checkbox]{appearance:none;-webkit-appearance:none;width:51px;height:31px;border-radius:16px;background:var(--fill);position:relative;cursor:pointer;flex:none;margin:0;transition:background .25s}
 input[type=checkbox]::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;
@@ -240,7 +241,6 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
 .cd-nut{fill:var(--ink)}
 .cd-dot{fill:var(--ink)}
 .cd-num{fill:var(--page);font:600 6.5px var(--font);text-anchor:middle}
-:root[data-theme="dark"] .cd-num{fill:#000}
 .cd-x{fill:var(--sub);font:600 7.5px var(--font);text-anchor:middle}
 .cd-o{fill:none;stroke:var(--sub);stroke-width:1}
 .cd-fr{fill:var(--sub);font:500 7px var(--font);text-anchor:end}
@@ -280,7 +280,7 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
       <div class="navrow">
         <span style="min-width:44px"></span>
         <div class="navtitle">악보</div>
-        <button id="theme" class="navbtn" type="button"></button>
+        <span style="min-width:44px"></span>
       </div>
     </header>
     <h1 class="large">악보</h1>
@@ -295,7 +295,7 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
 
     <div class="ghead">백업 및 복원</div>
     <div class="group">
-      <button id="bktoggle" class="cellrow tint" type="button" aria-expanded="false" aria-controls="bkpane">백업 텍스트 열기<svg class="chev" viewBox="0 0 8 14" style="transform:rotate(90deg)"><path d="m1 1 6 6-6 6"/></svg></button>
+      <button id="bktoggle" class="cellrow" type="button" aria-expanded="false" aria-controls="bkpane"><span class="lab"><span class="ico" style="--c:#8E8E93"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 19h14"/></svg></span><span class="lbl">백업 텍스트 열기</span></span><svg class="chev" viewBox="0 0 8 14" style="transform:rotate(90deg)"><path d="m1 1 6 6-6 6"/></svg></button>
       <div id="bkpane" hidden>
         <textarea id="bkbox" aria-label="백업 텍스트" placeholder="내보내기를 누르면 모든 곡과 이미지 데이터가 여기에 출력됩니다. 복원하려면 텍스트를 여기에 붙여넣으십시오."></textarea>
         <div class="pair">
@@ -333,27 +333,26 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
     <article id="sheet" aria-label="악보"></article>
     <div class="panel" id="panel" hidden>
       <div class="group">
-        <div class="prow"><span>조옮김</span>
+        <div class="prow"><span class="lab"><span class="ico" style="--c:#FF9500"><b>♯</b></span>조옮김</span>
           <div class="step"><button id="trm" type="button" aria-label="반음 내리기">−</button><button id="trv" type="button" title="눌러서 원래 키로"></button><button id="trp" type="button" aria-label="반음 올리기">+</button></div>
         </div>
-        <div class="prow"><span>글자 크기</span>
+        <div class="prow"><span class="lab"><span class="ico" style="--c:#007AFF"><b>가</b></span>글자 크기</span>
           <div class="step"><button id="fsm" type="button" aria-label="글자 작게">−</button><output id="fsv"></output><button id="fsp" type="button" aria-label="글자 크게">+</button></div>
         </div>
-        <div class="prow"><span>보기 방식</span>
+        <div class="prow"><span class="lab"><span class="ico" style="--c:#5856D6"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M12 5v14"/></svg></span>보기 방식</span>
           <div class="seg"><button type="button" data-m="reflow">나눠서 크게</button><button type="button" data-m="orig">원본 그대로</button></div>
         </div>
       </div>
       <p class="hint" id="modehint"></p>
       <div class="group">
-        <div class="prow"><label for="showch">맨 위에 코드 운지 보기</label><input id="showch" type="checkbox"></div>
-        <div class="prow"><label for="pin">자동 스크롤 중 코드 고정</label><input id="pin" type="checkbox"></div>
-        <div class="prow"><label for="wake">보는 동안 화면 켜 두기</label><input id="wake" type="checkbox"></div>
+        <div class="prow"><label class="lab" for="showch"><span class="ico" style="--c:#34C759"><svg viewBox="0 0 24 24"><path d="M6 4v16M10 4v16M14 4v16M18 4v16M6 8h12M6 12h12"/></svg></span>맨 위에 코드 운지 보기</label><input id="showch" type="checkbox"></div>
+        <div class="prow"><label class="lab" for="pin"><span class="ico" style="--c:#FF2D55"><svg viewBox="0 0 24 24"><path d="M9 4h6l-1 6 3 3H7l3-3z"/><path d="M12 13v7"/></svg></span>자동 스크롤 중 코드 고정</label><input id="pin" type="checkbox"></div>
+        <div class="prow"><label class="lab" for="wake"><span class="ico" style="--c:#32ADE6"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>보는 동안 화면 켜 두기</label><input id="wake" type="checkbox"></div>
       </div>
       <div class="group" id="imgrows" hidden>
-        <div class="prow"><span>이미지 배율</span>
+        <div class="prow"><span class="lab"><span class="ico" style="--c:#00C7BE"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg></span>이미지 배율</span>
           <div class="step"><button id="zm" type="button" aria-label="이미지 작게">−</button><output id="zv"></output><button id="zp" type="button" aria-label="이미지 크게">+</button></div>
         </div>
-        <div class="prow"><label for="inv">이미지 색 반전</label><input id="inv" type="checkbox"></div>
       </div>
     </div>
     <nav class="toolbar dock" aria-label="재생 조작">
@@ -384,7 +383,7 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
       <div class="ghead">악보 텍스트</div>
       <div class="group">
         <textarea id="etext" wrap="off" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="메모 앱이나 Pages에서 복사한 타브 텍스트를 붙여넣으십시오." aria-label="악보 텍스트"></textarea>
-        <label class="cellrow tint divider" for="file">텍스트 파일(.txt)에서 불러오기</label>
+        <label class="cellrow divider" for="file"><span class="lab"><span class="ico" style="--c:#007AFF"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span>텍스트 파일(.txt)에서 불러오기</span></label>
       </div>
       <input id="file" type="file" accept=".txt,text/plain" hidden>
       <p id="emsg" role="status"></p>
@@ -392,8 +391,8 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
       <section id="imgsec" class="group">
         <div id="thumbs"></div>
         <div id="imgtools">
-          <label class="cellrow tint" for="imgfile">사진 또는 파일 추가</label>
-          <button id="imgpaste" class="cellrow tint divider" type="button">클립보드에서 붙여넣기</button>
+          <label class="cellrow" for="imgfile"><span class="lab"><span class="ico" style="--c:#34C759"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg></span>사진 또는 파일 추가</span></label>
+          <button id="imgpaste" class="cellrow divider" type="button"><span class="lab"><span class="ico" style="--c:#FF9500"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9z"/></svg></span>클립보드에서 붙여넣기</span></button>
           <input id="imgfile" type="file" accept="image/*" multiple hidden>
           <div id="pastebox" contenteditable="true" role="textbox" aria-label="이미지 붙여넣기 칸" data-ph="이미지를 복사한 뒤, 여기를 길게 눌러 ‘붙여넣기’를 선택하십시오."></div>
         </div>
@@ -434,26 +433,6 @@ const $=s=>document.querySelector(s);
 
 // ---------- PWA Manifest 및 Service Worker 동적 등록 ----------
 (function registerPWA(){
-  const manifestData = {
-    name: "타브 리더",
-    short_name: "타브리더",
-    start_url: "./",
-    display: "standalone",
-    background_color: "#12171A",
-    theme_color: "#12171A",
-    icons: [{
-      src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231E2A24'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='%23E3B94E'>🎸</text></svg>",
-      sizes: "192x192 512x512",
-      type: "image/svg+xml"
-    }]
-  };
-  const stringManifest = JSON.stringify(manifestData);
-  const blobManifest = new Blob([stringManifest], {type: 'application/json'});
-  const manifestURL = URL.createObjectURL(blobManifest);
-  const link = document.createElement('link');
-  link.rel = 'manifest';
-  link.href = manifestURL;
-  document.head.appendChild(link);
 
   if ('serviceWorker' in navigator) {
     const swCode = `
@@ -633,13 +612,13 @@ function rowHTML(r,P){
   return '<span class="ln">'+esc(t)+'</span>';
 }
 function renderBlocks(bl,maxCols){
-  let h='';const heads=[];
+  let h='';const heads=[];let cur_c='';
   bl.forEach(b=>{
     if(b.t==='gap'){h+='<div class="gap"></div>';}
-    else if(b.t==='head'){h+='<h2 class="sec"><span>'+esc(b.text)+'</span></h2>';heads.push(b.text);}
+    else if(b.t==='head'){h+=secHead(b.text);heads.push(b.text);cur_c=secColor(b.text);}
     else{
       const cs=chunkBlock(b,maxCols);
-      h+='<div class="blk '+(b.t==='tab'?'tabblk':'txtblk')+'">'+
+      h+='<div class="blk '+(b.t==='tab'?'tabblk':'txtblk')+'"'+(b.t==='tab'&&cur_c?' style="--c:'+cur_c+'"':'')+'>'+
         cs.map(c=>'<div class="chunk">'+c.map(r=>rowHTML(r,b.P)).join('')+'</div>').join('')+'</div>';
     }
   });
@@ -1129,37 +1108,38 @@ function show(n){
 // 목록의 큰 제목이 스크롤되면 상단 바에 작은 제목을 보여준다 (iOS 큰 제목 동작)
 addEventListener('scroll',()=>{if(!V.lib.hidden)V.lib.classList.toggle('scrolled',scrollY>44);},{passive:true});
 
-function applyTheme(){
-  const r=document.documentElement;
-  if(cfg.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',cfg.theme);
-  const label='테마: '+({auto:'자동',light:'밝게',dark:'어둡게'}[cfg.theme]);
-  const ic={auto:'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/>',
-    light:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
-    dark:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'}[cfg.theme];
-  $('#theme').innerHTML='<svg class="i" viewBox="0 0 24 24">'+ic+'</svg>';
-  $('#theme').setAttribute('aria-label',label);$('#theme').title=label;
-  const dark=cfg.theme==='dark'||(cfg.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);
-  document.querySelector('meta[name="theme-color"]').content=dark?'#161618':'#F9F9F9';
-}
-$('#theme').onclick=()=>{cfg.theme={auto:'light',light:'dark',dark:'auto'}[cfg.theme];saveCfg();applyTheme();};
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
+function applyTheme(){document.documentElement.setAttribute('data-theme','light');} // 밝은 화면만 사용
 
 // ---------- 곡 목록 ----------
+// 곡마다 제목으로 정해지는 iOS 시스템 색 (설정 앱 아이콘처럼)
+const SONG_COLORS=['#FF3B30','#FF9500','#34C759','#00C7BE','#30B0C7','#007AFF','#5856D6','#AF52DE','#FF2D55','#A2845E'];
+const NOTE_SVG='<svg class="f" viewBox="0 0 24 24"><path d="M9 17.5a2.5 2.5 0 1 1-1.5-2.3V6l11-2v11.5a2.5 2.5 0 1 1-1.5-2.3V7.2l-8 1.5z"/></svg>';
+// 만든 순서대로 색을 돌려 쓴다 (곡 id가 생성 시각 기반이라 순서가 바뀌지 않음)
+function songColor(id){const k=songs.map(x=>x.id).sort().indexOf(id);return SONG_COLORS[(k<0?0:k)%SONG_COLORS.length];}
+// 섹션 종류별 색 (인트로·벌스·코러스·브리지 등)
+function secColor(name){
+  const n=name.toLowerCase();
+  if(/^이미지/.test(name))return '#00C7BE';
+  if(/intro|인트로|전주/.test(n))return '#30B0C7';
+  if(/pre|프리/.test(n))return '#5856D6';
+  if(/chorus|refrain|hook|후렴|코러스/.test(n))return '#FF9500';
+  if(/verse|벌스|절/.test(n))return '#007AFF';
+  if(/bridge|브릿지|브리지/.test(n))return '#AF52DE';
+  if(/solo|lead|솔로/.test(n))return '#FF3B30';
+  if(/inter|inst|break|간주/.test(n))return '#34C759';
+  if(/outro|ending|coda|아웃트로|후주|엔딩/.test(n))return '#8E8E93';
+  return '#FF2D55';
+}
+const SEC_SVG='<svg class="f" viewBox="0 0 24 24"><path d="M9 17.5a2.5 2.5 0 1 1-1.5-2.3V6l11-2v11.5a2.5 2.5 0 1 1-1.5-2.3V7.2l-8 1.5z"/></svg>';
+const IMG_SVG='<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg>';
+const secHead=(t,img)=>'<h2 class="sec"><span class="ico" style="--c:'+secColor(t)+'">'+(img?IMG_SVG:SEC_SVG)+'</span><span>'+esc(t)+'</span></h2>';
 function fmtDate(t){try{return new Date(t).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});}catch(e){return '';}}
 function renderList(){
   const q=$('#q').value.trim().toLowerCase();
   const arr=songs.filter(s=>!q||s.title.toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
-  // 메모 앱처럼: 제목 / 날짜 + 미리보기(카포·키, 코드 진행)
-  $('#list').innerHTML=arr.map(s=>{
-    const lines=s.text.split('\n').filter(x=>x.trim()).length,imgs=(s.images||[]).length;
-    const chs=songChords(parseSong(s));
-    const detail=songMeta(s.text||'').map(esc);
-    if(chs.length)detail.push('<code>'+esc(chs.slice(0,6).join(' '))+(chs.length>6?' …':'')+'</code>');
-    else detail.push(imgs?'이미지 '+imgs+'장':(lines?lines+'줄':'내용 없음'));
-    return '<li><button class="item" type="button" data-id="'+esc(s.id)+'"><span class="rm"><span class="it">'+esc(s.title)+'</span>'+
-      '<span class="ia"><em>'+fmtDate(s.updated)+'</em>'+detail.join(' · ')+'</span></span>'+
-      '<svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="m1 1 6 6-6 6"/></svg></button></li>';
-  }).join('');
+  $('#list').innerHTML=arr.map(s=>'<li><button class="item" type="button" data-id="'+esc(s.id)+'">'+
+    '<span class="ico" style="--c:'+songColor(s.id)+'">'+NOTE_SVG+'</span><span class="it">'+esc(s.title)+'</span>'+
+    '<svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="m1 1 6 6-6 6"/></svg></button></li>').join('');
   $('#list').hidden=!arr.length;
   $('#count').textContent=songs.length?songs.length+'개의 악보':'';
   $('#empty').textContent=songs.length?(arr.length?'':'검색 결과가 없습니다.'):'저장된 곡이 없습니다. 새 곡을 눌러 타브 텍스트를 붙여넣어 보세요.';
@@ -1171,8 +1151,8 @@ $('#addBtn').onclick=()=>openEdit(null);
 $('#bktoggle').onclick=()=>{
   const p=$('#bkpane'),open=p.hidden;p.hidden=!open;
   $('#bktoggle').setAttribute('aria-expanded',String(open));
-  $('#bktoggle').firstChild.textContent=open?'백업 텍스트 닫기':'백업 텍스트 열기';
-  $('#bktoggle svg').style.transform=open?'rotate(-90deg)':'rotate(90deg)';
+  $('#bktoggle .lbl').textContent=open?'백업 텍스트 닫기':'백업 텍스트 열기';
+  $('#bktoggle .chev').style.transform=open?'rotate(-90deg)':'rotate(90deg)';
 };
 
 // ---------- 백업 & 복원 (이미지 포함) ----------
@@ -1251,12 +1231,11 @@ async function layout(keep){
     const imgId = imgs[i];
     const src = await dbGetImage(imgId);
     if(src){
-      ih+='<h2 class="sec"><span>이미지 '+(i+1)+'</span></h2><div class="pgwrap"><img class="pg" alt="악보 이미지 '+(i+1)+
+      ih+=secHead('이미지 '+(i+1),true)+'<div class="pgwrap"><img class="pg" alt="악보 이미지 '+(i+1)+
         '" src="'+src+'" style="width:'+cfg.zoom+'%" decoding="async"></div>';
     }
   }
 
-  sheet.classList.toggle('inv',!!cfg.invert);
   sheet.innerHTML=ih+out.html;heads=imgs.map((_,i)=>'이미지 '+(i+1)).concat(out.heads);
   renderChords();fillJump();renderPin();
   if(keep)window.scrollTo(0,y*de.scrollHeight);
@@ -1299,11 +1278,11 @@ function syncUI(){
   $('#wake').checked=cfg.wake;
   $('#showch').checked=cfg.chords!==false;$('#pin').checked=cfg.pin!==false;
   const tr=(cur&&cur.tr)||0;$('#trv').textContent=fmtTr(tr);$('#trv').classList.toggle('on',!!tr);
-  $('#zv').textContent=cfg.zoom+'%';$('#inv').checked=!!cfg.invert;
+  $('#zv').textContent=cfg.zoom+'%';
   $('#imgrows').hidden=!(cur&&(cur.images||[]).length);
 }
 function fillJump(){
-  $('#jumpwrap').innerHTML=heads.map((h,i)=>'<button class="chip" type="button" data-j="'+i+'">'+esc(h)+'</button>').join('');
+  $('#jumpwrap').innerHTML=heads.map((h,i)=>'<button class="chip" type="button" data-j="'+i+'" style="--c:'+secColor(h)+'">'+esc(h)+'</button>').join('');
   $('#jumpwrap').hidden=!heads.length;curJ=null;
 }
 $('#jumpwrap').addEventListener('click',e=>{
@@ -1367,7 +1346,7 @@ $('#trv').onclick=()=>setTr(0);
 const ZOOMS=[100,125,150,200,250,300];
 $('#zm').onclick=()=>{cfg.zoom=ZOOMS[Math.max(0,ZOOMS.indexOf(cfg.zoom)-1)];saveCfg();syncUI();layout(true);};
 $('#zp').onclick=()=>{cfg.zoom=ZOOMS[Math.min(ZOOMS.length-1,ZOOMS.indexOf(cfg.zoom)+1)];saveCfg();syncUI();layout(true);};
-$('#inv').onchange=e=>{cfg.invert=e.target.checked;saveCfg();layout(true);};
+
 $('#wake').onchange=e=>{cfg.wake=e.target.checked;saveCfg();wake(cfg.wake);};
 
 // 자동 스크롤
