@@ -268,6 +268,14 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
 #imsg:empty{display:none}
 #del{display:flex}
 @media (min-width:600px){#sheet{padding-left:24px;padding-right:24px}.large{padding-left:24px}}
+@media (min-width:900px){
+  #app,.toolbar .inner{max-width:1040px}
+  .navtitle{font-size:20px}.navtitle span{font-size:14px}
+  .large{font-size:40px;padding-left:32px}
+  .item{min-height:60px}.item .it{font-size:20px}
+  #sheet{padding-left:40px;padding-right:40px}
+  .panel{max-width:640px}.popup{max-width:680px}
+}
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -1114,7 +1122,7 @@ const store={
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 };
 let songs=store.get('tr.songs',null);
-const cfg=Object.assign({size:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:false,chordsAll:false,strum:'strum',pin:true},store.get('tr.cfg',{}));
+const cfg=Object.assign({size:window.innerWidth>=900?19:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:false,chordsAll:false,strum:'strum',pin:true},store.get('tr.cfg',{}));
 const saveCfg=()=>store.set('tr.cfg',cfg);
 if(!cfg.v){cfg.v=2;cfg.chords=false;saveCfg();} // 화면을 넓게 쓰도록 코드 카드 줄 기본 숨김 (설정에서 다시 켤 수 있음)
 const saveSongs=()=>store.set('tr.songs',songs);
