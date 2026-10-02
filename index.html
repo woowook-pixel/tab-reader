@@ -66,7 +66,7 @@ button:disabled{opacity:.35;cursor:default}
 .ghead{margin:22px 36px 7px;font-size:13px;color:var(--sub);text-transform:uppercase;letter-spacing:.02em}
 .gfoot{margin:7px 36px 0;font-size:13px;line-height:1.4;color:var(--sub)}
 .group{list-style:none;margin:0 16px;padding:0;background:var(--cell);border-radius:10px;overflow:hidden}
-.group .cellrow+.cellrow{box-shadow:inset 0 .5px 0 var(--sep)}
+.group .cellrow~.cellrow{box-shadow:inset 0 .5px 0 var(--sep)}
 .cellrow .lab{color:var(--ink)}
 .group>li{position:relative}
 .group>li+li::before{content:"";position:absolute;left:62px;right:0;top:0;height:.5px;background:var(--sep);z-index:1}
@@ -107,6 +107,25 @@ button.cellrow:active,label.cellrow:active{background:var(--fill)}
 .cellrow .lab{flex:1}
 .item .ico{width:34px;height:34px;border-radius:8px}
 .item .ico svg{width:20px;height:20px}
+
+/* 애플 뮤직 앨범처럼 곡마다 색 카드 */
+.cards{list-style:none;margin:0 16px 16px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.card{position:relative;display:flex;flex-direction:column;justify-content:space-between;width:100%;aspect-ratio:1/.86;padding:12px 14px 13px;
+  border-radius:16px;overflow:hidden;text-align:left;color:#fff;background:var(--c);
+  background:linear-gradient(155deg,color-mix(in srgb,var(--c) 62%,#fff) 0%,var(--c) 58%,color-mix(in srgb,var(--c) 82%,#000) 100%);
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 6px 16px color-mix(in srgb,var(--c) 28%,transparent);transition:transform .12s}
+.card:active{transform:scale(.97)}
+.card .badge{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.24);display:grid;place-items:center;position:relative;z-index:1}
+.card .badge svg{width:19px;height:19px;fill:#fff}
+.card .ct{position:relative;z-index:1;font-size:17px;font-weight:700;line-height:1.25;letter-spacing:-.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 1px 2px rgba(0,0,0,.12)}
+.card .deco{position:absolute;right:-10px;top:-6px;width:92px;opacity:.28;transform:rotate(8deg);pointer-events:none}
+.card .deco svg{width:100%;display:block}
+.card .deco .cd-line{stroke:#fff;stroke-width:1.4}
+.card .deco .cd-nut,.card .deco .cd-dot{fill:#fff}
+.card .deco .cd-o{stroke:#fff}
+.card .deco .cd-x,.card .deco .cd-fr{fill:#fff}
+.card .deco .cd-num{display:none}
 
 /* ---------- 악보 보기 ---------- */
 #vhead{box-shadow:0 .5px 0 var(--sep)}
@@ -289,13 +308,16 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
       <input id="q" type="search" placeholder="검색" aria-label="곡 검색" autocomplete="off">
     </div>
     <p id="warn" class="gfoot" hidden>이 환경에서는 브라우저 저장이 막혀 있어 곡이 저장되지 않습니다.</p>
-    <ul id="list" class="group"></ul>
+    <ul id="list" class="cards"></ul>
     <p id="empty" class="note"></p>
     <p class="gfoot">곡과 이미지는 이 기기에만 저장됩니다. 기기 간 자동 동기화는 지원되지 않습니다. 다른 기기에서 사용하려면 아래 백업 및 복원 기능을 이용할 수 있습니다.</p>
 
     <div class="ghead">백업 및 복원</div>
     <div class="group">
-      <button id="bktoggle" class="cellrow" type="button" aria-expanded="false" aria-controls="bkpane"><span class="lab"><span class="ico" style="--c:#8E8E93"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 19h14"/></svg></span><span class="lbl">백업 텍스트 열기</span></span><svg class="chev" viewBox="0 0 8 14" style="transform:rotate(90deg)"><path d="m1 1 6 6-6 6"/></svg></button>
+      <button id="bkfile" class="cellrow" type="button"><span class="lab"><span class="ico" style="--c:#007AFF"><svg viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></span>파일로 내보내기</span></button>
+      <label class="cellrow" for="bkload"><span class="lab"><span class="ico" style="--c:#34C759"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></span>파일에서 복원</span></label>
+      <input id="bkload" type="file" accept=".json,application/json" hidden>
+      <button id="bktoggle" class="cellrow" type="button" aria-expanded="false" aria-controls="bkpane"><span class="lab"><span class="ico" style="--c:#8E8E93"><svg viewBox="0 0 24 24"><path d="M5 5h14M5 10h14M5 15h9M5 20h6"/></svg></span><span class="lbl">텍스트로 백업·복원</span></span><svg class="chev" viewBox="0 0 8 14" style="transform:rotate(90deg)"><path d="m1 1 6 6-6 6"/></svg></button>
       <div id="bkpane" hidden>
         <textarea id="bkbox" aria-label="백업 텍스트" placeholder="내보내기를 누르면 모든 곡과 이미지 데이터가 여기에 출력됩니다. 복원하려면 텍스트를 여기에 붙여넣으십시오."></textarea>
         <div class="pair">
@@ -305,7 +327,7 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
         <p id="bkmsg" class="hint"></p>
       </div>
     </div>
-    <p class="gfoot">곡 데이터와 이미지를 JSON 텍스트로 내보내거나 복원합니다. 이미지가 많으면 텍스트 용량이 커집니다.</p>
+    <p id="bkstat" class="gfoot" role="status">곡과 이미지를 .json 파일 하나로 내보내고, 그 파일로 다른 기기에서 복원할 수 있습니다. 복원은 기존 곡에 합쳐집니다.</p>
 
     <nav class="toolbar" aria-label="목록 도구">
       <div class="inner">
@@ -566,8 +588,14 @@ function parse(text){
   return B;
 }
 
+// 한글·한자·전각 문자는 고정폭 글꼴에서 영문 두 칸쯤 차지한다. 자를 위치를 계산할 때만 뒤에 채움 문자를 붙여 2칸으로 센다
+const WIDE=/[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFF60\uFFE0-\uFFE6]/g,FILL='\u0001';
+const widen=t=>t.replace(WIDE,'$&'+FILL),narrow=t=>t.split(FILL).join('');
 function chunkBlock(b,maxCols){
-  const rows=b.rows,P=b.P;
+  return chunkWide(b,maxCols).map(c=>c.map(r=>({k:r.k,txt:narrow(r.txt)})));
+}
+function chunkWide(b,maxCols){
+  const rows=b.rows.map(r=>({k:r.k,s:widen(r.s),suffix:widen(r.suffix),prefix:widen(r.prefix)})),P=b.P;
   const W=Math.max(...rows.map(r=>r.s.length));
   const WS=Math.max(...rows.map(r=>r.s.length+r.suffix.length));
   if(!isFinite(maxCols)||WS<=maxCols)return[rows.map(r=>({k:r.k,txt:r.s+r.suffix}))];
@@ -624,7 +652,7 @@ function renderBlocks(bl,maxCols){
   });
   return{html:h,heads};
 }
-function maxWidth(bl){let w=0;bl.forEach(b=>{if(b.rows)b.rows.forEach(r=>{w=Math.max(w,r.s.length+r.suffix.length);});});return w;}
+function maxWidth(bl){let w=0;bl.forEach(b=>{if(b.rows)b.rows.forEach(r=>{w=Math.max(w,widen(r.s).length+widen(r.suffix).length);});});return w;}
 
 // ---------- CHORDS (코드 운지 생성) ----------
 const PCS={C:0,'C#':1,Db:1,D:2,'D#':3,Eb:3,E:4,F:5,'F#':6,Gb:6,G:7,'G#':8,Ab:8,A:9,'A#':10,Bb:10,B:11,Cb:11,'B#':0,Fb:4,'E#':5};
@@ -1137,72 +1165,87 @@ function fmtDate(t){try{return new Date(t).toLocaleDateString('ko-KR',{month:'lo
 function renderList(){
   const q=$('#q').value.trim().toLowerCase();
   const arr=songs.filter(s=>!q||s.title.toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
-  $('#list').innerHTML=arr.map(s=>'<li><button class="item" type="button" data-id="'+esc(s.id)+'">'+
-    '<span class="ico" style="--c:'+songColor(s.id)+'">'+NOTE_SVG+'</span><span class="it">'+esc(s.title)+'</span>'+
-    '<svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="m1 1 6 6-6 6"/></svg></button></li>').join('');
+  $('#list').innerHTML=arr.map(s=>{
+    // 카드 장식: 곡의 첫 코드 운지 모양을 흐리게
+    const first=songChords(parseSong(s)).map(t=>[t,shapeFor(parseChord(t))]).find(x=>x[1]);
+    return '<li><button class="card" type="button" data-id="'+esc(s.id)+'" style="--c:'+songColor(s.id)+'">'+
+      (first?'<span class="deco" aria-hidden="true">'+chordSVG(first[1],first[0])+'</span>':'')+
+      '<span class="badge">'+NOTE_SVG+'</span><span class="ct">'+esc(s.title)+'</span></button></li>';
+  }).join('');
   $('#list').hidden=!arr.length;
   $('#count').textContent=songs.length?songs.length+'개의 악보':'';
   $('#empty').textContent=songs.length?(arr.length?'':'검색 결과가 없습니다.'):'저장된 곡이 없습니다. 새 곡을 눌러 타브 텍스트를 붙여넣어 보세요.';
   $('#warn').hidden=storageOK;
 }
-$('#list').addEventListener('click',e=>{const b=e.target.closest('.item');if(b)openSong(b.dataset.id);});
+$('#list').addEventListener('click',e=>{const b=e.target.closest('.card');if(b)openSong(b.dataset.id);});
 $('#q').addEventListener('input',renderList);
 $('#addBtn').onclick=()=>openEdit(null);
 $('#bktoggle').onclick=()=>{
   const p=$('#bkpane'),open=p.hidden;p.hidden=!open;
   $('#bktoggle').setAttribute('aria-expanded',String(open));
-  $('#bktoggle .lbl').textContent=open?'백업 텍스트 닫기':'백업 텍스트 열기';
+  $('#bktoggle .lbl').textContent=open?'텍스트 백업 닫기':'텍스트로 백업·복원';
   $('#bktoggle .chev').style.transform=open?'rotate(-90deg)':'rotate(90deg)';
 };
 
 // ---------- 백업 & 복원 (이미지 포함) ----------
-$('#bkout').onclick=async()=>{
-  $('#bkmsg').textContent = '백업 데이터(이미지 포함) 준비 중…';
-  try {
-    const fullBackup = [];
-    for (const s of songs) {
-      const songData = { ...s, imageData: {} };
-      if (Array.isArray(s.images)) {
-        for (const imgId of s.images) {
-          const dUrl = await dbGetImage(imgId);
-          if (dUrl) songData.imageData[imgId] = dUrl;
-        }
-      }
-      fullBackup.push(songData);
-    }
-    const box=$('#bkbox');box.value=JSON.stringify(fullBackup);box.focus();box.select();
-    let ok=false;try{await navigator.clipboard.writeText(box.value);ok=true;}catch(e){}
-    $('#bkmsg').textContent=ok?'복사했습니다. 안전한 곳에 붙여넣어 보관하세요.':'위 텍스트를 전체 선택하여 복사하세요.';
-  } catch(e) {
-    $('#bkmsg').textContent='내보내기 중 오류가 발생했습니다.';
+async function makeBackup(){
+  const out=[];
+  for(const s of songs){
+    const d={...s,imageData:{}};
+    for(const id of (s.images||[])){const u=await dbGetImage(id);if(u)d.imageData[id]=u;}
+    out.push(d);
   }
-};
-
-$('#bkin').onclick=async()=>{
+  return JSON.stringify(out);
+}
+async function restoreBackup(a){
+  if(!Array.isArray(a))throw new Error('format');
+  let n=0;
+  for(const x of a){
+    if(!x||typeof x.title!=='string'||typeof x.text!=='string')continue;
+    const id=/^[a-z0-9_-]+$/i.test(x.id||'')?x.id:uid();
+    if(x.imageData&&typeof x.imageData==='object')for(const k of Object.keys(x.imageData))await dbPutImage(k,x.imageData[k]);
+    const s={id,title:x.title,text:x.text,images:Array.isArray(x.images)?x.images:[],updated:Number(x.updated)||Date.now(),tr:normTr(Number(x.tr)||0)};
+    const k=songs.findIndex(y=>y.id===id);if(k>=0)songs[k]=s;else songs.push(s);
+    n++;
+  }
+  saveSongs();renderList();return n;
+}
+const bkstat=t=>{$('#bkstat').textContent=t;};
+// 파일로 내보내기: 휴대폰은 공유 시트(파일 앱에 저장 등), 그 밖에는 다운로드
+$('#bkfile').onclick=async()=>{
+  bkstat('백업 파일을 만드는 중…');
   try{
-    const a=JSON.parse($('#bkbox').value);if(!Array.isArray(a))throw 0;
-    let n=0;
-    $('#bkmsg').textContent='복원 데이터 처리 중…';
-    for (const x of a) {
-      if(!x||typeof x.title!=='string'||typeof x.text!=='string') continue;
-      const id=/^[a-z0-9_-]+$/i.test(x.id||'')?x.id:uid();
-      const imgIds = Array.isArray(x.images) ? x.images : [];
-      
-      if (x.imageData && typeof x.imageData === 'object') {
-        for (const imgId of Object.keys(x.imageData)) {
-          await dbPutImage(imgId, x.imageData[imgId]);
-        }
-      }
-      
-      const s={id,title:x.title,text:x.text,images:imgIds,updated:Number(x.updated)||Date.now(),tr:normTr(Number(x.tr)||0)};
-      const k=songs.findIndex(y=>y.id===id);
-      if(k>=0)songs[k]=s; else songs.push(s);
-      n++;
+    const json=await makeBackup(),d=new Date(),pad=n=>String(n).padStart(2,'0');
+    const name='tab-reader-backup-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'.json';
+    const file=new File([json],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})&&/iP(hone|ad|od)|Android/.test(navigator.userAgent)){
+      try{await navigator.share({files:[file],title:'타브 리더 백업'});bkstat(songs.length+'곡을 내보냈습니다.');return;}
+      catch(e){if(e&&e.name==='AbortError'){bkstat('내보내기를 취소했습니다.');return;}}
     }
-    saveSongs();renderList();$('#bkmsg').textContent=n+'곡을 성공적으로 복원했습니다.';
-  }catch(e){
-    $('#bkmsg').textContent='백업 텍스트를 읽지 못했습니다. 내보내기로 만든 올바른 텍스트 전체를 붙여넣어 주세요.';
-  }
+    const url=URL.createObjectURL(file),a=document.createElement('a');
+    a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    bkstat(songs.length+'곡을 '+name+' 파일로 내보냈습니다.');
+  }catch(e){bkstat('내보내기 중 오류가 발생했습니다.');}
+};
+$('#bkload').onchange=async e=>{
+  const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
+  bkstat('복원하는 중…');
+  try{const n=await restoreBackup(JSON.parse(await f.text()));bkstat(n+'곡을 복원했습니다.');}
+  catch(err){bkstat('이 파일을 읽지 못했습니다. 타브 리더에서 내보낸 .json 백업 파일인지 확인하십시오.');}
+};
+// 텍스트로 백업·복원 (예전 방식)
+$('#bkout').onclick=async()=>{
+  $('#bkmsg').textContent='백업 데이터(이미지 포함) 준비 중…';
+  try{
+    const box=$('#bkbox');box.value=await makeBackup();box.focus();box.select();
+    let ok=false;try{await navigator.clipboard.writeText(box.value);ok=true;}catch(e){}
+    $('#bkmsg').textContent=ok?'복사했습니다. 안전한 곳에 붙여넣어 보관하십시오.':'위 텍스트를 전체 선택하여 복사하십시오.';
+  }catch(e){$('#bkmsg').textContent='내보내기 중 오류가 발생했습니다.';}
+};
+$('#bkin').onclick=async()=>{
+  try{$('#bkmsg').textContent='복원 데이터 처리 중…';const n=await restoreBackup(JSON.parse($('#bkbox').value));$('#bkmsg').textContent=n+'곡을 복원했습니다.';}
+  catch(e){$('#bkmsg').textContent='백업 텍스트를 읽지 못했습니다. 내보내기로 만든 텍스트 전체를 붙여넣어 주십시오.';}
 };
 
 // ---------- 악보 보기 ----------
