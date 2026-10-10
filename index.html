@@ -250,6 +250,7 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
 /* ---------- 편집 ---------- */
 #edit .body{padding:8px 0 40px}
 #edit .group{margin-top:0}
+a.cellrow{text-decoration:none;color:var(--ink)}
 #etitle{width:100%;height:46px;border:0;background:transparent;padding:0 16px;font-size:17px;outline:none}
 #etext{display:block;width:100%;min-height:50vh;border:0;background:transparent;padding:12px 16px;font:15px/1.45 var(--mono);white-space:pre;overflow:auto;outline:none;resize:vertical}
 .group .divider{box-shadow:inset 0 .5px 0 var(--sep)}
@@ -392,6 +393,11 @@ input[type=checkbox]:checked::after{transform:translateX(20px)}
     <div class="body">
       <div class="ghead">제목</div>
       <div class="group"><input id="etitle" type="text" placeholder="비워 두면 첫 줄을 제목으로 씁니다" autocomplete="off" aria-label="제목"></div>
+      <div class="group" style="margin-top:10px">
+        <a id="findug" class="cellrow" href="#" target="_blank" rel="noopener"><span class="lab"><span class="ico" style="--c:#FF9500"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.2-4.2"/></svg></span>얼티밋 기타에서 코드 찾기</span></a>
+        <a id="findgg" class="cellrow divider" href="#" target="_blank" rel="noopener"><span class="lab"><span class="ico" style="--c:#8E8E93"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></span>구글에서 코드 찾기</span></a>
+      </div>
+      <p id="findhint" class="gfoot">제목을 입력한 뒤 누르면 새 탭에서 검색 결과가 열립니다. 마음에 드는 악보를 찾아 복사한 다음, 아래 악보 텍스트에 붙여넣으십시오.</p>
       <div class="ghead">악보 텍스트</div>
       <div class="group">
         <textarea id="etext" wrap="off" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="메모 앱이나 Pages에서 복사한 타브 텍스트를 붙여넣으십시오." aria-label="악보 텍스트"></textarea>
@@ -1368,6 +1374,23 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePop();});
 $('#pdia').onclick=()=>{if(pop.shapes.length>1){pop.vi=(pop.vi+1)%pop.shapes.length;drawPop();}};
 $('#pvoic').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(b){pop.vi=Number(b.dataset.v);drawPop();}});
 $('#pmode').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b){cfg.strum=b.dataset.p;saveCfg();drawPop();}});
+// 곡 제목으로 검색 페이지 열기 (제목이 비어 있으면 악보 첫 줄을 쓴다)
+const FIND_HINT='제목을 입력한 뒤 누르면 새 탭에서 검색 결과가 열립니다. 마음에 드는 악보를 찾아 복사한 다음, 아래 악보 텍스트에 붙여넣으십시오.';
+function findQuery(){
+  const t=$('#etitle').value.trim()||($('#etext').value.split('\n').find(l=>l.trim())||'').replace(/^\[.*\]$/,'').trim();
+  return t.slice(0,80);
+}
+function setFindLinks(){
+  const q=findQuery(),e=encodeURIComponent(q);
+  $('#findug').href=q?'https://www.ultimate-guitar.com/search.php?search_type=title&value='+e:'#';
+  $('#findgg').href=q?'https://www.google.com/search?q='+encodeURIComponent(q+' chords'):'#';
+}
+['#findug','#findgg'].forEach(s=>$(s).addEventListener('click',e=>{
+  setFindLinks();
+  const m=$('#findhint');
+  if(!findQuery()){e.preventDefault();m.textContent='검색할 곡 제목을 먼저 입력하십시오.';m.style.color='var(--red)';}
+  else{m.textContent=FIND_HINT;m.style.color='';}
+}));
 $('#psound').onclick=()=>{
   const sh=pop.shapes[pop.vi];if(!sh)return;
   const extraBass=sh.nb?pop.c.bass:null;
