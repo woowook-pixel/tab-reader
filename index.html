@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="타브 리더">
-<meta name="theme-color" content="#F9F9F9">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="favicon-64.png">
@@ -279,6 +279,71 @@ a.cellrow{text-decoration:none;color:var(--ink)}
   .panel{max-width:640px}.popup{max-width:680px}
 }
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* ===== 타브 리더: 악보 바로 보기 · 흰색 모노톤 ===== */
+:root{color-scheme:light;
+  --bg:#FFFFFF;--page:#FFFFFF;--cell:#F5F5F4;--fill:rgba(17,17,17,.06);--fill2:#F5F5F4;
+  --ink:#111111;--sub:rgba(17,17,17,.56);--faint:rgba(17,17,17,.3);--sep:rgba(17,17,17,.12);
+  --tint:#111111;--tint-soft:rgba(17,17,17,.08);--on-tint:#FFFFFF;--bar:rgba(255,255,255,.88);
+  --tab:rgba(17,17,17,.42);--fret:#111111;--scrim:rgba(0,0,0,.35);--sheet:#FFFFFF;--shadow:0 8px 40px rgba(0,0,0,.12);
+  --red:#D93025;--green:#1E8E3E;
+  --btn:#111111;--on-btn:#FFFFFF;--chipbg:#F0F0EE;--glass:rgba(17,17,17,.06);--card:#F5F5F4}
+html,body{background:var(--bg);color:var(--ink)}
+body.reading,body.home{background:var(--bg)}
+#lib{max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 80px) 24px 40px;box-sizing:border-box;text-align:center}
+.emptyh{margin:0;font-size:34px;font-weight:200;letter-spacing:-.04em}
+.empty{margin:18px 8px 0;font-size:15px;line-height:1.6;color:var(--sub)}.empty:empty{display:none}
+.gfoot{margin:10px 6px 0;font-size:13px;color:var(--sub)}
+#back{padding:0 16px;min-height:36px;border-radius:18px;background:var(--glass);font-size:14px;font-weight:600;color:var(--ink);gap:6px}
+.scrim2{position:fixed;inset:0;z-index:11;background:var(--scrim);opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim2.open{opacity:1;pointer-events:auto}
+.shelf{position:fixed;left:0;right:0;bottom:0;z-index:12;max-width:520px;margin:0 auto;max-height:86%;display:flex;flex-direction:column;border-radius:30px 30px 0 0;
+  background:#FFFFFF;box-shadow:0 -10px 40px rgba(0,0,0,.18),0 0 0 .5px rgba(17,17,17,.1);
+  transform:translateY(102%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s .32s}
+.shelf.open{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s}
+.shelfhead{flex:none;position:relative;height:50px}
+.shelfhead i{position:absolute;left:50%;top:12px;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:rgba(17,17,17,.22)}
+.shelfclose{position:absolute;right:14px;top:6px;height:36px;padding:0 12px;font-size:15px;font-weight:600;color:var(--sub)}
+.shelfbody{overflow-y:auto;padding:0 20px calc(28px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
+.finder{display:flex;align-items:center;gap:8px;height:54px;padding:0 7px 0 20px;border-radius:27px;background:var(--glass)}
+.finder input{flex:1;min-width:0;height:100%;border:0;background:transparent;outline:0;font-size:16px;color:var(--ink)}
+.finder input::placeholder{color:var(--sub)}.finder input::-webkit-search-cancel-button{-webkit-appearance:none}
+.go{height:40px;padding:0 18px;border-radius:20px;background:var(--btn);color:var(--on-btn);font-size:14px;font-weight:800}
+.shelfbody h2{margin:26px 0 14px;font-size:22px;font-weight:800;letter-spacing:-.03em}
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.chips .item{display:flex;align-items:center;gap:8px;width:auto;min-height:0;padding:11px 16px;border-radius:22px;background:var(--chipbg);color:var(--ink);font-size:15px;font-weight:600}
+.chips .item .it{flex:none;font-size:15px;font-weight:600;max-width:60vw}
+.chips .item em{font:600 12px var(--mono);font-style:normal;color:var(--sub)}
+.chips .item.on{background:var(--btn);color:var(--on-btn)}.chips .item.on em{color:rgba(255,255,255,.7)}
+.chips li::before{display:none!important}
+.addrow{margin-top:12px}
+.chipx{padding:11px 18px;border-radius:22px;box-shadow:inset 0 0 0 1.5px var(--ink);color:var(--ink);font-size:15px;font-weight:700}
+.bk{margin-top:30px;padding:20px 18px 18px;border-radius:22px;background:var(--card)}
+.bk h3{margin:0;font-size:17px;font-weight:800;letter-spacing:-.02em}
+.bkhint{margin:6px 0 16px;font-size:13px;line-height:1.5;color:var(--sub)}
+.bkbtns{display:flex;flex-wrap:wrap;gap:10px}
+.bk1,.bk2{flex:1 1 40%;min-height:48px;display:flex;align-items:center;justify-content:center;border-radius:16px;font-size:15px;font-weight:700;text-align:center;cursor:pointer}
+.bk1{background:var(--btn);color:var(--on-btn)}
+.bk2{box-shadow:inset 0 0 0 1.5px var(--ink);color:var(--ink);background:transparent}
+#bkpane{margin-top:14px}
+#bkpane textarea{display:block;width:100%;height:120px;margin:0 0 12px;padding:12px;border:0;border-radius:14px;background:#FFFFFF;color:var(--ink);font:13px/1.4 var(--mono);resize:none;outline:0;box-shadow:inset 0 0 0 1px var(--sep)}
+#bkpane .hint{margin:10px 2px 0}
+.navbtn{color:var(--ink);font-weight:500}.navbtn.done{font-weight:700}
+.chip{background:transparent;border-radius:0;padding:0 2px;height:28px;font-size:14px;color:var(--sub);box-shadow:inset 0 -2px 0 transparent}
+.chip.on{background:transparent!important;color:var(--ink)!important;box-shadow:inset 0 -2px 0 var(--ink);font-weight:600}
+.chip i,.chip .dot,.chip::before,.chip::after{display:none!important}.secnav{gap:18px}
+.sec{background:transparent!important;padding:0!important;margin:26px 0 8px;font:700 12px/1 var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--sub);width:auto}
+.sec .ico{display:none}
+.tabblk,.txtblk{background:transparent;border-left:0!important;border-radius:0;padding-left:0}
+.tabblk{box-shadow:inset 0 .5px 0 var(--sep),inset 0 -.5px 0 var(--sep);padding-top:10px;padding-bottom:10px}
+.ln.ch{color:var(--ink);font-weight:800}
+.c.on{background:var(--btn);color:var(--on-btn);box-shadow:0 0 0 2px var(--btn)}
+.dock{border-radius:34px;left:16px;right:16px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:480px;margin:0 auto;background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.16),0 0 0 .5px rgba(17,17,17,.12);padding:0 12px}
+.playbtn{background:var(--btn);color:var(--on-btn);box-shadow:none}
+.prog{display:none}
+.ico{background:var(--glass)!important;color:var(--ink)}.ico svg{stroke:var(--ink)!important}
+.group{background:var(--cell);border-radius:14px}
+input[type=checkbox]:checked{background:var(--btn)}
 </style>
 </head>
 <body>
@@ -286,53 +351,47 @@ a.cellrow{text-decoration:none;color:var(--ink)}
 <div id="app">
 
   <section id="lib">
-    <header class="bar">
-      <div class="navrow">
-        <span style="min-width:44px"></span>
-        <div class="navtitle">악보</div>
-        <span style="min-width:44px"></span>
-      </div>
-    </header>
-    <h1 class="large">악보</h1>
-    <div class="search">
-      <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="검색" aria-label="곡 검색" autocomplete="off">
-    </div>
     <p id="warn" class="gfoot" hidden>이 환경에서는 브라우저 저장이 막혀 있어 곡이 저장되지 않습니다.</p>
-    <ul id="list" class="group"></ul>
-    <p id="empty" class="note"></p>
-    <p class="gfoot">곡과 이미지는 이 기기에만 저장됩니다. 기기 간 자동 동기화는 지원되지 않습니다. 다른 기기에서 사용하려면 아래 백업 및 복원 기능을 이용할 수 있습니다.</p>
-
-    <div class="ghead">백업 및 복원</div>
-    <div class="group">
-      <button id="bkfile" class="cellrow" type="button"><span class="lab"><span class="ico" style="--c:#007AFF"><svg viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></span>파일로 내보내기</span></button>
-      <label class="cellrow" for="bkload"><span class="lab"><span class="ico" style="--c:#34C759"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></span>파일에서 복원</span></label>
-      <input id="bkload" type="file" accept=".json,application/json" hidden>
-      <button id="bktoggle" class="cellrow" type="button" aria-expanded="false" aria-controls="bkpane"><span class="lab"><span class="ico" style="--c:#8E8E93"><svg viewBox="0 0 24 24"><path d="M5 5h14M5 10h14M5 15h9M5 20h6"/></svg></span><span class="lbl">텍스트로 백업·복원</span></span><svg class="chev" viewBox="0 0 8 14" style="transform:rotate(90deg)"><path d="m1 1 6 6-6 6"/></svg></button>
-      <div id="bkpane" hidden>
-        <textarea id="bkbox" aria-label="백업 텍스트" placeholder="내보내기를 누르면 모든 곡과 이미지 데이터가 여기에 출력됩니다. 복원하려면 텍스트를 여기에 붙여넣으십시오."></textarea>
-        <div class="pair">
-          <button id="bkout" class="pill" type="button">내보내기</button>
-          <button id="bkin" class="pill" type="button">복원 (합치기)</button>
-        </div>
-        <p id="bkmsg" class="hint"></p>
-      </div>
-    </div>
-    <p id="bkstat" class="gfoot" role="status">곡과 이미지를 .json 파일 하나로 내보내고, 그 파일로 다른 기기에서 복원할 수 있습니다. 복원은 기존 곡에 합쳐집니다.</p>
-
-    <nav class="toolbar" aria-label="목록 도구">
-      <div class="inner">
-        <span style="min-width:44px"></span>
-        <span class="count" id="count"></span>
-        <button id="addBtn" class="tbtn" type="button" aria-label="새 곡"><svg class="i" viewBox="0 0 24 24"><path d="M20 12.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6.5"/><path d="M17.6 3.4a2 2 0 0 1 2.9 2.9L12 14.8 8.5 15.5l.7-3.5z"/></svg></button>
-      </div>
-    </nav>
+    <h1 class="emptyh">타브 리더</h1>
+    <p id="empty" class="empty"></p>
   </section>
+  <div id="shelfScrim" class="scrim2"></div>
+  <div id="shelf" class="shelf" role="dialog" aria-label="내 곡">
+    <div class="shelfhead"><i></i><button id="shelfClose" class="shelfclose" type="button">닫기</button></div>
+    <div class="shelfbody">
+      <form id="finder" class="finder" autocomplete="off">
+        <input id="q" type="search" placeholder="곡 이름으로 코드 찾기" aria-label="곡 이름">
+        <button class="go" type="submit">찾기</button>
+      </form>
+      <h2>내 곡</h2>
+      <ul id="list" class="chips"></ul>
+      <div class="addrow"><button id="addBtn" class="chipx" type="button">+ 새 곡</button></div>
+      <section class="bk" aria-labelledby="bkh">
+        <h3 id="bkh">백업 · 복원</h3>
+        <p id="bkstat" class="bkhint" role="status">곡과 악보 이미지를 텍스트로 복사해 두었다가, 다른 기기에서 붙여넣어 복원할 수 있습니다.</p>
+        <div class="bkbtns">
+          <button id="bkcopy" class="bk1" type="button">백업 복사</button>
+          <button id="bkfile" class="bk2" type="button">파일로 저장</button>
+          <button id="bktoggle" class="bk2" type="button" aria-expanded="false" aria-controls="bkpane"><span class="lbl">복원하기</span></button>
+        </div>
+        <div id="bkpane" hidden>
+          <textarea id="bkbox" aria-label="백업 텍스트" placeholder="복사해 둔 백업 텍스트를 여기에 붙여넣으십시오."></textarea>
+          <div class="bkbtns">
+            <label class="bk2 bklabel" for="bkload">파일에서 불러오기</label>
+            <button id="bkin" class="bk1" type="button">복원 (합치기)</button>
+          </div>
+          <p id="bkmsg" class="hint"></p>
+        </div>
+        <input id="bkload" type="file" accept=".json,application/json" hidden>
+        <button id="bkout" type="button" hidden></button>
+      </section>
+    </div>
+  </div>
 
   <section id="view" hidden>
     <header class="bar" id="vhead">
       <div class="navrow">
-        <button id="back" class="navbtn" type="button" aria-label="악보 목록으로"><svg class="i" viewBox="0 0 13 21"><path d="M11 2 2.5 10.5 11 19"/></svg>악보</button>
+        <button id="back" class="navbtn" type="button" aria-label="내 곡 열기" aria-expanded="false" aria-controls="shelf">♪ <span id="count">내 곡</span></button>
         <div class="navtitle"><b id="vtitle"></b><span id="vsub" hidden></span></div>
         <button id="editBtn" class="navbtn" type="button">편집</button>
       </div>
@@ -1144,7 +1203,7 @@ const V={lib:$('#lib'),view:$('#view'),edit:$('#edit')};
 let cur=null,parsed=null,heads=[],prevView='lib',ratio=0;
 function show(n){
   for(const k in V)V[k].hidden=(k!==n);
-  document.body.classList.toggle('reading',n==='view');
+  document.body.classList.toggle('reading',n==='view');document.body.classList.toggle('home',n==='lib');if(n==='edit')openShelf(false);
   V.lib.classList.remove('scrolled');window.scrollTo(0,0);
 }
 // 목록의 큰 제목이 스크롤되면 상단 바에 작은 제목을 보여준다 (iOS 큰 제목 동작)
@@ -1152,6 +1211,7 @@ addEventListener('scroll',()=>{if(!V.lib.hidden)V.lib.classList.toggle('scrolled
 
 function applyTheme(){document.documentElement.setAttribute('data-theme','light');} // 밝은 화면만 사용
 
+const hpush=(a,b)=>{try{history.pushState(a,b);}catch(e){}},hrep=(a,b)=>{try{history.replaceState(a,b);}catch(e){}};
 // ---------- 곡 목록 ----------
 // 곡마다 제목으로 정해지는 iOS 시스템 색 (설정 앱 아이콘처럼)
 const SONG_COLORS=['#FF3B30','#FF9500','#34C759','#00C7BE','#30B0C7','#007AFF','#5856D6','#AF52DE','#FF2D55','#A2845E'];
@@ -1176,25 +1236,46 @@ const SEC_SVG='<svg class="f" viewBox="0 0 24 24"><path d="M9 17.5a2.5 2.5 0 1 1
 const IMG_SVG='<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg>';
 const secHead=(t,img)=>'<h2 class="sec" style="--c:'+secColor(t)+'"><span class="ico" style="--c:'+secColor(t)+'">'+(img?IMG_SVG:SEC_SVG)+'</span><span>'+esc(t)+'</span></h2>';
 function fmtDate(t){try{return new Date(t).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});}catch(e){return '';}}
+function songFirst(s){let cs=[];try{cs=[...new Set(songChords(parseSong(s)))];}catch(e){}return cs;}
+function nowSong(){return songs.find(s=>s.id===cfg.last)||songs.slice().sort((a,b)=>b.updated-a.updated)[0]||null;}
 function renderList(){
   const q=$('#q').value.trim().toLowerCase();
   const arr=songs.filter(s=>!q||s.title.toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
-  $('#list').innerHTML=arr.map(s=>'<li><button class="item" type="button" data-id="'+esc(s.id)+'">'+
-    '<span class="ico" style="--c:'+songColor(s.id)+'">'+NOTE_SVG+'</span><span class="it">'+esc(s.title)+'</span>'+
-    '<svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="m1 1 6 6-6 6"/></svg></button></li>').join('');
-  $('#list').hidden=!arr.length;
-  $('#count').textContent=songs.length?songs.length+'개의 악보':'';
-  $('#empty').textContent=songs.length?(arr.length?'':'검색 결과가 없습니다.'):'저장된 곡이 없습니다. 새 곡을 눌러 타브 텍스트를 붙여넣어 보세요.';
+  const now=nowSong();
+  $('#list').innerHTML=arr.map(s=>{const k=songFirst(s)[0]||'';
+    return '<li><button class="item'+(now&&now.id===s.id?' on':'')+'" type="button" data-id="'+esc(s.id)+'"><span class="it">'+esc(s.title)+'</span>'+(k?'<em>'+esc(k)+'</em>':'')+'</button></li>';}).join('');
+  $('#count').textContent=songs.length?'내 곡 '+songs.length:'내 곡';
+  $('#empty').textContent=songs.length?'':'저장된 곡이 없습니다. 아래에서 곡 이름을 넣고 찾기를 누르거나, 새 곡을 추가하십시오.';
   $('#warn').hidden=storageOK;
 }
-$('#list').addEventListener('click',e=>{const b=e.target.closest('.item');if(b)openSong(b.dataset.id);});
+function openShelf(on){
+  $('#shelf').classList.toggle('open',on);$('#shelfScrim').classList.toggle('open',on);
+  document.body.classList.toggle('shelfopen',on);
+  $('#back').setAttribute('aria-expanded',String(on));
+  if(on)renderList();
+}
+const shelfOpen=()=>$('#shelf').classList.contains('open');
+$('#shelfClose').onclick=()=>openShelf(false);
+$('#shelfScrim').onclick=()=>openShelf(false);
+$('#list').addEventListener('click',e=>{const b=e.target.closest('.item');if(!b)return;cfg.last=b.dataset.id;saveCfg();$('#q').value='';openShelf(false);openSong(b.dataset.id,true);});
+$('#finder').addEventListener('submit',e=>{e.preventDefault();const t=$('#q').value.trim();if(!t){$('#q').focus();return;}openEdit(null);$('#etitle').value=t;setFindLinks();});
 $('#q').addEventListener('input',renderList);
 $('#addBtn').onclick=()=>openEdit(null);
 $('#bktoggle').onclick=()=>{
   const p=$('#bkpane'),open=p.hidden;p.hidden=!open;
   $('#bktoggle').setAttribute('aria-expanded',String(open));
-  $('#bktoggle .lbl').textContent=open?'텍스트 백업 닫기':'텍스트로 백업·복원';
-  $('#bktoggle .chev').style.transform=open?'rotate(-90deg)':'rotate(90deg)';
+  $('#bktoggle .lbl').textContent=open?'복원 닫기':'복원하기';
+  if(open)$('#bkbox').focus();
+};
+$('#bkcopy').onclick=async()=>{
+  $('#bkstat').textContent='백업을 만드는 중…';
+  try{
+    const t=await makeBackup();let ok=false;
+    try{await navigator.clipboard.writeText(t);ok=true;}catch(e){}
+    if(ok){$('#bkstat').textContent=songs.length+'곡을 복사했습니다. 메모 앱 등에 붙여넣어 보관하십시오.';}
+    else{const p=$('#bkpane');p.hidden=false;$('#bktoggle').setAttribute('aria-expanded','true');$('#bktoggle .lbl').textContent='복원 닫기';
+      const b=$('#bkbox');b.value=t;b.focus();b.select();$('#bkstat').textContent='자동 복사가 막혀 있어 아래 칸에 백업 텍스트를 띄웠습니다. 전체를 선택해 복사하십시오.';}
+  }catch(e){$('#bkstat').textContent='백업을 만들지 못했습니다.';}
 };
 
 // ---------- 백업 & 복원 (이미지 포함) ----------
@@ -1261,8 +1342,8 @@ $('#bkin').onclick=async()=>{
 // ---------- 악보 보기 ----------
 function getRatio(){if(!ratio){ratio=$('#probe').getBoundingClientRect().width/10000;}return ratio||0.6;}
 function openSong(id,noPush){
-  cur=songs.find(s=>s.id===id);if(!cur)return;
-  if(!noPush)history.pushState({v:'view',id},'');
+  cur=songs.find(s=>s.id===id);if(!cur)return;cfg.last=id;saveCfg();
+  if(!noPush)hpush({v:'view',id},'');
   parsed=parseSong(cur);$('#vtitle').textContent=cur.title;syncSub();
   show('view');syncUI();layout(false);wake(true);
 }
@@ -1462,7 +1543,7 @@ async function wake(on){
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!V.view.hidden)wake(true);});
 
-$('#back').onclick=()=>goBack();
+$('#back').onclick=()=>openShelf(!shelfOpen());
 $('#editBtn').onclick=()=>{closePop();setPlay(false);openEdit(cur.id);};
 
 // ---------- 곡 편집 및 이미지 추가 ----------
@@ -1556,7 +1637,7 @@ function openEdit(id){
   $('#etitle').value=ed?ed.title:'';$('#etext').value=ed?ed.text:'';
   $('#etop').textContent=ed?'곡 편집':'새 곡';$('#del').hidden=!ed;$('#del').textContent='이 곡 삭제';
   $('#emsg').textContent='';imsg('');renderThumbs();show('edit');
-  history.pushState({v:'edit',id:editingId},'');
+  hpush({v:'edit',id:editingId},'');
 }
 
 $('#cancel').onclick=()=>{
@@ -1591,7 +1672,7 @@ $('#save').onclick=async()=>{
   cur=s;saveSongs();draft={ids:[],orig:[],up:[],dataUrls:{}};
   if(history.state&&history.state.v==='edit'){
     if(prevView==='view'){pending={v:'view',id:s.id};history.back();}
-    else{history.replaceState({v:'view',id:s.id},'');openSong(s.id,true);}
+    else{hrep({v:'view',id:s.id},'');openSong(s.id,true);}
   }else openSong(s.id,true);
 };
 
@@ -1615,11 +1696,11 @@ $('#del').onclick=async()=>{
 
 // ---------- 뒤로 가기 (브라우저 기록 연동 + 스와이프) ----------
 // 화면 전환을 history에 남겨 브라우저 뒤로 가기·iOS 가장자리 스와이프·안드로이드 뒤로 버튼이 모두 동작하게 한다.
-if(!history.state||history.state.v!=='lib')history.replaceState({v:'lib'},'');
+if(!history.state||history.state.v!=='lib')hrep({v:'lib'},'');
 let pending=null;
 function leaveView(){closePop();setPlay(false);wake(false);$('#panel').hidden=true;$('#gear').setAttribute('aria-expanded','false');}
-function goLib(){leaveView();show('lib');renderList();}
-function goBack(){if(history.state&&history.state.v!=='lib')history.back();else goLib();}
+function goLib(){leaveView();renderList();const s=nowSong();if(s){openSong(s.id,true);}else{show('lib');openShelf(true);}}
+function goBack(){openShelf(true);}
 async function discardDraft(){
   const temp=draft.up.filter(x=>!draft.orig.includes(x));draft={ids:[],orig:[],up:[],dataUrls:{}};
   for(const id of temp)await dbDelImage(id);
@@ -1680,7 +1761,7 @@ addEventListener('popstate',e=>{
   view.addEventListener('touchcancel',end,{passive:true});
 })();
 
-applyTheme();renderList();setPlay(false);
+applyTheme();renderList();setPlay(false);goLib();
 })();
 </script>
 </body>
