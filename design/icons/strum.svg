@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect width="1024" height="1024" fill="#111111"/>
+  <g transform="translate(179.2 179.2) scale(10.4)">
+    <!-- 기타 피크 -->
+    <path d="M32 8 C47 8 55 13 55 22 C55 35 41 50 32 57 C23 50 9 35 9 22 C9 13 17 8 32 8 Z" fill="#FFFFFF"/>
+    <!-- 타브 줄 -->
+    <g stroke="#111111" stroke-width="2.6" stroke-linecap="round">
+      <line x1="14" y1="21" x2="50" y2="21"/>
+      <line x1="16" y1="29" x2="48" y2="29"/>
+      <line x1="20" y1="37" x2="44" y2="37"/>
+    </g>
+    <!-- 지금 칠 음 -->
+    <rect x="28.5" y="25.5" width="7" height="7" fill="#FF7A3D"/>
+  </g>
+</svg>

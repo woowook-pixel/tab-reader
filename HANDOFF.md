@@ -47,6 +47,9 @@
     - 코드 운지표의 점·빈 줄 표시는 원형에서 사각으로 바꿨다(모서리 0 원칙). 되돌리려면 `chordSVG`의 `<rect class="cd-dot">`, `<rect class="cd-o">`를 원형으로.
     - 아이콘: `design/icons/fret-*.png` → `apple-touch-icon.png`(180), `icon-192/512.png`, `favicon-64.png`(svg에서 생성). manifest `name`·`short_name`은 Fret, 색은 `#FFFFFF`.
     - 상단 바 높이는 `--vtop`(안전영역 + 44px)이고, 악보 보기의 고정 영역 높이는 `vhb()`(상단 바 + 섹션 탭 + 코드 고정 바)로 계산한다.
+19. **앱 이름·홈 아이콘만 Strum으로 변경**: HTML `<title>`, `apple-mobile-web-app-title`, manifest `name`·`short_name`을 Strum으로, `apple-touch-icon`은 `design/icons/strum-180.png`, favicon은 `design/icons/strum.svg`(+ `strum-192.png` 대체), manifest icons는 `strum-192.png`·`strum-512.png`로 바꿨다. 화면 UI·색·레이아웃·기능은 그대로(화면 픽셀 비교로 확인). 기존 아이콘 파일(`apple-touch-icon.png`, `icon-192/512.png`, `favicon-64.png`, `design/icons/fret-*`)은 지우지 않고 참조만 바꿨다.
+    - 일부러 바꾸지 않은 'Fret' 표기: 화면 상단 워드마크 `Fret`(`index.html`의 `.pf-wordmark` 3곳), 백업 공유 시트 제목 `Fret 백업`과 복원 오류 문구 `Fret에서 내보낸 …`(`index.html` JS), `design/DESIGN.md`·`design/FRET.md` 문서, HANDOFF.md 18번.
+    - iPhone은 기존 홈 화면 바로가기를 지우고 Safari에서 다시 '홈 화면에 추가'해야 새 이름과 아이콘이 보인다.
 
 ## 남은 일 / 후보
 
