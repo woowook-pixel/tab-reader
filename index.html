@@ -193,9 +193,6 @@ svg.cd{display:block;width:60px;height:auto;margin:0 auto}
 .step output,#trv{order:-1;margin-right:12px;min-width:40px;text-align:right;color:var(--sub);font-variant-numeric:tabular-nums}
 #trv.on{color:var(--tint);font-weight:600}
 .step button:not(#trv){width:47px;height:32px;background:var(--fill);font-size:20px;line-height:1;color:var(--ink)}
-.step button:not(#trv):first-of-type{border-radius:8px 0 0 8px;box-shadow:inset -.5px 0 0 var(--sep)}
-.step button:not(#trv):last-of-type{border-radius:0 8px 8px 0}
-.step button:not(#trv):active{background:var(--sep)}
 .seg{display:flex;background:var(--fill);border-radius:9px;padding:2px}
 .seg button{min-height:28px;padding:0 12px;border-radius:7px;font-size:13px;font-weight:500;white-space:nowrap}
 .seg button[aria-pressed="true"]{background:var(--cell);font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)}
@@ -304,6 +301,100 @@ a.cellrow{text-decoration:none;color:var(--ink)}
   #sheet{padding-left:40px;padding-right:40px}
   .panel{max-width:640px}.popup{max-width:680px}
 }
+
+/* ===== Fret · 악보 보기 ===== */
+:root{--vtop:calc(env(safe-area-inset-top,0px) + var(--pf-touch))}
+#view{padding:0}
+#vhead{position:sticky;top:0;z-index:6;height:var(--vtop);padding:env(safe-area-inset-top,0px) var(--pf-side) 0;background:var(--pf-white);box-shadow:none}
+.fr-acts{display:flex;align-items:center;gap:6px}
+#back,#editBtn{min-width:var(--pf-touch);height:var(--pf-touch);padding:0 2px;border-radius:0}
+#view .fr-vtb{padding:20px var(--pf-side) 22px}
+.fr-vt{font-size:40px;overflow-wrap:anywhere}
+.fr-vsub{font:var(--pf-sub);color:var(--pf-gray)}
+.fr-vnav{position:sticky;top:var(--vtop);z-index:5;padding:0 var(--pf-side);background:var(--pf-white)}
+.fr-vnav .pf-tabs{scrollbar-width:none}.fr-vnav .pf-tabs::-webkit-scrollbar{display:none}
+.pf-tab{flex:none}
+.pf-tab.pf-now::before{margin-right:7px;vertical-align:1px}
+.pinbar{display:flex;gap:8px;overflow-x:auto;padding:8px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch;background:var(--pf-white)}
+.pinbar::-webkit-scrollbar{display:none}
+.pinbar .cc{width:52px;padding:4px 2px 2px}
+#chords{padding:6px var(--pf-side) 0}
+#chords .ch-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:18px 0 8px;margin:0;box-shadow:none}
+#chords .ch-h b{font:var(--pf-label);letter-spacing:.12em;text-transform:uppercase}
+#call{min-height:var(--pf-touch);padding:0 2px;font:var(--pf-action);letter-spacing:.08em;color:var(--pf-black)}
+.cstrip{gap:8px;padding:0 0 10px}
+.cc{background:none;border-radius:0;box-shadow:inset 0 0 0 1px var(--pf-line);transition:none}
+.cc:active{transform:none;opacity:.5}
+.cc.on{background:none;box-shadow:inset 0 0 0 2px var(--pf-black)}
+.cc.on .cn{color:var(--pf-black)}
+.cn{font:700 13px/1.3 var(--pf-font)}
+.cu{color:var(--pf-gray)}
+#view #sheet{--fs:15px;padding:0 var(--pf-side) 60vh;font-family:var(--pf-mono);font-size:var(--fs)}
+#view .blk{padding:6px 0;margin:2px 0;border-radius:0}
+#view .tabblk{background:none;margin:8px 0;padding:4px 0 4px 12px;border-left:2px solid var(--pf-black);border-radius:0}
+#view .tabblk .chunk+.chunk{margin-top:8px;padding-top:8px;box-shadow:inset 0 1px 0 var(--pf-line)}
+#view .ln.tab{color:var(--pf-mute)}
+#view .ln.tab b{color:var(--pf-black);font-weight:700}
+#view .ln.tab i{color:var(--pf-gray)}
+#view .ln.ch{color:var(--pf-black);font-weight:800}
+#view .tabblk .ln.ch{font-weight:700}
+#view .c{border-radius:0;transition:none}
+#view .c:hover{background:none;box-shadow:inset 0 -2px 0 var(--pf-black)}
+#view .c.on{background:var(--pf-black);color:var(--pf-white);box-shadow:none}
+#view .sec{display:block;margin:26px 0 8px;padding:12px 0 0;box-shadow:inset 0 1px 0 var(--pf-black);font:var(--pf-label);letter-spacing:.12em;text-transform:uppercase;color:var(--pf-black)}
+#view .pg{border-radius:0;margin:8px 0 14px}
+/* 하단 고정 조작 바 */
+.fr-dock{position:fixed;left:0;right:0;bottom:0;z-index:6;max-width:none;background:var(--pf-white);box-shadow:inset 0 1px 0 var(--pf-black);padding:0 var(--pf-side) env(safe-area-inset-bottom,0px)}
+.fr-dock .inner{max-width:720px;margin:0 auto;height:auto;min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative}
+#gear{padding:0 2px;border-radius:0}
+#gear[aria-expanded="true"]{background:none;box-shadow:inset 0 -2px 0 var(--pf-black)}
+.spd{display:flex;align-items:center;gap:2px}
+.fr-pm{width:var(--pf-touch);height:var(--pf-touch);font:500 24px/1 var(--pf-font);color:var(--pf-black);border-radius:0}
+.fr-pm:active{opacity:.4}
+.spd output{min-width:72px;text-align:center;font:400 11px/1.2 var(--pf-font);color:var(--pf-gray)}
+.spd output b{display:block;font:800 18px/1.1 var(--pf-font);color:var(--pf-black);font-variant-numeric:tabular-nums}
+.fr-play{min-width:96px;height:var(--pf-touch);padding:0 18px;border-radius:0;background:var(--pf-black);color:var(--pf-white);font:800 12px/1 var(--pf-font);letter-spacing:.14em;display:grid;place-items:center}
+.fr-play:active{opacity:.7}
+.prog{position:absolute;left:calc(-1*var(--pf-side));right:calc(-1*var(--pf-side));top:-1px;height:3px}
+.prog i{background:var(--pf-black);transition:none}
+/* 보기 설정 시트 */
+.panel{position:fixed;left:0;right:0;bottom:calc(65px + env(safe-area-inset-bottom,0px));z-index:7;max-width:720px;margin:0 auto;max-height:64vh;overflow:auto;background:var(--pf-white);border-radius:0;box-shadow:inset 0 2px 0 var(--pf-black);padding:10px var(--pf-side) 16px}
+.panel .group{margin:0;background:none;border-radius:0;box-shadow:none}
+.panel .group+.group,.panel .hint+.group{margin-top:18px}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:var(--pf-row);padding:4px 0;background:none;font:500 16px/1.3 var(--pf-font);box-shadow:inset 0 -1px 0 var(--pf-line)}
+.panel .group>.prow:first-child{box-shadow:inset 0 1px 0 var(--pf-black),inset 0 -1px 0 var(--pf-line)}
+.group .prow+.prow{box-shadow:inset 0 -1px 0 var(--pf-line)}
+.prow .lab{flex:1;min-width:0;min-height:var(--pf-touch);display:flex;align-items:center}
+.panel .hint{margin:8px 0 0;font:var(--pf-sub);color:var(--pf-gray)}
+.step button:not(#trv){width:var(--pf-touch);height:var(--pf-touch);background:none;border-radius:0;box-shadow:none;font:500 24px/1 var(--pf-font);color:var(--pf-black)}
+.step button:not(#trv):active{opacity:.4}
+.step output,#trv{min-width:44px;text-align:center;font:700 14px/1 var(--pf-font);color:var(--pf-black);order:0;margin:0}
+#trv{height:var(--pf-touch)}
+#trv.on{color:var(--pf-black);font-weight:800}
+.seg{display:flex;gap:18px;background:none;padding:0;border-radius:0}
+.seg button{min-height:var(--pf-touch);padding:0;border-radius:0;background:none;box-shadow:none;font:500 14px/1 var(--pf-font);color:var(--pf-mute);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:none;box-shadow:inset 0 -2px 0 var(--pf-black);font-weight:800;color:var(--pf-black)}
+input[type=checkbox]{appearance:none;-webkit-appearance:none;width:24px;height:24px;border:2px solid var(--pf-black);border-radius:0;background:var(--pf-white);position:relative;flex:none;margin:0;cursor:pointer;transition:none}
+input[type=checkbox]::after{content:"";position:absolute;left:6px;top:1px;width:5px;height:11px;border:solid var(--pf-white);border-width:0 2px 2px 0;border-radius:0;background:none;box-shadow:none;transform:rotate(45deg);opacity:0}
+input[type=checkbox]:checked{background:var(--pf-black)}
+input[type=checkbox]:checked::after{opacity:1;transform:rotate(45deg)}
+/* 코드 시트 */
+.scrim{background:var(--pf-dim)}
+.popup{border-radius:0;background:var(--pf-white);box-shadow:inset 0 2px 0 var(--pf-black);padding:22px var(--pf-side) calc(24px + env(safe-area-inset-bottom,0px))}
+.ph h3{font:var(--pf-heading);letter-spacing:-.02em}
+.ph #pfull{font:var(--pf-sub);color:var(--pf-gray)}
+#pclose{width:auto;height:var(--pf-touch);margin:0;padding:0 2px;border-radius:0;background:none;color:var(--pf-black);display:block}
+.plabel{font:var(--pf-label);letter-spacing:.12em;color:var(--pf-black)}
+.notes span{border-radius:0;background:none;box-shadow:inset 0 0 0 1px var(--pf-line);font:700 13px/1 var(--pf-mono);padding:6px 8px}
+.voic button::before{border-radius:0;width:7px;height:7px;background:var(--pf-line)}
+.voic button[aria-pressed="true"]::before{background:var(--pf-black)}
+.pinfo{color:var(--pf-gray)}
+.pact .seg{width:100%;gap:22px;box-shadow:inset 0 -1px 0 var(--pf-line)}
+.pact .seg button{flex:none;font-size:14px}
+.sound{min-height:56px;border-radius:0;background:var(--pf-black);color:var(--pf-white);font:800 13px/1 var(--pf-font);letter-spacing:.12em;display:flex;align-items:center;justify-content:center}
+.sound.ring{animation:none}
+.cd-line{stroke:var(--pf-mute)}
+.cd-o{fill:none;stroke:var(--pf-gray);stroke-width:1}
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -347,15 +438,22 @@ a.cellrow{text-decoration:none;color:var(--ink)}
   </section>
 
   <section id="view" hidden>
-    <header class="bar" id="vhead">
-      <div class="navrow">
-        <button id="back" class="navbtn" type="button" aria-label="악보 목록으로"><svg class="i" viewBox="0 0 13 21"><path d="M11 2 2.5 10.5 11 19"/></svg>악보</button>
-        <div class="navtitle"><b id="vtitle"></b><span id="vsub" hidden></span></div>
-        <button id="editBtn" class="navbtn" type="button">편집</button>
-      </div>
-      <nav id="jumpwrap" class="secnav" aria-label="섹션으로 이동"></nav>
-      <div id="pinbar" class="pinbar" aria-label="이 곡의 코드 (고정)" hidden></div>
+    <header id="vhead" class="pf-topbar">
+      <span class="pf-wordmark">Fret</span>
+      <span class="fr-acts">
+        <button id="back" class="pf-action" type="button" aria-label="악보 목록으로">← 악보</button>
+        <button id="editBtn" class="pf-action" type="button">편집</button>
+      </span>
     </header>
+    <div class="pf-titleblock fr-vtb">
+      <span class="pf-eyebrow" id="vartist" hidden></span>
+      <h1 class="pf-title fr-vt" id="vtitle"></h1>
+      <span class="fr-vsub" id="vsub" hidden></span>
+    </div>
+    <div id="vnav" class="fr-vnav">
+      <nav id="jumpwrap" class="pf-tabs" role="tablist" aria-label="섹션으로 이동"></nav>
+      <div id="pinbar" class="pinbar" aria-label="이 곡의 코드 (고정)" hidden></div>
+    </div>
     <section id="chords" hidden aria-label="코드 운지">
       <div class="ch-h"><b>코드</b><button id="call" type="button">모두 보기</button></div>
       <div id="cstrip" class="cstrip"></div>
@@ -363,38 +461,38 @@ a.cellrow{text-decoration:none;color:var(--ink)}
     <article id="sheet" aria-label="악보"></article>
     <div class="panel" id="panel" hidden>
       <div class="group">
-        <div class="prow"><span class="lab"><span class="ico" style="--c:#FF9500"><b>♯</b></span>조옮김</span>
+        <div class="prow"><span class="lab">조옮김</span>
           <div class="step"><button id="trm" type="button" aria-label="반음 내리기">−</button><button id="trv" type="button" title="눌러서 원래 키로"></button><button id="trp" type="button" aria-label="반음 올리기">+</button></div>
         </div>
-        <div class="prow"><span class="lab"><span class="ico" style="--c:#007AFF"><b>가</b></span>글자 크기</span>
+        <div class="prow"><span class="lab">글자 크기</span>
           <div class="step"><button id="fsm" type="button" aria-label="글자 작게">−</button><output id="fsv"></output><button id="fsp" type="button" aria-label="글자 크게">+</button></div>
         </div>
-        <div class="prow"><span class="lab"><span class="ico" style="--c:#5856D6"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M12 5v14"/></svg></span>보기 방식</span>
+        <div class="prow"><span class="lab">보기 방식</span>
           <div class="seg"><button type="button" data-m="reflow">나눠서 크게</button><button type="button" data-m="orig">원본 그대로</button></div>
         </div>
       </div>
       <p class="hint" id="modehint"></p>
       <div class="group">
-        <div class="prow"><label class="lab" for="showch"><span class="ico" style="--c:#34C759"><svg viewBox="0 0 24 24"><path d="M6 4v16M10 4v16M14 4v16M18 4v16M6 8h12M6 12h12"/></svg></span>맨 위에 코드 운지 보기</label><input id="showch" type="checkbox"></div>
-        <div class="prow"><label class="lab" for="pin"><span class="ico" style="--c:#FF2D55"><svg viewBox="0 0 24 24"><path d="M9 4h6l-1 6 3 3H7l3-3z"/><path d="M12 13v7"/></svg></span>자동 스크롤 중 코드 고정</label><input id="pin" type="checkbox"></div>
-        <div class="prow"><label class="lab" for="wake"><span class="ico" style="--c:#32ADE6"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>보는 동안 화면 켜 두기</label><input id="wake" type="checkbox"></div>
+        <div class="prow"><label class="lab" for="showch">맨 위에 코드 운지 보기</label><input id="showch" type="checkbox"></div>
+        <div class="prow"><label class="lab" for="pin">자동 스크롤 중 코드 고정</label><input id="pin" type="checkbox"></div>
+        <div class="prow"><label class="lab" for="wake">보는 동안 화면 켜 두기</label><input id="wake" type="checkbox"></div>
       </div>
       <div class="group" id="imgrows" hidden>
-        <div class="prow"><span class="lab"><span class="ico" style="--c:#00C7BE"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg></span>이미지 배율</span>
+        <div class="prow"><span class="lab">이미지 배율</span>
           <div class="step"><button id="zm" type="button" aria-label="이미지 작게">−</button><output id="zv"></output><button id="zp" type="button" aria-label="이미지 크게">+</button></div>
         </div>
       </div>
     </div>
-    <nav class="toolbar dock" aria-label="재생 조작">
+    <nav class="dock fr-dock" aria-label="재생 조작">
       <div class="prog" aria-hidden="true"><i id="prog"></i></div>
       <div class="inner">
-        <button id="gear" class="tbtn" type="button" aria-label="보기 설정" aria-expanded="false" aria-controls="panel"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button>
+        <button id="gear" class="pf-action" type="button" aria-label="보기 설정" aria-expanded="false" aria-controls="panel">보기 설정</button>
         <div class="spd">
-          <button id="slow" class="tbtn" type="button" aria-label="느리게"><svg class="i" viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+          <button id="slow" class="fr-pm" type="button" aria-label="느리게">−</button>
           <output id="lvl"></output>
-          <button id="fast" class="tbtn" type="button" aria-label="빠르게"><svg class="i" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></button>
+          <button id="fast" class="fr-pm" type="button" aria-label="빠르게">+</button>
         </div>
-        <button id="play" class="playbtn" type="button" aria-label="자동 스크롤 재생" aria-pressed="false"></button>
+        <button id="play" class="fr-play" type="button" aria-label="자동 스크롤 재생" aria-pressed="false">PLAY</button>
       </div>
     </nav>
   </section>
@@ -441,10 +539,9 @@ a.cellrow{text-decoration:none;color:var(--ink)}
 
 <div id="scrim" class="scrim"></div>
 <div id="cpop" class="popup" role="dialog" aria-modal="true" aria-labelledby="pname" aria-hidden="true">
-  <div class="grab"></div>
   <div class="ph">
     <div><h3 id="pname"></h3><span id="pfull"></span></div>
-    <button id="pclose" type="button" aria-label="닫기"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <button id="pclose" class="pf-action" type="button" aria-label="닫기">닫기</button>
   </div>
   <div class="pbody">
     <div id="pdia" title="눌러서 다른 운지 보기"></div>
@@ -457,7 +554,7 @@ a.cellrow{text-decoration:none;color:var(--ink)}
   </div>
   <div class="pact">
     <div class="seg" id="pmode"><button type="button" data-p="strum">스트럼</button><button type="button" data-p="arp">아르페지오</button></div>
-    <button id="psound" class="sound" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>소리 듣기</button>
+    <button id="psound" class="sound" type="button">소리 듣기</button>
   </div>
 </div>
 
@@ -905,7 +1002,7 @@ function chordSVG(sh,label,big){
   if(base>1)s+='<text class="cd-fr" x="'+(X0-4)+'" y="'+(Y0+DY*0.5+2.5)+'">'+base+'fr</text>';
   for(let i=0;i<6;i++){
     if(f[i]===-1)s+='<text class="cd-x" x="'+sx(i)+'" y="'+(Y0-6)+'">×</text>';
-    else if(f[i]===0)s+='<circle class="cd-o" cx="'+sx(i)+'" cy="'+(Y0-9)+'" r="3"/>';
+    else if(f[i]===0)s+='<rect class="cd-o" x="'+(sx(i)-3)+'" y="'+(Y0-12)+'" width="6" height="6"/>';
   }
   const barred={};
   for(let n=1;n<=4;n++){
@@ -913,7 +1010,7 @@ function chordSVG(sh,label,big){
     if(idx.length>=2&&idx.every(i=>f[i]===f[idx[0]])){
       const r=f[idx[0]]-base+1;if(r<1||r>5)continue;
       const a=idx[0],b=idx[idx.length-1];
-      s+='<rect class="cd-dot" x="'+(sx(a)-R)+'" y="'+(fy(r)-R)+'" width="'+((b-a)*DX+2*R)+'" height="'+2*R+'" rx="'+R+'"/>';
+      s+='<rect class="cd-dot" x="'+(sx(a)-R)+'" y="'+(fy(r)-R)+'" width="'+((b-a)*DX+2*R)+'" height="'+2*R+'"/>';
       s+='<text class="cd-num" x="'+sx(a)+'" y="'+(fy(r)+2.5)+'">'+n+'</text>';
       idx.forEach(i=>{barred[i]=1;});
     }
@@ -921,7 +1018,7 @@ function chordSVG(sh,label,big){
   for(let i=0;i<6;i++){
     if(f[i]>0&&!barred[i]){
       const r=f[i]-base+1;if(r<1||r>5)continue;
-      s+='<circle class="cd-dot" cx="'+sx(i)+'" cy="'+fy(r)+'" r="'+R+'"/>';
+      s+='<rect class="cd-dot" x="'+(sx(i)-R)+'" y="'+(fy(r)-R)+'" width="'+2*R+'" height="'+2*R+'"/>';
       if(fg[i]>0)s+='<text class="cd-num" x="'+sx(i)+'" y="'+(fy(r)+2.5)+'">'+fg[i]+'</text>';
     }
   }
@@ -1192,7 +1289,7 @@ function secColor(name){
 }
 const SEC_SVG='<svg class="f" viewBox="0 0 24 24"><path d="M9 17.5a2.5 2.5 0 1 1-1.5-2.3V6l11-2v11.5a2.5 2.5 0 1 1-1.5-2.3V7.2l-8 1.5z"/></svg>';
 const IMG_SVG='<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg>';
-const secHead=(t,img)=>'<h2 class="sec"><span class="ico" style="--c:'+secColor(t)+'">'+(img?IMG_SVG:SEC_SVG)+'</span><span>'+esc(t)+'</span></h2>';
+const secHead=t=>'<h2 class="sec">'+esc(t)+'</h2>';
 function fmtDate(t){try{return new Date(t).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});}catch(e){return '';}}
 function renderList(){
   const q=$('#q').value.trim().toLowerCase();
@@ -1276,10 +1373,15 @@ $('#bkin').onclick=async()=>{
 
 // ---------- 악보 보기 ----------
 function getRatio(){if(!ratio){ratio=$('#probe').getBoundingClientRect().width/10000;}return ratio||0.6;}
+function setVTitle(t){
+  const m=/^(.+?)\s-\s(.+)$/.exec(t),a=$('#vartist');
+  if(m){a.textContent=m[1];a.hidden=false;$('#vtitle').textContent=m[2];}
+  else{a.hidden=true;a.textContent='';$('#vtitle').textContent=t;}
+}
 function openSong(id,noPush){
   cur=songs.find(s=>s.id===id);if(!cur)return;
   if(!noPush)history.pushState({v:'view',id},'');
-  parsed=parseSong(cur);$('#vtitle').textContent=cur.title;syncSub();
+  parsed=parseSong(cur);setVTitle(cur.title);syncSub();
   show('view');syncUI();layout(false);wake(true);
 }
 
@@ -1321,11 +1423,12 @@ function setTr(v){
   parsed=parseSong(cur);syncSub();syncUI();layout(true);
 }
 // 자동 스크롤 중에는 코드를 헤더 아래에 고정 (헤더 높이가 바뀌어도 보던 위치 유지)
+const vhb=()=>$('#vhead').offsetHeight+$('#vnav').offsetHeight;
 function renderPin(){
-  const pb=$('#pinbar'),before=$('#vhead').offsetHeight;
+  const pb=$('#pinbar'),before=vhb();
   const list=(playing&&cfg.pin!==false&&parsed&&!V.view.hidden)?songChords(parsed):[];
   pb.hidden=!list.length;pb.innerHTML=list.length?list.map(chordCard).join(''):'';
-  const d=$('#vhead').offsetHeight-before;
+  const d=vhb()-before;
   if(d&&scrollY>0)window.scrollBy(0,d);
 }
 function renderChords(){
@@ -1351,22 +1454,22 @@ function syncUI(){
   $('#imgrows').hidden=!(cur&&(cur.images||[]).length);
 }
 function fillJump(){
-  $('#jumpwrap').innerHTML=heads.map((h,i)=>'<button class="chip" type="button" data-j="'+i+'" style="--c:'+secColor(h)+'">'+esc(h)+'</button>').join('');
-  $('#jumpwrap').hidden=!heads.length;curJ=null;
+  $('#jumpwrap').innerHTML=heads.map((h,i)=>'<button class="pf-tab" role="tab" aria-selected="false" type="button" data-j="'+i+'">'+esc(h)+'</button>').join('');
+  $('#jumpwrap').hidden=!heads.length;curJ=null;syncJump();
 }
 $('#jumpwrap').addEventListener('click',e=>{
   const b=e.target.closest('[data-j]');if(!b)return;
   const el=$('#sheet').querySelectorAll('.sec')[Number(b.dataset.j)];
-  if(el){const hb=$('#vhead').getBoundingClientRect().bottom;window.scrollTo(0,window.scrollY+el.getBoundingClientRect().top-hb-8);}
+  if(el){window.scrollTo(0,window.scrollY+el.getBoundingClientRect().top-vhb()-8);}
 });
 let curJ=null;
 function syncJump(){
   if(V.view.hidden||!heads.length)return;
-  const top=$('#vhead').getBoundingClientRect().bottom+10;let c='0';
+  const top=vhb()+10;let c='0';
   $('#sheet').querySelectorAll('.sec').forEach((h,i)=>{if(h.getBoundingClientRect().top<=top)c=String(i);});
   if(c===curJ)return;curJ=c;
-  $('#jumpwrap').querySelectorAll('.chip').forEach(b=>{
-    const on=b.dataset.j===c;b.classList.toggle('on',on);
+  $('#jumpwrap').querySelectorAll('.pf-tab').forEach(b=>{
+    const on=b.dataset.j===c;b.setAttribute('aria-selected',String(on));b.classList.toggle('pf-now',on);
     if(on){const w=$('#jumpwrap');w.scrollTo({left:b.offsetLeft-w.clientWidth/2+b.offsetWidth/2,behavior:'smooth'});}
   });
 }
@@ -1453,7 +1556,7 @@ const ICON_PLAY='<svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg>';
 const ICON_PAUSE='<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
 function setPlay(on){
   playing=on;cancelAnimationFrame(raf);
-  $('#play').innerHTML=on?ICON_PAUSE:ICON_PLAY;
+  $('#play').textContent=on?'STOP':'PLAY';
   $('#play').setAttribute('aria-label',on?'자동 스크롤 정지':'자동 스크롤 재생');$('#play').setAttribute('aria-pressed',String(on));
   if(on){
     if(innerHeight+scrollY>=document.documentElement.scrollHeight-2)window.scrollTo(0,0);
