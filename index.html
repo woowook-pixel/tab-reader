@@ -395,6 +395,30 @@ input[type=checkbox]:checked::after{opacity:1;transform:rotate(45deg)}
 .sound.ring{animation:none}
 .cd-line{stroke:var(--pf-mute)}
 .cd-o{fill:none;stroke:var(--pf-gray);stroke-width:1}
+
+/* ===== Fret · 새 곡(편집) ===== */
+#edit .pf-topbar{position:sticky;top:0;z-index:6;height:var(--vtop);padding:env(safe-area-inset-top,0px) var(--pf-side) 0;background:var(--pf-white)}
+#edit .body{padding:0 var(--pf-side) calc(56px + env(safe-area-inset-bottom,0px))}
+#edit .pf-titleblock{padding:18px 0 10px}
+#edit .pf-label{padding-top:30px}
+#edit .pf-input input{padding:0;height:100%;border-radius:0}
+#edit .pf-input input::placeholder{color:var(--pf-mute)}
+#edit .pf-list{list-style:none;margin:0;padding:0}
+a.fr-row{text-decoration:none;color:var(--pf-black)}
+.fr-row .go{flex:none;font:700 15px/1 var(--pf-font)}
+#etext{display:block;width:100%;min-height:50vh;border:0;border-radius:0;background:none;padding:14px 0;font:15px/1.45 var(--pf-mono);white-space:pre;overflow:auto;outline:none;resize:vertical;box-shadow:inset 0 1px 0 var(--pf-black),inset 0 -1px 0 var(--pf-line)}
+#etext::placeholder{color:var(--pf-mute)}
+#edit .gfoot,#imsg{margin:12px 0 0;font:var(--pf-sub);color:var(--pf-gray)}
+#emsg{margin:10px 0 0;color:var(--pf-black);font:700 12px/1.4 var(--pf-font)}
+#thumbs .th{padding:14px 0 4px;background:none;box-shadow:inset 0 -1px 0 var(--pf-line)}
+.th img{display:block;width:100%;max-height:240px;object-fit:contain;background:none;border-radius:0;filter:none}
+.tb{display:flex;flex-wrap:wrap;gap:0 22px;padding:0}
+.tb button{min-height:var(--pf-touch);padding:0;border-radius:0;background:none;font:var(--pf-action);letter-spacing:.08em;color:var(--pf-black)}
+.tb button.danger{color:var(--pf-black)}
+#pastebox{min-height:56px;border:0;border-radius:0;background:none;padding:14px 0;margin:0;color:var(--pf-black);font:var(--pf-body);box-shadow:inset 0 -1px 0 var(--pf-line);-webkit-user-select:text;user-select:text;outline:none}
+#pastebox:empty::before{content:attr(data-ph);font:var(--pf-sub);color:var(--pf-gray)}
+.fr-delwrap{margin-top:34px}
+#del{box-shadow:inset 0 1px 0 var(--pf-black),inset 0 -1px 0 var(--pf-line);font-weight:800}
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -498,41 +522,45 @@ input[type=checkbox]:checked::after{opacity:1;transform:rotate(45deg)}
   </section>
 
   <section id="edit" hidden>
-    <header class="bar hair">
-      <div class="navrow">
-        <button id="cancel" class="navbtn" type="button">취소</button>
-        <div class="navtitle" id="etop">새 곡</div>
-        <button id="save" class="navbtn done" type="button">완료</button>
-      </div>
+    <header class="pf-topbar">
+      <span class="pf-wordmark">Fret</span>
+      <span class="fr-acts">
+        <button id="cancel" class="pf-action" type="button">취소</button>
+        <button id="save" class="pf-action" type="button">완료</button>
+      </span>
     </header>
     <div class="body">
-      <div class="ghead">제목</div>
-      <div class="group"><input id="etitle" type="text" placeholder="비워 두면 첫 줄을 제목으로 씁니다" autocomplete="off" aria-label="제목"></div>
-      <div class="group" style="margin-top:10px">
-        <a id="findug" class="cellrow" href="#" target="_blank" rel="noopener"><span class="lab"><span class="ico" style="--c:#FF9500"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.2-4.2"/></svg></span>얼티밋 기타에서 코드 찾기</span></a>
-        <a id="findgg" class="cellrow divider" href="#" target="_blank" rel="noopener"><span class="lab"><span class="ico" style="--c:#8E8E93"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></span>구글에서 코드 찾기</span></a>
+      <div class="pf-titleblock"><h1 class="pf-title" id="etop">새 곡</h1></div>
+
+      <div class="pf-label"><span>제목</span></div>
+      <label class="pf-input"><input id="etitle" type="text" placeholder="비워 두면 첫 줄을 제목으로 씁니다" autocomplete="off" aria-label="제목"></label>
+
+      <div class="pf-label"><span>코드 찾기</span></div>
+      <div class="pf-list">
+        <a id="findug" class="pf-row fr-row" href="#" target="_blank" rel="noopener"><span>얼티밋 기타에서 코드 찾기</span><span class="go" aria-hidden="true">↗</span></a>
+        <a id="findgg" class="pf-row fr-row" href="#" target="_blank" rel="noopener"><span>구글에서 코드 찾기</span><span class="go" aria-hidden="true">↗</span></a>
       </div>
       <p id="findhint" class="gfoot">제목을 입력한 뒤 누르면 새 탭에서 검색 결과가 열립니다. 마음에 드는 악보를 찾아 복사한 다음, 아래 악보 텍스트에 붙여넣으십시오.</p>
-      <div class="ghead">악보 텍스트</div>
-      <div class="group">
-        <textarea id="etext" wrap="off" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="메모 앱이나 Pages에서 복사한 타브 텍스트를 붙여넣으십시오." aria-label="악보 텍스트"></textarea>
-        <label class="cellrow divider" for="file"><span class="lab"><span class="ico" style="--c:#007AFF"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span>텍스트 파일(.txt)에서 불러오기</span></label>
-      </div>
+
+      <div class="pf-label"><span>악보 텍스트</span></div>
+      <textarea id="etext" wrap="off" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="메모 앱이나 Pages에서 복사한 타브 텍스트를 붙여넣으십시오." aria-label="악보 텍스트"></textarea>
+      <label class="pf-row fr-row" for="file"><span>텍스트 파일(.txt)에서 불러오기</span></label>
       <input id="file" type="file" accept=".txt,text/plain" hidden>
       <p id="emsg" role="status"></p>
-      <div class="ghead">이미지</div>
-      <section id="imgsec" class="group">
+
+      <div class="pf-label"><span>이미지</span></div>
+      <section id="imgsec" class="pf-list">
         <div id="thumbs"></div>
         <div id="imgtools">
-          <label class="cellrow" for="imgfile"><span class="lab"><span class="ico" style="--c:#34C759"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg></span>사진 또는 파일 추가</span></label>
-          <button id="imgpaste" class="cellrow divider" type="button"><span class="lab"><span class="ico" style="--c:#FF9500"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9z"/></svg></span>클립보드에서 붙여넣기</span></button>
+          <label class="pf-row fr-row" for="imgfile"><span>사진 또는 파일 추가</span></label>
+          <button id="imgpaste" class="pf-row fr-row" type="button"><span>클립보드에서 붙여넣기</span></button>
           <input id="imgfile" type="file" accept="image/*" multiple hidden>
           <div id="pastebox" contenteditable="true" role="textbox" aria-label="이미지 붙여넣기 칸" data-ph="이미지를 복사한 뒤, 여기를 길게 눌러 ‘붙여넣기’를 선택하십시오."></div>
         </div>
       </section>
       <p class="gfoot">스크린샷이나 사진을 그대로 보여줍니다. PDF는 페이지를 캡처해 이미지로 추가하십시오.</p>
       <p id="imsg" class="gfoot" role="status"></p>
-      <div class="group" style="margin-top:28px"><button id="del" class="cellrow red" type="button" hidden>이 곡 삭제</button></div>
+      <div class="fr-delwrap"><button id="del" class="pf-row fr-row" type="button" hidden>이 곡 삭제</button></div>
     </div>
   </section>
 </div>
@@ -1673,7 +1701,7 @@ function openEdit(id){
   const ed=id?songs.find(s=>s.id===id):null;editingId=ed?ed.id:null;prevView=ed?'view':'lib';
   const im=(ed&&ed.images)||[];draft={ids:im.slice(),orig:im.slice(),up:[],dataUrls:{}};
   $('#etitle').value=ed?ed.title:'';$('#etext').value=ed?ed.text:'';
-  $('#etop').textContent=ed?'곡 편집':'새 곡';$('#del').hidden=!ed;$('#del').textContent='이 곡 삭제';
+  $('#etop').textContent=ed?'편집':'새 곡';$('#del').hidden=!ed;$('#del').textContent='이 곡 삭제';
   $('#emsg').textContent='';imsg('');renderThumbs();show('edit');
   history.pushState({v:'edit',id:editingId},'');
 }
