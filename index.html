@@ -2,34 +2,36 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>타브 리더 - 독립형 기타 타브/코드 뷰어</title>
+<title>Fret</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="타브 리더">
-<meta name="theme-color" content="#F9F9F9">
+<meta name="apple-mobile-web-app-title" content="Fret">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="favicon-64.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="design/tokens.css">
 
 <style>
 /* iOS 시스템 색상과 재질을 따른 토큰 */
 :root{
   box-sizing:border-box;
-  --bg:#F2F2F7; --page:#FFFFFF; --cell:#FFFFFF; --fill:rgba(118,118,128,.12); --fill2:#F2F2F7;
-  --ink:#000000; --sub:rgba(60,60,67,.6); --faint:rgba(60,60,67,.3); --sep:rgba(60,60,67,.29);
-  --tint:#007AFF; --tint-soft:rgba(0,122,255,.12); --on-tint:#FFFFFF; --green:#34C759; --red:#FF3B30;
-  --bar:rgba(249,249,249,.82); --tab:rgba(60,60,67,.45); --fret:#000000; --scrim:rgba(0,0,0,.2);
-  --sheet:#FFFFFF; --shadow:0 8px 40px rgba(0,0,0,.12);
-  --font:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretendard Variable',Pretendard,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;
-  --mono:ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;
+  /* 공통 토큰(design/tokens.css)에 연결 */
+  --bg:var(--pf-white); --page:var(--pf-white); --cell:var(--pf-white); --fill:transparent; --fill2:var(--pf-white);
+  --ink:var(--pf-black); --sub:var(--pf-gray); --faint:var(--pf-mute); --sep:var(--pf-line);
+  --tint:var(--pf-black); --tint-soft:transparent; --on-tint:var(--pf-white); --green:var(--pf-black); --red:var(--pf-info-red);
+  --bar:var(--pf-white); --tab:var(--pf-mute); --fret:var(--pf-black); --scrim:var(--pf-dim);
+  --sheet:var(--pf-white); --shadow:none;
+  --font:var(--pf-font);
+  --mono:var(--pf-mono);
 }
 *,*::before,*::after{box-sizing:inherit}
 html{background:var(--bg);-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.35 var(--font);letter-spacing:-.01em;
+body{margin:0;background:var(--bg);color:var(--ink);font:var(--pf-body);
   -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 body.reading{background:var(--page)}
 [hidden]{display:none!important}
@@ -1141,6 +1143,7 @@ const uid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 // ---------- UI 및 화면 전환 ----------
 const V={lib:$('#lib'),view:$('#view'),edit:$('#edit')};
 let cur=null,parsed=null,heads=[],prevView='lib',ratio=0;
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{ratio=0;if(!V.view.hidden&&parsed)layout(true);});
 function show(n){
   for(const k in V)V[k].hidden=(k!==n);
   document.body.classList.toggle('reading',n==='view');
@@ -1228,7 +1231,7 @@ $('#bkfile').onclick=async()=>{
     const name='tab-reader-backup-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'.json';
     const file=new File([json],name,{type:'application/json'});
     if(navigator.canShare&&navigator.canShare({files:[file]})&&/iP(hone|ad|od)|Android/.test(navigator.userAgent)){
-      try{await navigator.share({files:[file],title:'타브 리더 백업'});bkstat(songs.length+'곡을 내보냈습니다.');return;}
+      try{await navigator.share({files:[file],title:'Fret 백업'});bkstat(songs.length+'곡을 내보냈습니다.');return;}
       catch(e){if(e&&e.name==='AbortError'){bkstat('내보내기를 취소했습니다.');return;}}
     }
     const url=URL.createObjectURL(file),a=document.createElement('a');
@@ -1241,7 +1244,7 @@ $('#bkload').onchange=async e=>{
   const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
   bkstat('복원하는 중…');
   try{const n=await restoreBackup(JSON.parse(await f.text()));bkstat(n+'곡을 복원했습니다.');}
-  catch(err){bkstat('이 파일을 읽지 못했습니다. 타브 리더에서 내보낸 .json 백업 파일인지 확인하십시오.');}
+  catch(err){bkstat('이 파일을 읽지 못했습니다. Fret에서 내보낸 .json 백업 파일인지 확인하십시오.');}
 };
 // 텍스트로 백업·복원 (예전 방식)
 $('#bkout').onclick=async()=>{
