@@ -4,7 +4,7 @@
 
 ## 프로젝트 개요
 
-- **타브 리더**: 기타 타브·코드 악보 뷰어 PWA. 빌드 도구 없이 `index.html` 한 파일(HTML+CSS+JS)로 되어 있다.
+- **Fret(구 타브 리더)**: 기타 타브·코드 악보 뷰어 PWA. 개인 앱 패밀리 공통 디자인(`design/`)을 따른다. 빌드 도구 없이 `index.html` 한 파일(HTML+CSS+JS)로 되어 있다.
 - 배포: GitHub Pages — https://woowook-pixel.github.io/tab-reader/ (`main`에 push하면 1~2분 뒤 반영)
 - 데이터: 곡은 `localStorage`(`tr.songs`, 설정은 `tr.cfg`), 이미지는 IndexedDB(`TabReaderDB`). 서버 없음.
 - 그 밖의 파일: `manifest.webmanifest`, 아이콘 PNG(`icon-192/512.png`, `apple-touch-icon.png`, `favicon-64.png`)
@@ -39,6 +39,14 @@
     - 남긴 기능: 코드 소리 보강(14), 태블릿 폭·기본 글자 크기(13), 편집 화면의 '코드 찾기' 버튼(16).
     - 남긴 아이콘: 미색 바탕의 큰 'Am'과 타브 줄(사용자가 고른 것). 원래 초록 아이콘으로 돌리려면 `a5acc14`의 PNG 4종과 `manifest.webmanifest`를 쓰면 된다.
     - 되돌린 시안은 `m/`·`ui2/`에만 남고 저장소에는 없다. 다음 디자인 변경은 반드시 시안을 보여 주고, 사용자가 고른 뒤에 적용한다(이번에 여러 번 엇나갔음).
+18. **Fret 공통 디자인 적용 (`design/family-ui`)**: 앱 이름을 Fret로 바꾸고 `design/tokens.css`(공통 토큰)를 연결했다. 기준 문서는 `design/DESIGN.md`(공통)와 `design/FRET.md`(Fret 화면별). 로직(타브 파싱, 섹션 인식, 자동 스크롤, 저장·백업)은 건드리지 않고 마크업과 스타일만 바꿨다.
+    - 규칙: 모서리 0, 그림자·원형·색 아이콘 없음, 텍스트 버튼, 타브·악보 입력란은 `--pf-mono`만. Ember(`#FF7A3D`)는 악보 보기의 현재 섹션 탭 점(`.pf-now`) 한 곳에만 쓴다.
+    - 악보 목록: 상단 바 `FRET` + `+ 새 곡`, 44px 제목 '악보' + 'N개의 악보' 라벨, 밑줄형 검색, 목록 행(곡명 + `→`), 백업 및 복원 행(아이콘 없음).
+    - 악보 보기: 상단 바 `FRET` + `← 악보`·`편집`, 곡명은 ' - ' 앞을 아티스트 라벨·뒤를 40px 제목으로, 밑줄 섹션 탭(+ Ember 점), 섹션 라벨(대문자 + 검정 시작선), 타브 블록은 왼쪽 검정 2px 선, 하단 고정 바(`보기 설정`, `−` 숫자 `+`, 검정 `PLAY`/`STOP`). 보기 설정과 코드 시트는 상단 검정 2px 선 시트, 스위치는 사각 체크박스.
+    - 새 곡: 상단 바 `FRET` + `취소`·`완료`, 44px 제목 '새 곡'(편집 시 '편집'), 섹션 라벨 + 밑줄 입력/목록 행, 이미지 미리보기는 흑백 처리 없이 원본.
+    - 코드 운지표의 점·빈 줄 표시는 원형에서 사각으로 바꿨다(모서리 0 원칙). 되돌리려면 `chordSVG`의 `<rect class="cd-dot">`, `<rect class="cd-o">`를 원형으로.
+    - 아이콘: `design/icons/fret-*.png` → `apple-touch-icon.png`(180), `icon-192/512.png`, `favicon-64.png`(svg에서 생성). manifest `name`·`short_name`은 Fret, 색은 `#FFFFFF`.
+    - 상단 바 높이는 `--vtop`(안전영역 + 44px)이고, 악보 보기의 고정 영역 높이는 `vhb()`(상단 바 + 섹션 탭 + 코드 고정 바)로 계산한다.
 
 ## 남은 일 / 후보
 
