@@ -1,7 +1,7 @@
 # 공통 디자인 적용 현황 (Strum)
 
 - 사용 중인 공통 CSS: v1 (https://personal-design-rho.vercel.app/v1/tokens.css)
-- 적용한 CHANGELOG 번호: 002, 003, 004
+- 적용한 CHANGELOG 번호: 002, 003, 004, 005, 006
 - 참고: 이 저장소는 예전 복사본 `design/tokens.css`도 계속 불러온다(`index.html`의 `<link>` 두 줄, 복사본이 먼저, 중앙 CSS가 그 다음). 복사본을 지우고 중앙 CSS만 쓰려면 `design/tokens.css` 링크를 지우면 된다.
 
 ## 002 상단 헤더 위치·높이 통일
@@ -25,4 +25,18 @@
 - `apple-touch-icon` → `https://personal-design-rho.vercel.app/icons/pixel/strum-180.png`(예전에 넣은 data 주소 링크를 대체)
 - `manifest.webmanifest` icons → `strum-192.png`, `strum-512.png`(any, maskable)
 - favicon(svg) → `.../strum.svg`. 64px PNG favicon 링크는 구형 브라우저용 대체로 그대로 둠.
-- 저장소 안의 기존 아이콘 파일은 지우지 않았다. `tools/apple-icon-data-uri.py`는 이제 `apple-touch-icon` 링크를 data 주소로 덮어쓰므로, 중앙 주소를 쓰는 동안은 실행하지 않는다.
+- 저장소 안의 기존 아이콘 파일은 지우지 않았다. (006에서 apple-touch-icon만 다시 data 주소로 바뀜)
+
+## 005 기호 추가
+
+- `<head>`에 `https://personal-design-rho.vercel.app/v1/symbols.js`(defer)를 추가했다. 기호는 `<pf-sym name="...">`, JS에서 만드는 곳은 `SYM(name)` 헬퍼를 쓴다.
+- 바꾼 글자 기호: 목록 끝 `→` → arrow-right, 코드 찾기 행 `↗` → arrow-up-right, 백업 펼침 `→`(회전) → arrow-down(열리면 180도 회전), `+ 새 곡` → plus + 글자, `← 악보` → arrow-left + 글자.
+- 글자 앞에 붙인 기호: 편집 edit, 보기 설정 settings, PLAY play / STOP stop(`setPlay`가 `innerHTML`로 갱신), 이 곡 삭제 close(문구 바뀔 때는 글자 노드만 갱신). 검색 입력창 앞 search.
+- 기호는 글자색을 따르고 Ember는 쓰지 않았다. 기호 옆 간격은 `.pf-action`, `.fr-play`, `#del`에 `gap`을 줘서 맞췄다. 기호 스크립트를 못 받으면 글자만 남는다.
+- 이 앱에 없는 항목(설정 새로고침, 공유, 링크 복사, 순서 변경, 모두 지우기, 탭바)은 해당 없음.
+- 남겨 둔 텍스트 기호: 스텝퍼(조옮김, 글자 크기, 이미지 배율, 재생 속도)의 `−`/`+`(빼기 기호가 중앙에 없어 한 쌍을 그대로 둠), 코드 운지 그림 안의 `×`(뮤트 표시, 그림의 일부).
+
+## 006 홈 아이콘 회색 글자 수정
+
+- `apple-touch-icon` 링크를 중앙에서 받은 Strum용 data 주소(180x180, 메타데이터 제거본)로 교체했다. 링크는 한 개만 있다.
+- favicon과 manifest icons는 중앙 주소 그대로 둔다.

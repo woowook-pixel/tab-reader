@@ -11,12 +11,13 @@
 <meta name="apple-mobile-web-app-title" content="Strum">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" sizes="180x180" href="https://personal-design-rho.vercel.app/icons/pixel/strum-180.png">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAABwUlEQVR42u3dwQ3CMAxA0RR1gWYOFmMiFmOOzMCVA4pQQcRx3pugwJcrWWnZjuMo8M7FV4A4EAfiQByIA3EgDsSBOBAHiANxIA7EgTgQB+JAHIgDcYA4EAfiQByIA3EgDsSBOBAH7GGvrLW2yG9QazU5cFtBHIgDcYA4EAfiQBwMsY19g/E6a9Bzxi5PTQ7EgTgQB+JAHIgDcZBF3GOCYQ/P/VzYTaDJgTgQB+JAHIgDcSAOxEF6HqTG5EAciANxIA7EgTgQB+JgXYMfpO7ob0hPnzBtt+vpS6r3R6jPYnIgDsSBOBAH4kAcIA4+M+sSLBNLMNxWEAfiQBwgDsSBOBAHo8TdkPZFO3g36UFAkwNxIA7EgTgQB+JAHIiDxe0pP5XXVJociANxIA7EgTgQB+KAF7MeE+z7/xIs5f9nmxyIA3EgDsSBOBAH4kAcpJdzQ9rxzfI05RrU5EAciANxIA7EgTgQB+JgZcttSDE5EAfiQByIA3EgDsSBOEAciANxIA7EgTgQB+JAHIgDxIE4EAfiQByIA3EgDsSBOBAHiANxIA7EgTgQB+JAHIgDcYA4EAfiQByIA3EgDsSBOBAHlPIErGYplQCXaiUAAAAASUVORK5CYII=">
 <link rel="icon" type="image/svg+xml" href="https://personal-design-rho.vercel.app/icons/pixel/strum.svg">
 <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=2">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="design/tokens.css">
 <link rel="stylesheet" href="https://personal-design-rho.vercel.app/v1/tokens.css">
+<script src="https://personal-design-rho.vercel.app/v1/symbols.js" defer></script>
 
 <style>
 /* Strum: 공통 토큰과 부품 클래스는 design/tokens.css, 여기는 이 앱 화면 규칙만 둔다.
@@ -32,7 +33,11 @@ button{background:none;border:0;padding:0;cursor:pointer}
 button:disabled{opacity:.35;cursor:default}
 .pf-tab{flex:none;min-width:var(--pf-touch)}
 .pf-tab.pf-now::before{margin-right:7px;vertical-align:1px}
-.go{flex:none;font:700 15px/1 var(--pf-font)}
+.go{flex:none;display:inline-flex;align-items:center;font:700 15px/1 var(--pf-font)}
+.pf-action,.fr-play{white-space:nowrap}
+.pf-action{display:inline-flex;align-items:center;justify-content:center;gap:.4em}
+#del{gap:.4em}
+.pf-input pf-sym{flex:none}
 .gfoot{margin:12px 0 0;font:var(--pf-sub);color:var(--pf-gray)}
 .note{margin:28px 0 0;padding:0;text-align:left;font:var(--pf-sub);color:var(--pf-gray)}
 .note:empty{display:none}
@@ -40,7 +45,7 @@ button:disabled{opacity:.35;cursor:default}
 .fr-row{width:100%;text-align:left;font:500 16px/1.3 var(--pf-font);cursor:pointer}
 .fr-row:active{opacity:.45}
 a.fr-row{text-decoration:none;color:var(--pf-black)}
-.fr-row .chev{display:inline-block;flex:none;font:700 15px/1 var(--pf-font);color:var(--pf-black)}
+.fr-row .chev{margin-left:auto;display:inline-block;flex:none;font:700 15px/1 var(--pf-font);color:var(--pf-black)}
 
 /* ---------- 악보 목록 ---------- */
 #lib{padding:0 var(--pf-side) calc(56px + env(safe-area-inset-bottom,0px))}
@@ -120,7 +125,7 @@ body.reading .pf-update.pf-no-tabbar{bottom:calc(65px + env(safe-area-inset-bott
 .fr-pm:active{opacity:.4}
 .spd output{min-width:72px;text-align:center;font:400 11px/1.2 var(--pf-font);color:var(--pf-gray)}
 .spd output b{display:block;font:800 18px/1.1 var(--pf-font);color:var(--pf-black);font-variant-numeric:tabular-nums}
-.fr-play{min-width:96px;height:var(--pf-touch);padding:0 18px;background:var(--pf-black);color:var(--pf-white);font:800 12px/1 var(--pf-font);letter-spacing:.14em;display:grid;place-items:center}
+.fr-play{min-width:96px;height:var(--pf-touch);padding:0 18px;background:var(--pf-black);color:var(--pf-white);font:800 12px/1 var(--pf-font);letter-spacing:.14em;display:inline-flex;align-items:center;justify-content:center;gap:.4em}
 .fr-play:active{opacity:.7}
 .prog{position:absolute;left:calc(-1*var(--pf-side));right:calc(-1*var(--pf-side));top:-1px;height:3px}
 .prog i{display:block;height:100%;width:0;background:var(--pf-black)}
@@ -221,7 +226,7 @@ input[type=checkbox]:checked::after{opacity:1}
       <div class="pf-topbar">
         <span class="pf-wordmark">Strum</span>
         <div class="pf-actions">
-          <button id="addBtn" class="pf-action" type="button">+ 새 곡</button>
+          <button id="addBtn" class="pf-action" type="button"><pf-sym name="plus"></pf-sym>새 곡</button>
         </div>
       </div>
     </header>
@@ -229,7 +234,7 @@ input[type=checkbox]:checked::after{opacity:1}
       <span class="pf-eyebrow" id="count"></span>
       <h1 class="pf-title">악보</h1>
     </div>
-    <label class="pf-input"><input id="q" type="search" placeholder="검색" aria-label="곡 검색" autocomplete="off"></label>
+    <label class="pf-input"><pf-sym name="search"></pf-sym><input id="q" type="search" placeholder="검색" aria-label="곡 검색" autocomplete="off"></label>
     <p id="warn" class="gfoot" hidden>이 환경에서는 브라우저 저장이 막혀 있어 곡이 저장되지 않습니다.</p>
 
     <div class="pf-label"><span>곡</span></div>
@@ -242,7 +247,7 @@ input[type=checkbox]:checked::after{opacity:1}
       <button id="bkfile" class="pf-row fr-row" type="button"><span>파일로 내보내기</span></button>
       <label class="pf-row fr-row" for="bkload"><span>파일에서 복원</span></label>
       <input id="bkload" type="file" accept=".json,application/json" hidden>
-      <button id="bktoggle" class="pf-row fr-row" type="button" aria-expanded="false" aria-controls="bkpane"><span class="lbl">텍스트로 백업·복원</span><span class="chev" aria-hidden="true" style="transform:rotate(90deg)">→</span></button>
+      <button id="bktoggle" class="pf-row fr-row" type="button" aria-expanded="false" aria-controls="bkpane"><span class="lbl">텍스트로 백업·복원</span><span class="chev" aria-hidden="true"><pf-sym name="arrow-down"></pf-sym></span></button>
       <div id="bkpane" hidden>
         <textarea id="bkbox" aria-label="백업 텍스트" placeholder="내보내기를 누르면 모든 곡과 이미지 데이터가 여기에 출력됩니다. 복원하려면 텍스트를 여기에 붙여넣으십시오."></textarea>
         <div class="pair">
@@ -260,8 +265,8 @@ input[type=checkbox]:checked::after{opacity:1}
       <div class="pf-topbar">
         <span class="pf-wordmark">Strum</span>
         <div class="pf-actions">
-          <button id="back" class="pf-action" type="button" aria-label="악보 목록으로">← 악보</button>
-          <button id="editBtn" class="pf-action" type="button">편집</button>
+          <button id="back" class="pf-action" type="button" aria-label="악보 목록으로"><pf-sym name="arrow-left"></pf-sym>악보</button>
+          <button id="editBtn" class="pf-action" type="button"><pf-sym name="edit"></pf-sym>편집</button>
         </div>
       </div>
     </header>
@@ -306,13 +311,13 @@ input[type=checkbox]:checked::after{opacity:1}
     <nav class="dock fr-dock" aria-label="재생 조작">
       <div class="prog" aria-hidden="true"><i id="prog"></i></div>
       <div class="inner">
-        <button id="gear" class="pf-action" type="button" aria-label="보기 설정" aria-expanded="false" aria-controls="panel">보기 설정</button>
+        <button id="gear" class="pf-action" type="button" aria-label="보기 설정" aria-expanded="false" aria-controls="panel"><pf-sym name="settings"></pf-sym>보기 설정</button>
         <div class="spd">
           <button id="slow" class="fr-pm" type="button" aria-label="느리게">−</button>
           <output id="lvl"></output>
           <button id="fast" class="fr-pm" type="button" aria-label="빠르게">+</button>
         </div>
-        <button id="play" class="fr-play" type="button" aria-label="자동 스크롤 재생" aria-pressed="false">PLAY</button>
+        <button id="play" class="fr-play" type="button" aria-label="자동 스크롤 재생" aria-pressed="false"><pf-sym name="play"></pf-sym>PLAY</button>
       </div>
     </nav>
   </section>
@@ -335,8 +340,8 @@ input[type=checkbox]:checked::after{opacity:1}
 
       <div class="pf-label"><span>코드 찾기</span></div>
       <div class="pf-list">
-        <a id="findug" class="pf-row fr-row" href="#" target="_blank" rel="noopener"><span>얼티밋 기타에서 코드 찾기</span><span class="go" aria-hidden="true">↗</span></a>
-        <a id="findgg" class="pf-row fr-row" href="#" target="_blank" rel="noopener"><span>구글에서 코드 찾기</span><span class="go" aria-hidden="true">↗</span></a>
+        <a id="findug" class="pf-row fr-row" href="#" target="_blank" rel="noopener"><span>얼티밋 기타에서 코드 찾기</span><span class="go" aria-hidden="true"><pf-sym name="arrow-up-right"></pf-sym></span></a>
+        <a id="findgg" class="pf-row fr-row" href="#" target="_blank" rel="noopener"><span>구글에서 코드 찾기</span><span class="go" aria-hidden="true"><pf-sym name="arrow-up-right"></pf-sym></span></a>
       </div>
       <p id="findhint" class="gfoot">제목을 입력한 뒤 누르면 새 탭에서 검색 결과가 열립니다. 마음에 드는 악보를 찾아 복사한 다음, 아래 악보 텍스트에 붙여넣으십시오.</p>
 
@@ -358,7 +363,7 @@ input[type=checkbox]:checked::after{opacity:1}
       </section>
       <p class="gfoot">스크린샷이나 사진을 그대로 보여줍니다. PDF는 페이지를 캡처해 이미지로 추가하십시오.</p>
       <p id="imsg" class="gfoot" role="status"></p>
-      <div class="fr-delwrap"><button id="del" class="pf-row fr-row" type="button" hidden>이 곡 삭제</button></div>
+      <div class="fr-delwrap"><button id="del" class="pf-row fr-row" type="button" hidden><pf-sym name="close"></pf-sym><span>이 곡 삭제</span></button></div>
     </div>
   </section>
 </div>
@@ -393,6 +398,7 @@ input[type=checkbox]:checked::after{opacity:1}
 (function(){
 'use strict';
 const $=s=>document.querySelector(s);
+const SYM=n=>'<pf-sym name="'+n+'"></pf-sym>';
 
 // ---------- PWA Manifest 및 Service Worker 동적 등록 ----------
 let swReg=null;
@@ -1103,7 +1109,7 @@ function fmtDate(t){try{return new Date(t).toLocaleDateString('ko-KR',{month:'lo
 function renderList(){
   const q=$('#q').value.trim().toLowerCase();
   const arr=songs.filter(s=>!q||s.title.toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
-  $('#list').innerHTML=arr.map(s=>'<li><button class="item pf-row" type="button" data-id="'+esc(s.id)+'"><span class="it">'+esc(s.title)+'</span><span class="go" aria-hidden="true">→</span></button></li>').join('');
+  $('#list').innerHTML=arr.map(s=>'<li><button class="item pf-row" type="button" data-id="'+esc(s.id)+'"><span class="it">'+esc(s.title)+'</span><span class="go" aria-hidden="true">'+SYM("arrow-right")+'</span></button></li>').join('');
   $('#list').hidden=!arr.length;
   $('#count').textContent=songs.length?songs.length+'개의 악보':'';
   $('#empty').textContent=songs.length?(arr.length?'':'검색 결과가 없습니다.'):'저장된 곡이 없습니다. 새 곡을 눌러 타브 텍스트를 붙여넣어 보세요.';
@@ -1116,7 +1122,7 @@ $('#bktoggle').onclick=()=>{
   const p=$('#bkpane'),open=p.hidden;p.hidden=!open;
   $('#bktoggle').setAttribute('aria-expanded',String(open));
   $('#bktoggle .lbl').textContent=open?'텍스트 백업 닫기':'텍스트로 백업·복원';
-  $('#bktoggle .chev').style.transform=open?'rotate(-90deg)':'rotate(90deg)';
+  $('#bktoggle .chev').style.transform=open?'rotate(180deg)':'';
 };
 
 // ---------- 백업 & 복원 (이미지 포함) ----------
@@ -1365,7 +1371,7 @@ function tick(t){
 }
 function setPlay(on){
   playing=on;cancelAnimationFrame(raf);
-  $('#play').textContent=on?'STOP':'PLAY';
+  $('#play').innerHTML=on?SYM('stop')+'STOP':SYM('play')+'PLAY';
   $('#play').setAttribute('aria-label',on?'자동 스크롤 정지':'자동 스크롤 재생');$('#play').setAttribute('aria-pressed',String(on));
   if(on){
     if(innerHeight+scrollY>=document.documentElement.scrollHeight-2)window.scrollTo(0,0);
@@ -1482,7 +1488,7 @@ function openEdit(id){
   const ed=id?songs.find(s=>s.id===id):null;editingId=ed?ed.id:null;prevView=ed?'view':'lib';
   const im=(ed&&ed.images)||[];draft={ids:im.slice(),orig:im.slice(),up:[],dataUrls:{}};
   $('#etitle').value=ed?ed.title:'';$('#etext').value=ed?ed.text:'';
-  $('#etop').textContent=ed?'편집':'새 곡';$('#del').hidden=!ed;$('#del').textContent='이 곡 삭제';
+  $('#etop').textContent=ed?'편집':'새 곡';$('#del').hidden=!ed;$('#del').lastChild.textContent='이 곡 삭제';
   $('#emsg').textContent='';imsg('');renderThumbs();show('edit');
   history.pushState({v:'edit',id:editingId},'');
 }
@@ -1526,8 +1532,8 @@ $('#save').onclick=async()=>{
 $('#del').onclick=async()=>{
   if(!editingId)return;
   if($('#del').dataset.arm!=='1'){
-    $('#del').dataset.arm='1';$('#del').textContent='한 번 더 누르면 삭제됩니다 (이미지도 함께 삭제)';
-    clearTimeout(delT);delT=setTimeout(()=>{$('#del').dataset.arm='';$('#del').textContent='이 곡 삭제';},3000);return;
+    $('#del').dataset.arm='1';$('#del').lastChild.textContent='한 번 더 누르면 삭제됩니다 (이미지도 함께 삭제)';
+    clearTimeout(delT);delT=setTimeout(()=>{$('#del').dataset.arm='';$('#del').lastChild.textContent='이 곡 삭제';},3000);return;
   }
   const did=editingId,gone=songs.find(s=>s.id===did);
   songs=songs.filter(s=>s.id!==did);saveSongs();
