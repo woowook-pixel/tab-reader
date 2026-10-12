@@ -4,7 +4,7 @@
 
 ## 프로젝트 개요
 
-- **Fret(구 타브 리더)**: 기타 타브·코드 악보 뷰어 PWA. 개인 앱 패밀리 공통 디자인(`design/`)을 따른다. 빌드 도구 없이 `index.html` 한 파일(HTML+CSS+JS)로 되어 있다.
+- **Strum(구 Fret, 타브 리더)**: 기타 타브·코드 악보 뷰어 PWA. 개인 앱 패밀리 공통 디자인(`design/`)을 따른다. 빌드 도구 없이 `index.html` 한 파일(HTML+CSS+JS)로 되어 있다.
 - 배포: GitHub Pages — https://woowook-pixel.github.io/tab-reader/ (`main`에 push하면 1~2분 뒤 반영)
 - 데이터: 곡은 `localStorage`(`tr.songs`, 설정은 `tr.cfg`), 이미지는 IndexedDB(`TabReaderDB`). 서버 없음.
 - 그 밖의 파일: `manifest.webmanifest`, 아이콘 PNG(`icon-192/512.png`, `apple-touch-icon.png`, `favicon-64.png`)
@@ -48,7 +48,7 @@
     - 아이콘: `design/icons/fret-*.png` → `apple-touch-icon.png`(180), `icon-192/512.png`, `favicon-64.png`(svg에서 생성). manifest `name`·`short_name`은 Fret, 색은 `#FFFFFF`.
     - 상단 바 높이는 `--vtop`(안전영역 + 44px)이고, 악보 보기의 고정 영역 높이는 `vhb()`(상단 바 + 섹션 탭 + 코드 고정 바)로 계산한다.
 19. **앱 이름·홈 아이콘만 Strum으로 변경**: HTML `<title>`, `apple-mobile-web-app-title`, manifest `name`·`short_name`을 Strum으로, `apple-touch-icon`은 `design/icons/strum-180.png`, favicon은 `design/icons/strum.svg`(+ `strum-192.png` 대체), manifest icons는 `strum-192.png`·`strum-512.png`로 바꿨다. 화면 UI·색·레이아웃·기능은 그대로(화면 픽셀 비교로 확인). 기존 아이콘 파일(`apple-touch-icon.png`, `icon-192/512.png`, `favicon-64.png`, `design/icons/fret-*`)은 지우지 않고 참조만 바꿨다.
-    - 일부러 바꾸지 않은 'Fret' 표기: 화면 상단 워드마크 `Fret`(`index.html`의 `.pf-wordmark` 3곳), 백업 공유 시트 제목 `Fret 백업`과 복원 오류 문구 `Fret에서 내보낸 …`(`index.html` JS), `design/DESIGN.md`·`design/FRET.md` 문서, HANDOFF.md 18번.
+    - 화면 안의 'Fret' 표기도 Strum으로 바꿨다: 상단 워드마크 3곳(`.pf-wordmark`, 화면에는 대문자 STRUM), 백업 공유 시트 제목 `Strum 백업`, 복원 오류 문구. 남은 Fret 표기는 `design/DESIGN.md`·`design/FRET.md`(패밀리 공통 문서)와 HANDOFF.md의 옛 항목뿐이다.
     - iPhone은 기존 홈 화면 바로가기를 지우고 Safari에서 다시 '홈 화면에 추가'해야 새 이름과 아이콘이 보인다.
 
 ## 남은 일 / 후보
