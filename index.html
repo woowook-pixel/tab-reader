@@ -16,11 +16,12 @@
 <link rel="icon" type="image/png" sizes="192x192" href="design/icons/strum-192.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="design/tokens.css">
+<link rel="stylesheet" href="https://personal-design-rho.vercel.app/v1/tokens.css">
 
 <style>
 /* Strum: 공통 토큰과 부품 클래스는 design/tokens.css, 여기는 이 앱 화면 규칙만 둔다.
    모서리 0, 그림자 없음, 원형 없음. Ember는 악보 보기의 현재 섹션 탭 점(.pf-now)에만 쓴다. */
-:root{box-sizing:border-box;--vtop:calc(env(safe-area-inset-top,0px) + var(--pf-touch))}
+:root{box-sizing:border-box;--vtop:var(--pf-touch)}
 *,*::before,*::after{box-sizing:inherit}
 html{background:var(--pf-white);-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--pf-white);color:var(--pf-black);font:var(--pf-body);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
@@ -29,8 +30,6 @@ body{margin:0;background:var(--pf-white);color:var(--pf-black);font:var(--pf-bod
 button,input,textarea{font:inherit;color:inherit;letter-spacing:inherit;border-radius:0}
 button{background:none;border:0;padding:0;cursor:pointer}
 button:disabled{opacity:.35;cursor:default}
-.pf-topbar{position:relative}
-.fr-acts{display:flex;align-items:center;gap:6px}
 .pf-tab{flex:none;min-width:var(--pf-touch)}
 .pf-tab.pf-now::before{margin-right:7px;vertical-align:1px}
 .go{flex:none;font:700 15px/1 var(--pf-font)}
@@ -44,8 +43,8 @@ a.fr-row{text-decoration:none;color:var(--pf-black)}
 .fr-row .chev{display:inline-block;flex:none;font:700 15px/1 var(--pf-font);color:var(--pf-black)}
 
 /* ---------- 악보 목록 ---------- */
-#lib{padding:calc(env(safe-area-inset-top,0px) + 12px) var(--pf-side) calc(56px + env(safe-area-inset-bottom,0px))}
-#lib .pf-titleblock{padding:30px 0 24px}
+#lib{padding:0 var(--pf-side) calc(56px + env(safe-area-inset-bottom,0px))}
+#lib .pf-titleblock{padding-bottom:24px}
 #lib .pf-title{overflow-wrap:anywhere}
 .pf-input input[type=search]{-webkit-appearance:none;appearance:none}
 .pf-input input::placeholder{color:var(--pf-mute)}
@@ -62,13 +61,11 @@ a.fr-row{text-decoration:none;color:var(--pf-black)}
 #bkpane .hint{margin:10px 0 0}
 
 /* ---------- 악보 보기 ---------- */
-#view{padding:0}
-#vhead{position:sticky;top:0;z-index:6;height:var(--vtop);padding:env(safe-area-inset-top,0px) var(--pf-side) 0;background:var(--pf-white)}
-#back,#editBtn{min-width:var(--pf-touch);height:var(--pf-touch);padding:0 2px}
-#view .fr-vtb{padding:20px var(--pf-side) 22px}
+#view{padding:0 var(--pf-side)}
+#view .fr-vtb{padding-bottom:22px}
 .fr-vt{font-size:40px;overflow-wrap:anywhere}
 .fr-vsub{font:var(--pf-sub);color:var(--pf-gray)}
-.fr-vnav{position:sticky;top:var(--vtop);z-index:5;padding:0 var(--pf-side);background:var(--pf-white)}
+.fr-vnav{position:sticky;top:var(--vtop);z-index:5;background:var(--pf-white)}
 .fr-vnav .pf-tabs{scrollbar-width:none}.fr-vnav .pf-tabs::-webkit-scrollbar{display:none}
 .pinbar{display:flex;gap:8px;overflow-x:auto;padding:8px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch;background:var(--pf-white)}
 .pinbar::-webkit-scrollbar{display:none}
@@ -77,7 +74,7 @@ a.fr-row{text-decoration:none;color:var(--pf-black)}
 .pinbar svg.cd{width:42px}
 .pinbar .cu{display:none}
 .pinbar .cc.unk{min-height:0}
-#chords{padding:6px var(--pf-side) 0}
+#chords{padding:6px 0 0}
 .ch-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:18px 0 8px}
 .ch-h b{font:var(--pf-label);letter-spacing:.12em;text-transform:uppercase}
 #call{min-height:var(--pf-touch);padding:0 2px;font:var(--pf-action);letter-spacing:.08em;color:var(--pf-black)}
@@ -91,7 +88,7 @@ a.fr-row{text-decoration:none;color:var(--pf-black)}
 .cn{font:700 13px/1.3 var(--pf-font);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cu{font:var(--pf-sub);font-size:11px;color:var(--pf-gray);line-height:1.3;margin-top:2px}
 svg.cd{display:block;width:60px;height:auto;margin:0 auto}
-#sheet{--fs:15px;padding:0 var(--pf-side) 60vh;font-family:var(--pf-mono);font-size:var(--fs)}
+#sheet{--fs:15px;padding:0 0 60vh;font-family:var(--pf-mono);font-size:var(--fs)}
 .blk{padding:6px 0;overflow-x:auto;margin:2px 0}
 .blk,.pgwrap{scrollbar-width:none}.blk::-webkit-scrollbar,.pgwrap::-webkit-scrollbar{display:none}
 .ln{display:block;white-space:pre;line-height:1.35;font-variant-ligatures:none}
@@ -184,9 +181,9 @@ input[type=checkbox]:checked::after{opacity:1}
 .cd-str{fill:var(--pf-mute);font:500 5.5px var(--pf-font);text-anchor:middle}
 
 /* ---------- 새 곡(편집) ---------- */
-#edit .pf-topbar{position:sticky;top:0;z-index:6;height:var(--vtop);padding:env(safe-area-inset-top,0px) var(--pf-side) 0;background:var(--pf-white)}
-#edit .body{padding:0 var(--pf-side) calc(56px + env(safe-area-inset-bottom,0px))}
-#edit .pf-titleblock{padding:18px 0 10px}
+#edit{padding:0 var(--pf-side)}
+#edit .body{padding:0 0 calc(56px + env(safe-area-inset-bottom,0px))}
+#edit .pf-titleblock{padding-bottom:10px}
 #edit .pf-label{padding-top:30px}
 #edit .pf-input input{padding:0;height:100%}
 #etext{display:block;width:100%;min-height:50vh;border:0;background:none;padding:14px 0;font:15px/1.45 var(--pf-mono);white-space:pre;overflow:auto;outline:none;resize:vertical;box-shadow:inset 0 1px 0 var(--pf-black),inset 0 -1px 0 var(--pf-line)}
@@ -219,9 +216,13 @@ input[type=checkbox]:checked::after{opacity:1}
 <div id="app">
 
   <section id="lib">
-    <header class="pf-topbar fr-top">
-      <span class="pf-wordmark">Strum</span>
-      <button id="addBtn" class="pf-action" type="button">+ 새 곡</button>
+    <header class="pf-header">
+      <div class="pf-topbar">
+        <span class="pf-wordmark">Strum</span>
+        <div class="pf-actions">
+          <button id="addBtn" class="pf-action" type="button">+ 새 곡</button>
+        </div>
+      </div>
     </header>
     <div class="pf-titleblock">
       <span class="pf-eyebrow" id="count"></span>
@@ -254,12 +255,14 @@ input[type=checkbox]:checked::after{opacity:1}
   </section>
 
   <section id="view" hidden>
-    <header id="vhead" class="pf-topbar">
-      <span class="pf-wordmark">Strum</span>
-      <span class="fr-acts">
-        <button id="back" class="pf-action" type="button" aria-label="악보 목록으로">← 악보</button>
-        <button id="editBtn" class="pf-action" type="button">편집</button>
-      </span>
+    <header id="vhead" class="pf-header">
+      <div class="pf-topbar">
+        <span class="pf-wordmark">Strum</span>
+        <div class="pf-actions">
+          <button id="back" class="pf-action" type="button" aria-label="악보 목록으로">← 악보</button>
+          <button id="editBtn" class="pf-action" type="button">편집</button>
+        </div>
+      </div>
     </header>
     <div class="pf-titleblock fr-vtb">
       <span class="pf-eyebrow" id="vartist" hidden></span>
@@ -314,12 +317,14 @@ input[type=checkbox]:checked::after{opacity:1}
   </section>
 
   <section id="edit" hidden>
-    <header class="pf-topbar">
-      <span class="pf-wordmark">Strum</span>
-      <span class="fr-acts">
-        <button id="cancel" class="pf-action" type="button">취소</button>
-        <button id="save" class="pf-action" type="button">완료</button>
-      </span>
+    <header class="pf-header">
+      <div class="pf-topbar">
+        <span class="pf-wordmark">Strum</span>
+        <div class="pf-actions">
+          <button id="cancel" class="pf-action" type="button">취소</button>
+          <button id="save" class="pf-action" type="button">완료</button>
+        </div>
+      </div>
     </header>
     <div class="body">
       <div class="pf-titleblock"><h1 class="pf-title" id="etop">새 곡</h1></div>
@@ -1184,6 +1189,7 @@ function openSong(id,noPush){
 
 async function layout(keep){
   if(V.view.hidden||!parsed)return;
+  syncVtop();
   const sheet=$('#sheet'),de=document.documentElement;
   const y=keep?window.scrollY/Math.max(1,de.scrollHeight):0;
   const avail=sheet.clientWidth-55;const r=getRatio();
@@ -1221,6 +1227,8 @@ function setTr(v){
 }
 // 자동 스크롤 중에는 코드를 헤더 아래에 고정 (헤더 높이가 바뀌어도 보던 위치 유지)
 const vhb=()=>$('#vhead').offsetHeight+$('#vnav').offsetHeight;
+const syncVtop=()=>{const hh=$('#vhead').offsetHeight;if(hh)document.documentElement.style.setProperty('--vtop',hh+'px');};
+addEventListener('resize',syncVtop);
 function renderPin(){
   const pb=$('#pinbar'),before=vhb();
   const list=(playing&&cfg.pin!==false&&parsed&&!V.view.hidden)?songChords(parsed):[];
