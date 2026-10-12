@@ -367,10 +367,9 @@ input[type=checkbox]:checked::after{opacity:1}
 
       <div class="pf-label"><span>코드 찾기</span></div>
       <div class="pf-list">
-        <a id="findug" class="pf-row fr-row" href="#" target="_blank" rel="noopener"><span>얼티밋 기타에서 코드 찾기</span><span class="go" aria-hidden="true"><pf-sym name="arrow-up-right"></pf-sym></span></a>
         <a id="findgg" class="pf-row fr-row" href="#" target="_blank" rel="noopener"><span>구글에서 코드 찾기</span><span class="go" aria-hidden="true"><pf-sym name="arrow-up-right"></pf-sym></span></a>
       </div>
-      <p id="findhint" class="gfoot">제목을 입력한 뒤 누르면 새 탭에서 검색 결과가 열립니다. 마음에 드는 악보를 찾아 복사한 다음, 아래 악보 텍스트에 붙여넣으십시오.</p>
+      <p id="findhint" class="gfoot">제목을 입력한 뒤 누르면 Safari에서 검색 결과가 열립니다. 마음에 드는 악보를 찾아 복사한 다음, 아래 악보 텍스트에 붙여넣으십시오.</p>
 
       <div class="pf-label"><span>악보 텍스트</span></div>
       <textarea id="etext" wrap="off" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="메모 앱이나 Pages에서 복사한 타브 텍스트를 붙여넣으십시오." aria-label="악보 텍스트"></textarea>
@@ -1455,17 +1454,20 @@ $('#pdia').onclick=()=>{if(pop.shapes.length>1){pop.vi=(pop.vi+1)%pop.shapes.len
 $('#pvoic').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(b){pop.vi=Number(b.dataset.v);drawPop();}});
 $('#pmode').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b){cfg.strum=b.dataset.p;saveCfg();drawPop();}});
 // 곡 제목으로 검색 페이지 열기 (제목이 비어 있으면 악보 첫 줄을 쓴다)
-const FIND_HINT='제목을 입력한 뒤 누르면 새 탭에서 검색 결과가 열립니다. 마음에 드는 악보를 찾아 복사한 다음, 아래 악보 텍스트에 붙여넣으십시오.';
+const FIND_HINT='제목을 입력한 뒤 누르면 Safari에서 검색 결과가 열립니다. 마음에 드는 악보를 찾아 복사한 다음, 아래 악보 텍스트에 붙여넣으십시오.';
 function findQuery(){
   const t=$('#etitle').value.trim()||($('#etext').value.split('\n').find(l=>l.trim())||'').replace(/^\[.*\]$/,'').trim();
   return t.slice(0,80);
 }
 function setFindLinks(){
-  const q=findQuery(),e=encodeURIComponent(q);
-  $('#findug').href=q?'https://www.ultimate-guitar.com/search.php?search_type=title&value='+e:'#';
-  $('#findgg').href=q?'https://www.google.com/search?q='+encodeURIComponent(q+' chords'):'#';
+  const q=findQuery();
+  const u='https://www.google.com/search?q='+encodeURIComponent(q+' chords');
+  // iOS 홈 화면 앱에서는 x-safari-https 주소로 앱 밖의 Safari를 연다. 브라우저에서는 새 탭.
+  const ios=navigator.standalone===true;
+  $('#findgg').href=q?(ios?'x-safari-'+u:u):'#';
+  $('#findgg').target=ios?'_self':'_blank';
 }
-['#findug','#findgg'].forEach(s=>$(s).addEventListener('click',e=>{
+['#findgg'].forEach(s=>$(s).addEventListener('click',e=>{
   setFindLinks();
   const m=$('#findhint');
   if(!findQuery()){e.preventDefault();m.textContent='검색할 곡 제목을 먼저 입력하십시오.';m.style.color='var(--red)';}
