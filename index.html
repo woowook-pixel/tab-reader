@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="design/tokens.css">
 
 <style>
-/* Fret: 공통 토큰과 부품 클래스는 design/tokens.css, 여기는 이 앱 화면 규칙만 둔다.
+/* Strum: 공통 토큰과 부품 클래스는 design/tokens.css, 여기는 이 앱 화면 규칙만 둔다.
    모서리 0, 그림자 없음, 원형 없음. Ember는 악보 보기의 현재 섹션 탭 점(.pf-now)에만 쓴다. */
 :root{box-sizing:border-box;--vtop:calc(env(safe-area-inset-top,0px) + var(--pf-touch))}
 *,*::before,*::after{box-sizing:inherit}
@@ -220,7 +220,7 @@ input[type=checkbox]:checked::after{opacity:1}
 
   <section id="lib">
     <header class="pf-topbar fr-top">
-      <span class="pf-wordmark">Fret</span>
+      <span class="pf-wordmark">Strum</span>
       <button id="addBtn" class="pf-action" type="button">+ 새 곡</button>
     </header>
     <div class="pf-titleblock">
@@ -255,7 +255,7 @@ input[type=checkbox]:checked::after{opacity:1}
 
   <section id="view" hidden>
     <header id="vhead" class="pf-topbar">
-      <span class="pf-wordmark">Fret</span>
+      <span class="pf-wordmark">Strum</span>
       <span class="fr-acts">
         <button id="back" class="pf-action" type="button" aria-label="악보 목록으로">← 악보</button>
         <button id="editBtn" class="pf-action" type="button">편집</button>
@@ -315,7 +315,7 @@ input[type=checkbox]:checked::after{opacity:1}
 
   <section id="edit" hidden>
     <header class="pf-topbar">
-      <span class="pf-wordmark">Fret</span>
+      <span class="pf-wordmark">Strum</span>
       <span class="fr-acts">
         <button id="cancel" class="pf-action" type="button">취소</button>
         <button id="save" class="pf-action" type="button">완료</button>
@@ -1139,7 +1139,7 @@ $('#bkfile').onclick=async()=>{
     const name='tab-reader-backup-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'.json';
     const file=new File([json],name,{type:'application/json'});
     if(navigator.canShare&&navigator.canShare({files:[file]})&&/iP(hone|ad|od)|Android/.test(navigator.userAgent)){
-      try{await navigator.share({files:[file],title:'Fret 백업'});bkstat(songs.length+'곡을 내보냈습니다.');return;}
+      try{await navigator.share({files:[file],title:'Strum 백업'});bkstat(songs.length+'곡을 내보냈습니다.');return;}
       catch(e){if(e&&e.name==='AbortError'){bkstat('내보내기를 취소했습니다.');return;}}
     }
     const url=URL.createObjectURL(file),a=document.createElement('a');
@@ -1152,7 +1152,7 @@ $('#bkload').onchange=async e=>{
   const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
   bkstat('복원하는 중…');
   try{const n=await restoreBackup(JSON.parse(await f.text()));bkstat(n+'곡을 복원했습니다.');}
-  catch(err){bkstat('이 파일을 읽지 못했습니다. Fret에서 내보낸 .json 백업 파일인지 확인하십시오.');}
+  catch(err){bkstat('이 파일을 읽지 못했습니다. Strum에서 내보낸 .json 백업 파일인지 확인하십시오.');}
 };
 // 텍스트로 백업·복원 (예전 방식)
 $('#bkout').onclick=async()=>{
