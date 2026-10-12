@@ -55,6 +55,7 @@
     - iPhone은 홈 화면에 추가하는 순간의 아이콘을 저장해 두고 이후 갱신하지 않는다. 아이콘이 안 바뀌거나 비어 보이면 바로가기를 지우고, 사파리에서 새로고침한 뒤 '홈 화면에 추가'를 다시 한다.
 22. **iOS 홈 화면 아이콘이 회색 글자 타일로 나오는 문제 대응 (`fix/apple-icon-data-uri`)**: 다른 앱(Pitch)에서 확인된 해결 방법을 적용했다. `apple-touch-icon`을 파일 주소 대신 data 주소로 `index.html`의 `<head>`에 직접 넣었다(약 4KB). iOS가 아이콘을 받아 오는 요청만 실패하는 것으로 보이고 정확한 원인은 알려지지 않았다. 파일 기반 `icon` 링크와 manifest icons는 그대로 둔다(안드로이드·데스크톱용).
 23. **CHANGELOG 003·004 적용**: 새 버전 알림 띠(`version.json` + `.github/workflows/stamp-version.yml`)와 중앙 픽셀 아이콘 주소. 22번의 data 주소 apple-touch-icon은 중앙 주소로 대체했다. 아이콘이 다시 회색 타일이면 `tools/apple-icon-data-uri.py`로 data 주소 방식으로 되돌린다. 자세한 내용은 `design/APPLIED.md`.
+24. **CHANGELOG 005·006 적용**: 기호(`<pf-sym>`, `symbols.js`)와 apple-touch-icon data 주소(중앙 제공값). 23번에서 중앙 주소로 바꿨던 apple-touch-icon이 다시 data 주소가 됐다. 자세한 내용은 `design/APPLIED.md`.
     - 아이콘 그림(`apple-touch-icon.png`, 180x180)을 바꾸면 `python3 tools/apple-icon-data-uri.py`를 다시 실행해 data 주소를 새로 만든다(PNG의 메타데이터 조각을 지워 표준 PNG로 다시 저장하고 링크 한 줄을 교체).
     - 증상이 같은지는 먼저 확인할 것: Safari '홈 화면에 추가' 창에서 앱 이름은 나오는데 아이콘 자리만 회색 글자 타일.
     - Vercel 배포 보호·iOS 캐시·파일 경로 문제로 단정하지 말 것(다른 앱에서 이미 제외됨).
