@@ -1121,7 +1121,7 @@ const uid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 // ---------- 계정 로그인과 서버 저장 (Supabase) ----------
 // 아래 두 값을 채우면 로그인이 필수가 되고 곡이 계정에 저장됩니다. 비워 두면 지금처럼 이 기기에만 저장합니다.
 // anon key는 공개용 키입니다. 접근 제한은 supabase/schema.sql의 행 단위 보안(RLS)이 맡습니다.
-const SUPABASE_URL='',SUPABASE_KEY='';
+const SUPABASE_URL='https://cisazryjjbgwimbeypoy.supabase.co',SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpc2F6cnlqamJnd2ltYmV5cG95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzYyMTIsImV4cCI6MjEwNjQxMjIxMn0.DZK5WIjFqZzCYvSmEmfwIcN02KNl8l6A_Z1eRWw4AT8';
 const SB_ON=!!(SUPABASE_URL&&SUPABASE_KEY);
 const SB_TABLE='strum_songs'; // 같은 Supabase 프로젝트의 다른 앱 테이블과 겹치지 않게 앱 이름을 붙인다
 const rowOf=s=>({id:s.id,user_id:acct.id,title:s.title,text:s.text,images:s.images||[],tr:Number(s.tr)||0,updated:Number(s.updated)||0});
