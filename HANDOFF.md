@@ -51,6 +51,8 @@
     - 화면 안의 'Fret' 표기도 Strum으로 바꿨다: 상단 워드마크 3곳(`.pf-wordmark`, 화면에는 대문자 STRUM), 백업 공유 시트 제목 `Strum 백업`, 복원 오류 문구. 남은 Fret 표기는 `design/DESIGN.md`·`design/FRET.md`(패밀리 공통 문서)와 HANDOFF.md의 옛 항목뿐이다.
     - iPhone은 기존 홈 화면 바로가기를 지우고 Safari에서 다시 '홈 화면에 추가'해야 새 이름과 아이콘이 보인다.
 20. **CHANGELOG 002 (상단 헤더 위치·높이 통일) 적용**: 세 화면의 상단 바를 `.pf-header > .pf-topbar > (.pf-wordmark, .pf-actions > .pf-action)`로 바꾸고, 앱이 준 위 여백·안전영역 계산·워드마크·버튼 스타일을 지웠다. 중앙 CSS 링크(`https://personal-design-rho.vercel.app/v1/tokens.css`)를 `index.html`에 추가했고, 적용 기록은 `design/APPLIED.md`. 악보 보기 섹션 탭의 고정 위치(`--vtop`)는 `syncVtop()`이 헤더 높이에서 읽는다.
+21. **홈 화면 아이콘이 안 보인다는 신고 대응 (`fix/home-icon`)**: 소스(`<head>`의 apple-touch-icon 링크, 파일 존재, Pages 빌드 성공)에는 결함이 없었다. 그래도 가장 확실한 구조로 맞췄다. 아이콘을 앱 루트의 표준 경로(`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `favicon-64.png`, `favicon.svg`)에 두고 링크·manifest가 그 경로를 가리키게 했으며, 주소 끝에 `?v=2`를 붙여 기기와 CDN이 옛 이미지를 다시 쓰지 않게 했다. `design/icons/strum-*`는 원본으로 그대로 둔다. 이 앱은 Next.js가 아니라 정적 사이트(Pages가 저장소 루트를 배포)라서 `public/` 폴더는 없다. 아이콘 그림을 바꿀 때는 파일 내용과 함께 `?v=` 숫자도 올릴 것.
+    - iPhone은 홈 화면에 추가하는 순간의 아이콘을 저장해 두고 이후 갱신하지 않는다. 아이콘이 안 바뀌거나 비어 보이면 바로가기를 지우고, 사파리에서 새로고침한 뒤 '홈 화면에 추가'를 다시 한다.
 
 ## 남은 일 / 후보
 
