@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="design/tokens.css">
 <link rel="stylesheet" href="https://personal-design-rho.vercel.app/v1/tokens.css">
 <script src="https://personal-design-rho.vercel.app/v1/symbols.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" defer></script>
 
 <style>
 /* Strum: 공통 토큰과 부품 클래스는 design/tokens.css, 여기는 이 앱 화면 규칙만 둔다.
@@ -48,6 +49,7 @@ a.fr-row{text-decoration:none;color:var(--pf-black)}
 .fr-row .chev{margin-left:auto;display:inline-block;flex:none;font:700 15px/1 var(--pf-font);color:var(--pf-black)}
 
 /* ---------- 악보 목록 ---------- */
+#login{padding:0 var(--pf-side)}
 #lib{padding:0 var(--pf-side) calc(56px + env(safe-area-inset-bottom,0px))}
 #lib .pf-titleblock{padding-bottom:24px}
 #lib .pf-title{overflow-wrap:anywhere}
@@ -221,6 +223,20 @@ input[type=checkbox]:checked::after{opacity:1}
 <span id="probe" aria-hidden="true">MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM</span>
 <div id="app">
 
+  <section id="login" hidden>
+    <header class="pf-header">
+      <div class="pf-topbar">
+        <span class="pf-wordmark">Strum</span>
+      </div>
+    </header>
+    <div class="pf-titleblock"><h1 class="pf-title">로그인</h1></div>
+    <div class="pf-list">
+      <button id="glogin" class="pf-row fr-row" type="button" disabled><span>Google로 로그인</span></button>
+    </div>
+    <p class="gfoot">악보를 계정에 저장해 여러 기기에서 이어서 볼 수 있습니다. Google 계정으로 로그인하십시오.</p>
+    <p id="lmsg" class="gfoot" role="status"></p>
+  </section>
+
   <section id="lib">
     <header class="pf-header">
       <div class="pf-topbar">
@@ -241,6 +257,15 @@ input[type=checkbox]:checked::after{opacity:1}
     <ul id="list" class="pf-list"></ul>
     <p id="empty" class="note"></p>
     <p class="gfoot">곡과 이미지는 이 기기에만 저장됩니다. 기기 간 자동 동기화는 지원되지 않습니다. 다른 기기에서 사용하려면 아래 백업 및 복원 기능을 이용할 수 있습니다.</p>
+
+    <div id="acctbox" hidden>
+      <div class="pf-label"><span>계정</span></div>
+      <div class="pf-list">
+        <div class="pf-row fr-row"><span id="acctmail"></span></div>
+        <button id="signout" class="pf-row fr-row" type="button"><span>로그아웃</span></button>
+      </div>
+      <p id="syncstat" class="gfoot" role="status"></p>
+    </div>
 
     <div class="pf-label"><span>백업 및 복원</span></div>
     <div class="pf-list">
@@ -1087,12 +1112,120 @@ let songs=store.get('tr.songs',null);
 const cfg=Object.assign({size:window.innerWidth>=900?19:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:false,chordsAll:false,strum:'strum',pin:true},store.get('tr.cfg',{}));
 const saveCfg=()=>store.set('tr.cfg',cfg);
 if(!cfg.v){cfg.v=2;cfg.chords=false;saveCfg();} // 화면을 넓게 쓰도록 코드 카드 줄 기본 숨김 (설정에서 다시 켤 수 있음)
-const saveSongs=()=>store.set('tr.songs',songs);
+let sb=null,acct=null,pushT=0,pushing=false,explicitOut=false;const synced=new Map(); // 서버와 맞춘 곡: id → 마지막으로 올린 내용
+const saveSongs=()=>{store.set('tr.songs',songs);syncSoon();};
 if(!Array.isArray(songs)){songs=[demo()];saveSongs();}
 const uid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
+
+// ---------- 계정 로그인과 서버 저장 (Supabase) ----------
+// 아래 두 값을 채우면 로그인이 필수가 되고 곡이 계정에 저장됩니다. 비워 두면 지금처럼 이 기기에만 저장합니다.
+// anon key는 공개용 키입니다. 접근 제한은 supabase/schema.sql의 행 단위 보안(RLS)이 맡습니다.
+const SUPABASE_URL='',SUPABASE_KEY='';
+const SB_ON=!!(SUPABASE_URL&&SUPABASE_KEY);
+const rowOf=s=>({id:s.id,user_id:acct.id,title:s.title,text:s.text,images:s.images||[],tr:Number(s.tr)||0,updated:Number(s.updated)||0});
+const fromRow=x=>({id:x.id,title:x.title,text:x.text,images:Array.isArray(x.images)?x.images:[],tr:Number(x.tr)||0,updated:Number(x.updated)||0});
+const syncMsg=t=>{const e=$('#syncstat');if(e)e.textContent=t;};
+function syncSoon(){if(!sb||!acct)return;clearTimeout(pushT);pushT=setTimeout(()=>pushDiff(),800);}
+// 바뀐 곡만 올리고, 지운 곡은 서버에서도 지운다.
+async function pushDiff(){
+  if(!sb||!acct||pushing)return true;
+  pushing=true;
+  try{
+    const up=[],js=new Map();
+    for(const s of songs){const row=rowOf(s),j=JSON.stringify(row);if(synced.get(s.id)!==j){up.push(row);js.set(s.id,j);}}
+    const del=[...synced.keys()].filter(id=>!songs.some(s=>s.id===id));
+    if(up.length){const {error}=await sb.from('songs').upsert(up,{onConflict:'user_id,id'});if(error)throw error;for(const [id,j] of js)synced.set(id,j);}
+    if(del.length){const {error}=await sb.from('songs').delete().eq('user_id',acct.id).in('id',del);if(error)throw error;for(const id of del)synced.delete(id);}
+    syncMsg(up.length||del.length?'서버에 저장했습니다.':'');
+    return true;
+  }catch(e){syncMsg('서버에 저장하지 못했습니다. 연결되면 다시 시도합니다.');return false;}
+  finally{pushing=false;}
+}
+// 서버에서 받아 합치기: 같은 곡은 최근에 고친 쪽, 다른 기기에서 지운 곡은 여기서도 지움
+async function pullMerge(){
+  if(!sb||!acct)return false;
+  try{
+    const {data,error}=await sb.from('songs').select('*').eq('user_id',acct.id);
+    if(error)throw error;
+    const remote=new Map(data.map(x=>[x.id,x]));
+    for(const [id,x] of remote){
+      const k=songs.findIndex(s=>s.id===id),rs=fromRow(x);
+      if(k<0){if(!synced.has(id)){songs.push(rs);synced.set(id,JSON.stringify(rowOf(rs)));}}
+      else if(rs.updated>(songs[k].updated||0)){songs[k]=rs;synced.set(id,JSON.stringify(rowOf(rs)));}
+      else if(JSON.stringify(rowOf(songs[k]))===JSON.stringify(rowOf(rs)))synced.set(id,JSON.stringify(rowOf(rs)));
+    }
+    for(const [id,j] of [...synced]){
+      if(remote.has(id))continue;
+      const k=songs.findIndex(s=>s.id===id);
+      if(k>=0&&JSON.stringify(rowOf(songs[k]))===j)songs.splice(k,1); // 내가 안 고친 곡이 서버에 없으면 지워진 것
+      synced.delete(id);
+    }
+    store.set('tr.songs',songs);
+    return true;
+  }catch(e){syncMsg('서버에서 불러오지 못했습니다.');return false;}
+}
+async function syncAll(){
+  if(!sb||!acct)return;
+  syncMsg('동기화하는 중입니다.');
+  const ok=await pullMerge();
+  if(ok)await pushDiff();
+  if(ok&&!songs.length){songs=[demo()];store.set('tr.songs',songs);}
+  if(!V.lib.hidden)renderList();
+}
+function enterApp(){if(!V.login.hidden){history.replaceState({v:'lib'},'');show('lib');renderList();}}
+async function onLogin(session){
+  const u=session.user,prev=store.get('tr.uid',null);
+  acct={id:u.id,email:u.email||''};
+  if(prev&&prev!==u.id){songs=[];synced.clear();} // 다른 계정이 쓰던 기기: 이전 계정의 곡은 치움
+  else if(!prev&&songs.length===1&&songs[0].id==='demo')songs=[]; // 예시 곡은 올리지 않음
+  store.set('tr.uid',u.id);store.set('tr.songs',songs);
+  $('#acctbox').hidden=false;$('#acctmail').textContent=acct.email||'로그인됨';
+  enterApp();
+  await syncAll();
+}
+function onLogout(){
+  acct=null;synced.clear();
+  if(explicitOut){explicitOut=false;songs=[];store.set('tr.songs',songs);try{localStorage.removeItem('tr.uid');}catch(e){}} // 직접 로그아웃할 때만 기기의 곡을 지움. 세션 만료는 곡을 남김
+  $('#acctbox').hidden=true;
+  $('#glogin').disabled=false;$('#lmsg').textContent='';
+  show('login');
+}
+async function initAuth(){
+  if(!SB_ON)return;
+  const cached=store.get('tr.uid',null);
+  if(!window.supabase){
+    if(cached){acct={id:cached,email:''};show('lib');renderList();} // 라이브러리를 못 받았지만 이 기기에 저장된 곡은 연다
+    else $('#lmsg').textContent='로그인 모듈을 불러오지 못했습니다. 연결을 확인한 뒤 다시 열어 주십시오.';
+    return;
+  }
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  $('#glogin').onclick=async()=>{
+    $('#glogin').disabled=true;$('#lmsg').textContent='';
+    const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
+    if(error){$('#glogin').disabled=false;$('#lmsg').textContent='로그인을 시작하지 못했습니다. 잠시 후 다시 시도해 주십시오.';}
+  };
+  $('#signout').onclick=async()=>{
+    const ok=await pushDiff();
+    if(!ok&&!confirm('서버에 올라가지 않은 변경이 있습니다. 로그아웃하면 이 기기의 악보가 지워지고 그 변경은 사라집니다. 계속하시겠습니까?'))return;
+    if(ok&&!confirm('로그아웃하면 이 기기의 악보가 지워집니다. 다시 로그인하면 불러옵니다. 계속하시겠습니까?'))return;
+    explicitOut=true;await sb.auth.signOut();
+  };
+  sb.auth.onAuthStateChange((ev,session)=>{
+    if(ev==='SIGNED_OUT')onLogout();
+    else if(session&&(ev==='SIGNED_IN'||ev==='INITIAL_SESSION')&&(!acct||acct.id!==session.user.id))setTimeout(()=>onLogin(session),0);
+  });
+  let s=null;try{s=(await sb.auth.getSession()).data.session;}catch(e){}
+  if(!s){
+    if(cached&&!navigator.onLine){acct={id:cached,email:''};$('#acctbox').hidden=false;enterApp();} // 오프라인이면 이 기기의 곡은 연다
+    else $('#glogin').disabled=false;
+  }
+  addEventListener('online',()=>syncAll());
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncAll();});
+}
+
 // ---------- UI 및 화면 전환 ----------
-const V={lib:$('#lib'),view:$('#view'),edit:$('#edit')};
+const V={login:$('#login'),lib:$('#lib'),view:$('#view'),edit:$('#edit')};
 let cur=null,parsed=null,heads=[],prevView='lib',ratio=0;
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{ratio=0;if(!V.view.hidden&&parsed)layout(true);});
 function show(n){
@@ -1615,6 +1748,7 @@ addEventListener('popstate',e=>{
 })();
 
 applyTheme();renderList();setPlay(false);
+if(SB_ON){show('login');if(document.readyState==='complete')initAuth();else addEventListener('load',initAuth);} // defer 스크립트(supabase)가 실행된 뒤에 시작
 
 // ---------- 새 버전 알림 (CHANGELOG 003) ----------
 // APP_VERSION은 배포 때 .github/workflows/stamp-version.yml이 version.json과 같은 값(커밋 SHA)으로 바꾼다.
