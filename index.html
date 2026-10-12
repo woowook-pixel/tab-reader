@@ -1123,6 +1123,7 @@ const uid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 // anon key는 공개용 키입니다. 접근 제한은 supabase/schema.sql의 행 단위 보안(RLS)이 맡습니다.
 const SUPABASE_URL='',SUPABASE_KEY='';
 const SB_ON=!!(SUPABASE_URL&&SUPABASE_KEY);
+const SB_TABLE='strum_songs'; // 같은 Supabase 프로젝트의 다른 앱 테이블과 겹치지 않게 앱 이름을 붙인다
 const rowOf=s=>({id:s.id,user_id:acct.id,title:s.title,text:s.text,images:s.images||[],tr:Number(s.tr)||0,updated:Number(s.updated)||0});
 const fromRow=x=>({id:x.id,title:x.title,text:x.text,images:Array.isArray(x.images)?x.images:[],tr:Number(x.tr)||0,updated:Number(x.updated)||0});
 const syncMsg=t=>{const e=$('#syncstat');if(e)e.textContent=t;};
@@ -1135,8 +1136,8 @@ async function pushDiff(){
     const up=[],js=new Map();
     for(const s of songs){const row=rowOf(s),j=JSON.stringify(row);if(synced.get(s.id)!==j){up.push(row);js.set(s.id,j);}}
     const del=[...synced.keys()].filter(id=>!songs.some(s=>s.id===id));
-    if(up.length){const {error}=await sb.from('songs').upsert(up,{onConflict:'user_id,id'});if(error)throw error;for(const [id,j] of js)synced.set(id,j);}
-    if(del.length){const {error}=await sb.from('songs').delete().eq('user_id',acct.id).in('id',del);if(error)throw error;for(const id of del)synced.delete(id);}
+    if(up.length){const {error}=await sb.from(SB_TABLE).upsert(up,{onConflict:'user_id,id'});if(error)throw error;for(const [id,j] of js)synced.set(id,j);}
+    if(del.length){const {error}=await sb.from(SB_TABLE).delete().eq('user_id',acct.id).in('id',del);if(error)throw error;for(const id of del)synced.delete(id);}
     syncMsg(up.length||del.length?'서버에 저장했습니다.':'');
     return true;
   }catch(e){syncMsg('서버에 저장하지 못했습니다. 연결되면 다시 시도합니다.');return false;}
@@ -1146,7 +1147,7 @@ async function pushDiff(){
 async function pullMerge(){
   if(!sb||!acct)return false;
   try{
-    const {data,error}=await sb.from('songs').select('*').eq('user_id',acct.id);
+    const {data,error}=await sb.from(SB_TABLE).select('*').eq('user_id',acct.id);
     if(error)throw error;
     const remote=new Map(data.map(x=>[x.id,x]));
     for(const [id,x] of remote){
@@ -1209,7 +1210,7 @@ async function initAuth(){
     const ok=await pushDiff();
     if(!ok&&!confirm('서버에 올라가지 않은 변경이 있습니다. 로그아웃하면 이 기기의 악보가 지워지고 그 변경은 사라집니다. 계속하시겠습니까?'))return;
     if(ok&&!confirm('로그아웃하면 이 기기의 악보가 지워집니다. 다시 로그인하면 불러옵니다. 계속하시겠습니까?'))return;
-    explicitOut=true;await sb.auth.signOut();
+    explicitOut=true;await sb.auth.signOut({scope:'local'}); // 같은 프로젝트를 쓰는 다른 앱의 로그인은 끊지 않음
   };
   sb.auth.onAuthStateChange((ev,session)=>{
     if(ev==='SIGNED_OUT')onLogout();
