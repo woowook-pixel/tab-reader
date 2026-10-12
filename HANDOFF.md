@@ -54,6 +54,7 @@
 21. **홈 화면 아이콘이 안 보인다는 신고 대응 (`fix/home-icon`)**: 소스(`<head>`의 apple-touch-icon 링크, 파일 존재, Pages 빌드 성공)에는 결함이 없었다. 그래도 가장 확실한 구조로 맞췄다. 아이콘을 앱 루트의 표준 경로(`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `favicon-64.png`, `favicon.svg`)에 두고 링크·manifest가 그 경로를 가리키게 했으며, 주소 끝에 `?v=2`를 붙여 기기와 CDN이 옛 이미지를 다시 쓰지 않게 했다. `design/icons/strum-*`는 원본으로 그대로 둔다. 이 앱은 Next.js가 아니라 정적 사이트(Pages가 저장소 루트를 배포)라서 `public/` 폴더는 없다. 아이콘 그림을 바꿀 때는 파일 내용과 함께 `?v=` 숫자도 올릴 것.
     - iPhone은 홈 화면에 추가하는 순간의 아이콘을 저장해 두고 이후 갱신하지 않는다. 아이콘이 안 바뀌거나 비어 보이면 바로가기를 지우고, 사파리에서 새로고침한 뒤 '홈 화면에 추가'를 다시 한다.
 22. **iOS 홈 화면 아이콘이 회색 글자 타일로 나오는 문제 대응 (`fix/apple-icon-data-uri`)**: 다른 앱(Pitch)에서 확인된 해결 방법을 적용했다. `apple-touch-icon`을 파일 주소 대신 data 주소로 `index.html`의 `<head>`에 직접 넣었다(약 4KB). iOS가 아이콘을 받아 오는 요청만 실패하는 것으로 보이고 정확한 원인은 알려지지 않았다. 파일 기반 `icon` 링크와 manifest icons는 그대로 둔다(안드로이드·데스크톱용).
+23. **CHANGELOG 003·004 적용**: 새 버전 알림 띠(`version.json` + `.github/workflows/stamp-version.yml`)와 중앙 픽셀 아이콘 주소. 22번의 data 주소 apple-touch-icon은 중앙 주소로 대체했다. 아이콘이 다시 회색 타일이면 `tools/apple-icon-data-uri.py`로 data 주소 방식으로 되돌린다. 자세한 내용은 `design/APPLIED.md`.
     - 아이콘 그림(`apple-touch-icon.png`, 180x180)을 바꾸면 `python3 tools/apple-icon-data-uri.py`를 다시 실행해 data 주소를 새로 만든다(PNG의 메타데이터 조각을 지워 표준 PNG로 다시 저장하고 링크 한 줄을 교체).
     - 증상이 같은지는 먼저 확인할 것: Safari '홈 화면에 추가' 창에서 앱 이름은 나오는데 아이콘 자리만 회색 글자 타일.
     - Vercel 배포 보호·iOS 캐시·파일 경로 문제로 단정하지 말 것(다른 앱에서 이미 제외됨).

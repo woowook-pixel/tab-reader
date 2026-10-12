@@ -1,0 +1,27 @@
+# main에 올라올 때마다 version.json과 index.html의 APP_VERSION을 같은 값(커밋 SHA)으로 바꿔 다시 올린다.
+# GITHUB_TOKEN으로 올린 커밋은 워크플로를 다시 일으키지 않으므로 반복되지 않는다.
+name: stamp-version
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  stamp:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 버전 값 바꾸기
+        run: |
+          V="${GITHUB_SHA::12}"
+          printf '{"version":"%s"}\n' "$V" > version.json
+          sed -i "s/^const APP_VERSION='[^']*';/const APP_VERSION='$V';/" index.html
+          grep -q "APP_VERSION='$V'" index.html
+      - name: 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add version.json index.html
+          git diff --cached --quiet || git commit -m "chore: 배포 버전 갱신 ${GITHUB_SHA::12}"
+          git push
