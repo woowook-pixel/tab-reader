@@ -50,6 +50,7 @@
 19. **앱 이름·홈 아이콘만 Strum으로 변경**: HTML `<title>`, `apple-mobile-web-app-title`, manifest `name`·`short_name`을 Strum으로, `apple-touch-icon`은 `design/icons/strum-180.png`, favicon은 `design/icons/strum.svg`(+ `strum-192.png` 대체), manifest icons는 `strum-192.png`·`strum-512.png`로 바꿨다. 화면 UI·색·레이아웃·기능은 그대로(화면 픽셀 비교로 확인). 기존 아이콘 파일(`apple-touch-icon.png`, `icon-192/512.png`, `favicon-64.png`, `design/icons/fret-*`)은 지우지 않고 참조만 바꿨다.
     - 화면 안의 'Fret' 표기도 Strum으로 바꿨다: 상단 워드마크 3곳(`.pf-wordmark`, 화면에는 대문자 STRUM), 백업 공유 시트 제목 `Strum 백업`, 복원 오류 문구. 남은 Fret 표기는 `design/DESIGN.md`·`design/FRET.md`(패밀리 공통 문서)와 HANDOFF.md의 옛 항목뿐이다.
     - iPhone은 기존 홈 화면 바로가기를 지우고 Safari에서 다시 '홈 화면에 추가'해야 새 이름과 아이콘이 보인다.
+20. **CHANGELOG 002 (상단 헤더 위치·높이 통일) 적용**: 세 화면의 상단 바를 `.pf-header > .pf-topbar > (.pf-wordmark, .pf-actions > .pf-action)`로 바꾸고, 앱이 준 위 여백·안전영역 계산·워드마크·버튼 스타일을 지웠다. 중앙 CSS 링크(`https://personal-design-rho.vercel.app/v1/tokens.css`)를 `index.html`에 추가했고, 적용 기록은 `design/APPLIED.md`. 악보 보기 섹션 탭의 고정 위치(`--vtop`)는 `syncVtop()`이 헤더 높이에서 읽는다.
 
 ## 남은 일 / 후보
 
