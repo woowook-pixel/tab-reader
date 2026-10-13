@@ -1,7 +1,7 @@
 # 공통 디자인 적용 현황 (Strum)
 
 - 공통 파일: design/shared (자동 동기화, 직접 고치지 않음). 정적 사이트(빌드 없음)라서 `index.html`이 `design/shared/tokens.css`, `design/shared/symbols.js`, `design/shared/icons/strum.svg`를 상대 경로로 바로 불러온다(import·복사 스크립트 없음). 중앙 주소는 쓰지 않는다.
-- 적용한 CHANGELOG 번호: 002, 003, 004, 005, 006, 009
+- 적용한 CHANGELOG 번호: 002, 003, 004, 005, 006, 009, 011
 - 예전 복사본(`design/tokens.css`, `design/icons/`, `design/DESIGN.md`)은 지웠다.
 
 ## 002 상단 헤더 위치·높이 통일
@@ -46,3 +46,8 @@
 - 공통 `.pf-titleblock`(제목 왼쪽, 보조 라벨 오른쪽 아래)을 그대로 쓴다. 악보 목록(`#count` + "악보")과 악보 보기(`#vartist` + 곡 제목)는 이미 `.pf-titleblock > .pf-eyebrow + .pf-title` 구조라 마크업은 그대로다. 앱이 제목 줄 배치를 직접 준 스타일은 없었다.
 - 악보 보기 제목 블록에만 앱 부제(`.fr-vsub`, 키·카포 등)가 하나 더 있어, 제목 줄 아래 한 줄로 가도록 `order:3; flex-basis:100%` 한 줄을 앱 CSS에 두었다.
 - 새 곡·로그인 화면은 제목만 있어 변화 없음. 제목 아래 여백(`padding-bottom`)은 제목 줄 배치가 아니라 다음 내용과의 간격이라 그대로 뒀다.
+
+## 011 워드마크 옆 작은 앱 아이콘
+
+- 최상위 화면(로그인, 악보 목록)의 상단 바 왼쪽을 `<span class="pf-brand"><span class="pf-wordmark">Strum</span><img class="pf-brand-icon" src="design/shared/icons/strum.svg" alt="" width="20" height="20"></span>`로 바꿨다. 주소는 favicon과 같은 상대 경로. alt는 비움(옆에 글자로 앱 이름이 있음).
+- 하위 화면(악보 보기, 편집)은 넣지 않았다. 크기와 간격은 공통 CSS(`.pf-brand`, `.pf-brand-icon`)에 맡겼고 앱 CSS는 건드리지 않았다.
