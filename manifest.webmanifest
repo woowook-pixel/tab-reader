@@ -8,19 +8,19 @@
   "theme_color": "#FFFFFF",
   "icons": [
     {
-      "src": "https://personal-design-rho.vercel.app/icons/pixel/strum-192.png",
+      "src": "design/shared/icons/strum-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://personal-design-rho.vercel.app/icons/pixel/strum-512.png",
+      "src": "design/shared/icons/strum-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://personal-design-rho.vercel.app/icons/pixel/strum-512.png",
+      "src": "design/shared/icons/strum-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
