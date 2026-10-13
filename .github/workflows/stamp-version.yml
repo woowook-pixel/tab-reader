@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: 홈 아이콘 data 주소를 design/shared에서 다시 넣기
+        run: python3 tools/inject-apple-icon.py
       - name: 버전 값 바꾸기
         run: |
           V="${GITHUB_SHA::12}"

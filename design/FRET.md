@@ -1,6 +1,6 @@
 # Fret 적용 기준
 
-공통 기준은 `DESIGN.md`, 토큰은 `tokens.css`를 따른다. 이 문서는 Fret(구 타브 리더)에만 해당하는 내용이다.
+공통 기준은 `shared/DESIGN.md`, 토큰은 `shared/tokens.css`를 따른다. 이 문서는 Fret(구 타브 리더)에만 해당하는 내용이다.
 
 ## 앱 이름
 

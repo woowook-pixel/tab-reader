@@ -1,8 +1,8 @@
 # 공통 디자인 적용 현황 (Strum)
 
-- 사용 중인 공통 CSS: v1 (https://personal-design-rho.vercel.app/v1/tokens.css)
-- 적용한 CHANGELOG 번호: 002, 003, 004, 005, 006
-- 참고: 이 저장소는 예전 복사본 `design/tokens.css`도 계속 불러온다(`index.html`의 `<link>` 두 줄, 복사본이 먼저, 중앙 CSS가 그 다음). 복사본을 지우고 중앙 CSS만 쓰려면 `design/tokens.css` 링크를 지우면 된다.
+- 공통 파일: design/shared (자동 동기화, 직접 고치지 않음). 정적 사이트(빌드 없음)라서 `index.html`이 `design/shared/tokens.css`, `design/shared/symbols.js`, `design/shared/icons/strum.svg`를 상대 경로로 바로 불러온다(import·복사 스크립트 없음). 중앙 주소는 쓰지 않는다.
+- 적용한 CHANGELOG 번호: 002, 003, 004, 005, 006, 009
+- 예전 복사본(`design/tokens.css`, `design/icons/`, `design/DESIGN.md`)은 지웠다.
 
 ## 002 상단 헤더 위치·높이 통일
 
@@ -22,14 +22,14 @@
 
 ## 004 홈 아이콘을 중앙 픽셀 아이콘으로
 
-- `apple-touch-icon` → `https://personal-design-rho.vercel.app/icons/pixel/strum-180.png`(예전에 넣은 data 주소 링크를 대체)
-- `manifest.webmanifest` icons → `strum-192.png`, `strum-512.png`(any, maskable)
-- favicon(svg) → `.../strum.svg`. 64px PNG favicon 링크는 구형 브라우저용 대체로 그대로 둠.
-- 저장소 안의 기존 아이콘 파일은 지우지 않았다. (006에서 apple-touch-icon만 다시 data 주소로 바뀜)
+- `apple-touch-icon` → (006에서 data 주소로 되돌림, 아래 참고)
+- `manifest.webmanifest` icons → `design/shared/icons/strum-192.png`, `strum-512.png`(any, maskable)
+- favicon(svg) → `design/shared/icons/strum.svg`. 64px PNG favicon 링크는 구형 브라우저용 대체로 그대로 둠.
+- 예전 아이콘 파일(`apple-touch-icon.png`, `icon-192/512.png`, `favicon.svg`)은 화면에서 쓰지 않아 지웠다. `favicon-64.png`는 head의 PNG favicon 링크가 쓰므로 남겼다.
 
 ## 005 기호 추가
 
-- `<head>`에 `https://personal-design-rho.vercel.app/v1/symbols.js`(defer)를 추가했다. 기호는 `<pf-sym name="...">`, JS에서 만드는 곳은 `SYM(name)` 헬퍼를 쓴다.
+- `<head>`에 `design/shared/symbols.js`(defer)를 추가했다. 기호는 `<pf-sym name="...">`, JS에서 만드는 곳은 `SYM(name)` 헬퍼를 쓴다.
 - 바꾼 글자 기호: 목록 끝 `→` → arrow-right, 코드 찾기 행 `↗` → arrow-up-right, 백업 펼침 `→`(회전) → arrow-down(열리면 180도 회전), `+ 새 곡` → plus + 글자, `← 악보` → arrow-left + 글자.
 - 글자 앞에 붙인 기호: 편집 edit, 보기 설정 settings, PLAY play / STOP stop(`setPlay`가 `innerHTML`로 갱신), 이 곡 삭제 close(문구 바뀔 때는 글자 노드만 갱신). 검색 입력창 앞 search.
 - 기호는 글자색을 따르고 Ember는 쓰지 않았다. 기호 옆 간격은 `.pf-action`, `.fr-play`, `#del`에 `gap`을 줘서 맞췄다. 기호 스크립트를 못 받으면 글자만 남는다.
@@ -38,5 +38,11 @@
 
 ## 006 홈 아이콘 회색 글자 수정
 
-- `apple-touch-icon` 링크를 중앙에서 받은 Strum용 data 주소(180x180, 메타데이터 제거본)로 교체했다. 링크는 한 개만 있다.
+- `apple-touch-icon`은 `design/shared/icons/apple-touch-icon.datauri.txt`의 data 주소를 `tools/inject-apple-icon.py`가 그대로 읽어 `<head>`에 넣는다(손으로 옮기지 않음). 넣기 전에 PNG 서명, 청크 CRC, 180x180을 검사하고 링크는 1개만 남긴다. GitHub Action(`stamp-version.yml`)이 main에 올라올 때마다 이 스크립트를 다시 돌려, 동기화로 아이콘이 바뀌어도 맞춰진다.
 - favicon과 manifest icons는 중앙 주소 그대로 둔다.
+
+## 009 제목 줄 배치
+
+- 공통 `.pf-titleblock`(제목 왼쪽, 보조 라벨 오른쪽 아래)을 그대로 쓴다. 악보 목록(`#count` + "악보")과 악보 보기(`#vartist` + 곡 제목)는 이미 `.pf-titleblock > .pf-eyebrow + .pf-title` 구조라 마크업은 그대로다. 앱이 제목 줄 배치를 직접 준 스타일은 없었다.
+- 악보 보기 제목 블록에만 앱 부제(`.fr-vsub`, 키·카포 등)가 하나 더 있어, 제목 줄 아래 한 줄로 가도록 `order:3; flex-basis:100%` 한 줄을 앱 CSS에 두었다.
+- 새 곡·로그인 화면은 제목만 있어 변화 없음. 제목 아래 여백(`padding-bottom`)은 제목 줄 배치가 아니라 다음 내용과의 간격이라 그대로 뒀다.
