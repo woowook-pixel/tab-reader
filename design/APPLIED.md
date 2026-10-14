@@ -1,7 +1,7 @@
 # 공통 디자인 적용 현황 (Strum)
 
 - 공통 파일: design/shared (자동 동기화, 직접 고치지 않음). 정적 사이트(빌드 없음)라서 `index.html`이 `design/shared/tokens.css`, `design/shared/symbols.js`, `design/shared/icons/strum.svg`를 상대 경로로 바로 불러온다(import·복사 스크립트 없음). 중앙 주소는 쓰지 않는다.
-- 적용한 CHANGELOG 번호: 002, 003, 004, 005, 006, 009, 011
+- 적용한 CHANGELOG 번호: 002, 003, 004, 005, 006, 009, 011, 012
 - 예전 복사본(`design/tokens.css`, `design/icons/`, `design/DESIGN.md`)은 지웠다.
 
 ## 002 상단 헤더 위치·높이 통일
@@ -51,3 +51,8 @@
 
 - 최상위 화면(로그인, 악보 목록)의 상단 바 왼쪽을 `<span class="pf-brand"><span class="pf-wordmark">Strum</span><img class="pf-brand-icon" src="design/shared/icons/strum.svg" alt="" width="20" height="20"></span>`로 바꿨다. 주소는 favicon과 같은 상대 경로. alt는 비움(옆에 글자로 앱 이름이 있음).
 - 하위 화면(악보 보기, 편집)은 넣지 않았다. 크기와 간격은 공통 CSS(`.pf-brand`, `.pf-brand-icon`)에 맡겼고 앱 CSS는 건드리지 않았다.
+
+## 012 워드마크 옆 앱 캐릭터
+
+- 최상위 화면(로그인, 악보 목록)의 `.pf-brand` 안 `img.pf-brand-icon`(011)을 `<picture>`로 바꿨다: `prefers-reduced-motion: reduce`이면 `design/shared/characters/strum-still.png`, 아니면 `strum.gif`를 `img.pf-brand-character`(alt 비움, 24x24)로 보여 준다. 주소는 favicon과 같은 상대 경로. 하위 화면(악보 보기, 편집)과 다른 곳에는 넣지 않았다. 크기·간격은 공통 CSS에 맡겼다.
+- 상단 흐림 점검: 해당 없음. `backdrop-filter`, `filter: blur`, 상단 가림막·그라데이션 요소가 없고, `.pf-header` 위를 덮는 고정 요소도 없다(고정 요소는 하단 재생 바, 설정 패널, 시트용 어두운 막, 새 버전 띠뿐). 반투명 값은 버튼 누름 상태 `:active`의 opacity(`index.html` 46·62·91·126·130·143·180줄)와 시트 뒤 어두운 막(`.scrim`, 156줄)뿐이다. 악보 보기에서 오른쪽으로 쓸어 돌아갈 때만 `#view`에 일시적으로 `opacity`/`transform`이 걸렸다 풀린다(1741~1753줄).
