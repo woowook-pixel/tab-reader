@@ -1,7 +1,7 @@
 # 공통 디자인 적용 현황 (Strum)
 
 - 공통 파일: design/shared (자동 동기화, 직접 고치지 않음). 정적 사이트(빌드 없음)라서 `index.html`이 `design/shared/tokens.css`, `design/shared/symbols.js`, `design/shared/icons/strum.svg`를 상대 경로로 바로 불러온다(import·복사 스크립트 없음). 중앙 주소는 쓰지 않는다.
-- 적용한 CHANGELOG 번호: 002, 003, 004, 005, 006, 009, 011, 012
+- 적용한 CHANGELOG 번호: 002, 003, 004, 005, 006, 009, 011, 012, 013
 - 예전 복사본(`design/tokens.css`, `design/icons/`, `design/DESIGN.md`)은 지웠다.
 
 ## 002 상단 헤더 위치·높이 통일
@@ -56,3 +56,8 @@
 
 - 최상위 화면(로그인, 악보 목록)의 `.pf-brand` 안 `img.pf-brand-icon`(011)을 `<picture>`로 바꿨다: `prefers-reduced-motion: reduce`이면 `design/shared/characters/strum-still.png`, 아니면 `strum.gif`를 `img.pf-brand-character`(alt 비움, 24x24)로 보여 준다. 주소는 favicon과 같은 상대 경로. 하위 화면(악보 보기, 편집)과 다른 곳에는 넣지 않았다. 크기·간격은 공통 CSS에 맡겼다.
 - 상단 흐림 점검: 해당 없음. `backdrop-filter`, `filter: blur`, 상단 가림막·그라데이션 요소가 없고, `.pf-header` 위를 덮는 고정 요소도 없다(고정 요소는 하단 재생 바, 설정 패널, 시트용 어두운 막, 새 버전 띠뿐). 반투명 값은 버튼 누름 상태 `:active`의 opacity(`index.html` 46·62·91·126·130·143·180줄)와 시트 뒤 어두운 막(`.scrim`, 156줄)뿐이다. 악보 보기에서 오른쪽으로 쓸어 돌아갈 때만 `#view`에 일시적으로 `opacity`/`transform`이 걸렸다 풀린다(1741~1753줄).
+
+## 013 탭바 잘림 수정, 상단 캐릭터 새 디자인
+
+- 상단 캐릭터: 최상위 화면(로그인, 악보 목록)의 `img.pf-brand-character`의 `width`/`height` 속성을 24x24에서 이 앱 값 68x28로 바꿨다(`strum.gif`는 272x112 = 4배). 크기는 공통 CSS가 정하며 앱 CSS에서 주지 않았다. `<picture>`의 still.png `source`는 그대로.
+- 탭바: 이 앱에는 하단 탭바(`.pf-tabbar`)가 없어 해당 없음. 지운 탭바 스타일도 없다. 악보 보기 아래의 재생 바(`.fr-dock`)는 탭바가 아니라 이 앱 고유 요소라 그대로 두었고, 그 위에 뜨는 새 버전 띠의 `bottom`만 재생 바 높이(65px)에 맞춰 둔 기존 값을 유지했다.
