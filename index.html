@@ -524,7 +524,11 @@ const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 function isChordLine(l){const t=l.trim().split(/\s+/);if(!t[0])return false;let n=0;
   for(const x of t){if(CH.test(x))n++;else if(!MARK.test(x))return false;}return n>0;}
 function isTabLine(l){return /^\s*[a-gA-G][|:]/.test(l)&&(l.match(/-/g)||[]).length>=3;}
-function isHead(l){return /^\s*\[[^\]]+\]\s*$/.test(l);}
+// 섹션 제목: [Verse] 형태, 또는 대괄호 없는 Intro:, Verse 1:, Chorus, (Bridge) 같은 흔한 이름
+const HEADW='intro|verse|chorus|pre[- ]?chorus|post[- ]?chorus|bridge|outro|solo|interlude|instrumental|refrain|hook|break|coda|ending|tag';
+const HEADRE=new RegExp('^\\s*\\(?(?:'+HEADW+')(?:\\s*\\d+)?\\)?\\s*(?:[:\\-])?\\s*(?:\\([^)]*\\))?\\s*$','i');
+function isHead(l){return /^\s*\[[^\]]+\]\s*$/.test(l)||(l.trim().length<=30&&HEADRE.test(l));}
+const headText=l=>l.trim().replace(/^\[|\]$/g,'').replace(/^\(|\)$/g,'').replace(/\s*[:\-]\s*$/,'').trim();
 function splitTab(l){l=l.replace(/\s+$/,'');const P=l.match(/^\s*[a-gA-G][|:]/)[0].length;
   const last=l.lastIndexOf('|');const end=last>=P?last+1:l.length;
   return{P,s:l.slice(0,end),suffix:l.slice(end),prefix:l.slice(0,P)};}
@@ -536,7 +540,7 @@ function parse(text){
   while(i<L.length){
     const l=L[i];
     if(!l.trim()){if(B.length&&B[B.length-1].t!=='gap')B.push({t:'gap'});i++;continue;}
-    if(isHead(l)){B.push({t:'head',text:l.trim().replace(/^\[|\]$/g,'')});i++;continue;}
+    if(isHead(l)){B.push({t:'head',text:headText(l)});i++;continue;}
     let chord=null;
     if(isChordLine(l)){
       const n=L[i+1];
@@ -1111,7 +1115,8 @@ const store={
 let songs=store.get('tr.songs',null);
 const cfg=Object.assign({size:window.innerWidth>=900?19:15,mode:'reflow',level:4,theme:'auto',wake:true,zoom:100,invert:false,chords:false,chordsAll:false,strum:'strum',pin:true},store.get('tr.cfg',{}));
 const saveCfg=()=>store.set('tr.cfg',cfg);
-if(!cfg.v){cfg.v=2;cfg.chords=false;saveCfg();} // 화면을 넓게 쓰도록 코드 카드 줄 기본 숨김 (설정에서 다시 켤 수 있음)
+if(!cfg.v){cfg.v=2;cfg.chords=false;saveCfg();}
+if(cfg.v<3){cfg.v=3;cfg.chords=true;saveCfg();} // 코드 운지 카드 줄을 기본으로 보임 (설정에서 끌 수 있음)
 let sb=null,acct=null,pushT=0,pushing=false,explicitOut=false;const synced=new Map(); // 서버와 맞춘 곡: id → 마지막으로 올린 내용
 const saveSongs=()=>{store.set('tr.songs',songs);syncSoon();};
 if(!Array.isArray(songs)){songs=[demo()];saveSongs();}
